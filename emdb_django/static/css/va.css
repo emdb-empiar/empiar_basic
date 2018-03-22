@@ -1,0 +1,58 @@
+/* fixed width table to contain 3 images width borders etc */
+.va_table { width: 962px; 
+   margin-left: 0px;}
+
+/* for image table cells */
+.va_img { width: 300px;
+    padding-right: 10px; }
+
+/* for highchart 1 column charts */
+.va_highchart1 { 
+    width: 310px;
+    height: 320px;
+    vertical-align: top;
+    border: 0px;
+    border-right: 3px solid white; }
+
+/* for highchart 2 column charts */
+.va_highchart2 {
+    width: 610px;
+    height: 320px;
+    vertical-align: top;
+    border: 0px;
+    border-right: 3px solid white; }
+
+/* for resolution text, when there is no tabular data */
+.va_res_text {
+    vertical-align: top;
+    border: 0px;
+    padding-left: 5px;
+    border-right: 3px solid white; }
+
+.va_help_icon {
+    float: right; }
+
+.va_images {
+    float: left;
+    border-right: 5px solid white; }
+
+.va_list {
+    overflow: auto; }
+
+/* override yui-sam-skin - looks really bad in Volume Viewer */
+.va_body {
+    background-color: #FFFFFF;
+}
+
+/* override basicstyles.css, that comes from somewhere... */
+.va_hr {
+    height: 5px;
+    background-color: #DCECD7;
+    border-width: 0px;
+    border-style: none;
+    margin: 0px;
+}
+
+/* override PDBe group settings */
+#contentarea { padding-left: 16px;
+    padding-right: 16px; }

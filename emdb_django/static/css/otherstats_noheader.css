@@ -1,0 +1,30 @@
+.resultsTable thead {
+    color: white;
+}
+.resultsTable th {
+    background-color: #6F6FC0;
+}
+.resultsTable tr.grandtotal {
+    background-color: white;
+}
+.myform > li > label {
+    width: 12em;
+}
+div#pdbeCenterContent h1{
+    color: #4B4BB0;
+    font-size: 200%;
+    background: white;
+    border: none;
+}
+div#pdbeCenterContent h2{
+    margin-top: 2em;
+    margin-bottom: 1em;
+    border-bottom: 1px solid #4B4BB0;
+    font-weight: bold;
+}
+.firstPlot {
+    width: 940px;
+}
+.secondPlot{
+    width: 940px;
+}

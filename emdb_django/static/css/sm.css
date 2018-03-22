@@ -1,0 +1,156 @@
+.sm_table { 
+  padding-left: 0px;
+  padding-right: 0px;
+  border-left: 1px solid #ffffff;
+  border-right: 1px solid #ffffff;
+  border-top: 5px solid #ffffff;
+}
+
+.sm_short_table {
+  width: 400px;
+}
+
+.sm_no_visible_border table {
+  padding-left: 0px;
+  padding-right: 0px;
+  padding-top: 0px;
+  padding-bottom: 0px;
+  border-top-width: 0px;
+  border-bottom-width: 0px;
+  border-left-width: 0px;
+  border-right-width: 0px;
+  border-top-color: #ffffff;
+  border-bottom-color: #ffffff;
+  border-left-color: #ffffff;
+  border-right-color: #ffffff;
+}
+
+.sm_td1 tr td {
+  border-left: 1px solid #ffffff;
+  border-right: 1px solid #ffffff;
+  border-top: 1px solid #ffffff;
+  border-bottom: 1px solid #ffffff;
+}
+
+.sm_tr1 tr th:first-child {
+  background: none repeat scroll 0 0 #71b360;
+  border-left: 1px solid #ffffff;
+  border-right: 1px solid #ffffff;
+  border-top: 1px solid #ffffff;
+  border-bottom: 1px solid #ffffff;
+  vertical-align: middle;
+}
+
+.sm_input1 tr td input {
+  margin: 0px;
+  padding: 0px;
+}
+
+.sm_td {
+  padding-left: 3px;
+  padding-right: 3px; 
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+.sm_vcenter {
+  vertical-align: middle;
+}
+.sm_center {
+  text-align: center;
+}
+
+.sm_left {
+  text-align: left;
+}
+
+.sm_clear {
+  clear: both;
+}
+
+.sm_th {
+	border-top: 1px solid #bfbfbf;
+	border-bottom: 1px solid #bfbfbf;
+}
+  
+.sm_thead {
+  background: none repeat scroll 0 0 #71b360;
+ }
+ 
+.sm_mapctrl {
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
+
+.sm_viewport {
+  width: 600px;
+  height: 500px;
+}
+
+.sm_applet {
+  width: 100%;
+  height: 100%;
+}
+
+.sm_narrow_table {
+  width: 200px;
+}
+
+.sm_maptable {
+  margin-top: 1px;
+  border: 0px;
+  width: 200px;
+}
+
+.sm_mapcell {
+  border: 0px;
+  padding-top: 2px;
+  padding-bottom: 1px;
+}
+
+.sm_hr {
+  margin-top: 2px;
+  margin-bottom: 0px;
+}
+
+.sm_welcome_table {
+  padding-left: 10px;
+}
+
+.sm_rightside {
+  border-right: 3px solid: #bfbfbf;
+  vertical-align: top;
+}
+
+.sm_no_table {
+  margin: 0px;
+  border: 0px;
+  padding: 0px;
+}
+
+.sm_monospace {
+  font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;
+}
+
+.pdbeshape-banner {
+  background-image: url(/pdbe/entry/static/images/banners/pdbe_local_banner.png);
+  background-repeat: no-repeat;
+  background-position: top right;
+  overflow: hidden; /* Do not set to scroll - white borders are added */
+  min-height: 112px;
+  margin-bottom: -26px;
+} 
+
+.pdbeshape-logo {
+  margin-left: 8px;
+  margin-right: 8px;
+}
+
+body.section-pdbe div#local-title img {
+  margin-top: 8px;
+}
+
+.pdbeshape-local-title {
+  color: #666666 !important;
+  text-shadow: 1px 1px white !important;
+}

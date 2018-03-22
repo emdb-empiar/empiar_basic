@@ -1,0 +1,571 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "EMPIAR API",
+    "description": "Access EMPIAR data with EMPIAR API",
+    "version": "1.0.0"
+  },
+  "schemes": [
+    "https"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/empiar/api/entry/{id}": {
+      "get": {
+        "operationId": "getEntryById",
+        "summary": "EMPIAR entry information",
+        "description": "The GET entry endpoint returns the information about a single EMPIAR entry.\nThe response includes the entry name, experiment type, author list,\nimage sets information and other details.\n",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The EMPIAR ID of the entry. Example: EMPIAR-10050",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Entry"
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/Entry"
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "postEntryById",
+        "summary": "EMPIAR entry information",
+        "description": "The POST entry endpoint returns the information about one or more EMPIAR entries.\nThese entries can be comma-separated or ranges can be specified with a dash '-' sign.\nThe response includes the entry name, experiment type, author list,\nimage sets information and other details.\n",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The EMPIAR ID of the entry or multiple comma and/or dash separated IDs. Example: 10050, 10054, 10060-10072",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Entry"
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/Entries"
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/empiar/api/emdb_ref/{id}": {
+      "get": {
+        "operationId": "getEntryEmdbById",
+        "summary": "EMPIAR entry information from the related EMDB entry accession code",
+        "description": "Based on the EMDB entry accession code, the GET entry endpoint returns the information about all related EMPIAR entries.\nThe response includes each entry's name, experiment type, author list,\nimage sets information and other details.\nThis call does not return obsoleted EMPIAR entries.\n",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The EMDB ID of the entry. Example: EMD-3233",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Entry from EMDB reference"
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/Entry"
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "postEntryEmdbById",
+        "summary": "EMPIAR entry information from the related EMDB entry accession code",
+        "description": "The POST entry endpoint returns the information about EMPIAR entries, that are related to the provided one or more EMDB accession codes.\nThese codes can be comma-separated or ranges can specified with a dash '-' sign.\nThe response includes the entry name, experiment type, author list,\nimage sets information and other details.\nThis call does not return obsoleted EMPIAR entries.\n",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The EMDB ID of the entry or multiple comma and/or dash separated IDs. Example: EMD-3233, EMD-3455, EMD-2200-EMD-2400",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Entry from EMDB reference"
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/Entries"
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/empiar/api/latest_citations": {
+      "get": {
+        "operationId": "getRecentEmpiarCitations",
+        "summary": "Latest citations that mention EMPIAR",
+        "description": "The GET endpoint returns the information about five latest citations that mention EMPIAR.\nThe response includes each citations's PubMed ID, publication year, author list and title.\n",
+        "tags": [
+          "Latest citations"
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/LatestCitations"
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Imageset": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the imageset."
+        },
+        "directory": {
+          "type": "string",
+          "description": "The directory where the imageset is located."
+        },
+        "category": {
+          "type": "string",
+          "description": "The category to which the imageset belongs."
+        },
+        "header_format": {
+          "type": "string",
+          "description": "The format of the headers of the data in the imageset."
+        },
+        "data_format": {
+          "type": "string",
+          "description": "The format of the data in the imageset."
+        },
+        "num_images_or_tilt_series": {
+          "type": "number",
+          "description": "The number of images or tilt series in the imageset."
+        },
+        "frames_per_image": {
+          "type": "number",
+          "description": "The number of frames per image."
+        },
+        "frame_range_min": {
+          "type": "number",
+          "description": "The minimum index of the frames if the imageset consists of a range of images."
+        },
+        "voxel_type": {
+          "type": "string",
+          "description": "The type of voxels in the images."
+        },
+        "pixel_width": {
+          "type": "number",
+          "description": "The width of pixels in the imageset."
+        },
+        "pixel_height": {
+          "type": "number",
+          "description": "The height of pixels in the imageset."
+        },
+        "details": {
+          "type": "string",
+          "description": "Additional information about the imageset."
+        },
+        "image_width": {
+          "type": "string",
+          "description": "The width of images in the imageset."
+        },
+        "image_height": {
+          "type": "string",
+          "description": "The height of images in the imageset."
+        }
+      }
+    },
+    "VersionHistory": {
+      "type": "object",
+      "properties": {
+        "version_number": {
+          "type": "number",
+          "description": "The version number of the entry in the version history."
+        },
+        "date": {
+          "type": "string",
+          "description": "The date on which the entry has been updated."
+        },
+        "status_code": {
+          "type": "string",
+          "description": "The status code of the entry at the moment it has been updated."
+        },
+        "details": {
+          "type": "string",
+          "description": "Details of the entry update."
+        }
+      }
+    },
+    "AuthorOrcid": {
+      "type": "string",
+      "description": "The ORCID ID of the author."
+    },
+    "AuthorDetailed": {
+      "type": "object",
+      "properties": {
+        "author_orcid": {
+          "$ref": "#/definitions/AuthorOrcid"
+        },
+        "middle_name": {
+          "type": "string",
+          "description": "The middle name of the author."
+        },
+        "organization": {
+          "type": "string",
+          "description": "The organization the author belongs to."
+        },
+        "street": {
+          "type": "string",
+          "description": "The street on which the organization is located."
+        },
+        "town_or_city": {
+          "type": "string",
+          "description": "The town or city where the organization is located."
+        },
+        "state_or_province": {
+          "type": "string",
+          "description": "The state or province where the organization is located."
+        },
+        "post_or_zip": {
+          "type": "string",
+          "description": "The post or zip of the organization."
+        },
+        "telephone": {
+          "type": "string",
+          "description": "The telephone by which the author can be reached."
+        },
+        "fax": {
+          "type": "string",
+          "description": "The fax by which the author can be reached."
+        },
+        "first_name": {
+          "type": "string",
+          "description": "The first name of the author."
+        },
+        "last_name": {
+          "type": "string",
+          "description": "The last name of the author."
+        },
+        "email": {
+          "type": "string",
+          "description": "The email address the author."
+        },
+        "country": {
+          "type": "string",
+          "description": "The country where the organization is located."
+        }
+      }
+    },
+    "PrincipalInvestigator": {
+      "type": "object",
+      "properties": {
+        "author": {
+          "$ref": "#/definitions/AuthorDetailed"
+        }
+      }
+    },
+    "AuthorEditor": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the author or editor. Consists of the last name and initials."
+        },
+        "author_orcid": {
+          "$ref": "#/definitions/AuthorDetailed"
+        }
+      }
+    },
+    "CrossReference": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The EMDB accession code"
+        }
+      }
+    },
+    "Citation": {
+      "type": "object",
+      "properties": {
+        "authors": {
+          "type": "array",
+          "description": "The authors of the citation. Could differ from those of the EMPIAR entry",
+          "items": {
+            "$ref": "#/definitions/AuthorEditor"
+          }
+        },
+        "editors": {
+          "type": "array",
+          "description": "The editors of the citation. Could differ from those of the EMPIAR entry",
+          "items": {
+            "$ref": "#/definitions/AuthorEditor"
+          }
+        },
+        "published": {
+          "type": "boolean",
+          "description": "True if the citation has been published, otherwise false"
+        },
+        "j_or_nj_citation": {
+          "type": "boolean",
+          "description": "True if the citation is a journal publication, otherwise false"
+        },
+        "title": {
+          "type": "string",
+          "description": "The title of the citation"
+        },
+        "volume": {
+          "type": "string",
+          "description": "The volume of the citation"
+        },
+        "country": {
+          "type": "string",
+          "description": "The country where the citation has been published"
+        },
+        "first_page": {
+          "type": "string",
+          "description": "The first page of the citation"
+        },
+        "last_page": {
+          "type": "string",
+          "description": "The last page of the citation"
+        },
+        "year": {
+          "type": "string",
+          "description": "The year of the publication of the citation"
+        },
+        "language": {
+          "type": "string",
+          "description": "The language of the citation"
+        },
+        "doi": {
+          "type": "string",
+          "description": "The DOI of the citation"
+        },
+        "pubmedid": {
+          "type": "string",
+          "description": "The PubMed ID of the citation"
+        },
+        "details": {
+          "type": "string",
+          "description": "Additional details about the citation"
+        },
+        "book_chapter_title": {
+          "type": "string",
+          "description": "The title of the book chapter of the citation"
+        },
+        "publisher": {
+          "type": "string",
+          "description": "The publishing body"
+        },
+        "publication_location": {
+          "type": "string",
+          "description": "The location of the publication"
+        },
+        "journal": {
+          "type": "string",
+          "description": "The journal where the citation is published"
+        },
+        "journal_abbreviation": {
+          "type": "string",
+          "description": "The abbreviation name of the journal"
+        },
+        "issue": {
+          "type": "string",
+          "description": "The citation's issue"
+        }
+      }
+    },
+    "Entry": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier representing a specific EMPIAR entry."
+        },
+        "imagesets": {
+          "type": "array",
+          "description": "The image sets that are stored in the EMPIAR entry.",
+          "items": {
+            "$ref": "#/definitions/Imageset"
+          }
+        },
+        "version_history": {
+          "type": "array",
+          "description": "The history of the changes of the EMPIAR entry.",
+          "items": {
+            "$ref": "#/definitions/VersionHistory"
+          }
+        },
+        "title": {
+          "type": "string",
+          "description": "The EMPIAR entry title."
+        },
+        "principal_investigator": {
+          "type": "array",
+          "description": "One or more principal investigator investigators.",
+          "items": {
+            "$ref": "#/definitions/PrincipalInvestigator"
+          }
+        },
+        "status": {
+          "type": "string",
+          "description": "Status of the entry. Can be released or obsoleted."
+        },
+        "deposition_date": {
+          "type": "string",
+          "description": "The date on which the entry has been deposited."
+        },
+        "release_date": {
+          "type": "string",
+          "description": "The date on which the entry has been released."
+        },
+        "obsolete_date": {
+          "type": "string",
+          "description": "The date on which the entry has been obsoleted."
+        },
+        "update_date": {
+          "type": "string",
+          "description": "The date on which the entry has had the last update."
+        },
+        "corresponding_author": {
+          "type": "object",
+          "properties": {
+            "author": {
+              "$ref": "#/definitions/AuthorDetailed"
+            }
+          }
+        },
+        "authors": {
+          "type": "array",
+          "description": "Complete list of the entry authors.",
+          "items": {
+            "$ref": "#/definitions/AuthorEditor"
+          }
+        },
+        "cross_references": {
+          "type": "array",
+          "description": "The EMDB accessions codes that are related to the EMPIAR entry.",
+          "items": {
+            "$ref": "#/definitions/CrossReference"
+          }
+        },
+        "citation": {
+          "type": "array",
+          "description": "The citation information related to the EMPIAR entry.",
+          "items": {
+            "$ref": "#/definitions/Citation"
+          }
+        },
+        "dataset_size": {
+          "type": "string",
+          "description": "The size of the EMPIAR entry"
+        },
+        "experiment_type": {
+          "type": "string",
+          "description": "The type of the EMPIAR entry. Can be SBF-SEM, INSILICO, EMDB, SXT, FIB-SEM, IHM."
+        }
+      }
+    },
+    "Entries": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Entry"
+      }
+    },
+    "LatestCitation": {
+      "type": "object",
+      "properties": {
+        "pmid": {
+          "type": "string",
+          "description": "PubMed identifier of the citation."
+        },
+        "pub_year": {
+          "type": "string",
+          "description": "The year in which the citation was published."
+        },
+        "author_string": {
+          "type": "string",
+          "description": "The list of the citation authors"
+        },
+        "title": {
+          "type": "string",
+          "description": "The title of the citation."
+        }
+      }
+    },
+    "LatestCitations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/LatestCitation"
+      }
+    },
+    "Error": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "fields": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

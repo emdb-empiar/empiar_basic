@@ -1,0 +1,676 @@
+/* empiar.css
+
+ Authors:
+		Ardan Patwardhan
+
+ Description:
+ 		css file that goes with empiar.js
+
+ Date:
+		20130724
+
+ Copyright [2013-16] EMBL - European Bioinformatics Institute
+ Licensed under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in
+ compliance with the License. You may obtain a copy of
+ the License at
+ http://www.apache.org/licenses/LICENSE-2.0
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on
+ an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied. See the License for the
+ specific language governing permissions and limitations
+ under the License.
+ 
+ Version history:
+0.2, 2014/05/23: Minor layout changes to put this into production.
+0.3, 2014/10/27, Ardan Patwardhan: Changes for compliant layout
+
+ */
+
+.noAspera {
+	//font-weight: bold;
+	//color: red;
+	margin-top: 10px;
+}
+
+.transferDiv {
+	position: relative;
+	//top: 100px;
+	width: 300px;
+	overflow: auto;
+	border: 2px solid #7F7F7F;
+	padding: 10px;
+}
+
+.transferDiv .yui-pb {
+	z-index: 0;
+}
+
+.transferDiv .yui-button {
+	width: 100px;
+}
+
+.transferDiv button {
+	z-index:10;
+	background-color: #668680;
+    background-image: none;
+    border: 2px solid white;
+    border-radius: 5px;
+    color: white;
+    font-family: verdana;
+    font-weight: bold;
+    line-height: 1.538;
+    margin: 0.15em;
+    padding: 0 9px;
+    position: relative;
+    text-align: center;
+    width: auto;
+}
+
+.empiarTable {
+	display: block;
+	border: 0;
+	padding: 0;
+	width: 100%;
+}
+
+.empiarTable thead {
+	background: #DDD;
+}
+
+.empiarTable th {
+	font-weight: bold;
+	text-align: center;
+	padding: 4px 5px 4px 5px;
+	background: #D8E5D8;
+	border: #a0a0a0 1px solid;
+	vertical-align:middle;
+}
+
+.empiarTable td {
+	padding: 4px 5px 4px 5px;
+	border: #a0a0a0 1px solid;
+	text-align: left;
+	vertical-align: top;
+	position: relative;
+	//height: 100px;
+}
+
+.empiarTable tbody tr:nth-child(odd) {
+	background: #d0d0d0;
+}
+
+.empiarTable tbody tr:nth-child(even) {
+	background: #f0f0f0;
+}
+
+.empiarTable .idDiv {
+	width: 90px;
+}
+
+.empiarTable .downloadDiv {
+	float: right;
+	position: relative;
+    top: -4px;
+    right: 0px;
+    width: 16px;
+    padding:2px 2px 2px 2px;
+}
+
+.empiarTable .entryIcon {
+	//position: absolute;
+	//top: 20px;
+	//left: 0px;
+	display: block;
+	margin: 5px auto 5px auto;
+	//height: 80px;
+	width: 80px;
+}
+
+.empiarTable .entryId {
+	font-weight: bold;
+}
+
+.empiarTable .yui-button, .empiarTable .yui-button .first-child {
+	background:none;
+	border-width: 0;
+}
+
+
+.empiarTable .downloadDiv button, .empiarDepositInstructions .uploadDiv button {
+	width: 16px;
+	padding: 0px;
+}
+
+.empiarFaq .question {
+	padding-top: 10px;
+}
+
+.empiarFaq .question:first-child {
+	padding-top: 0px;
+}
+
+.empiarFaq p {
+	padding-left: 9px;
+}
+
+.empiarDepositInstructions ul, .empiarFaq ul {
+    list-style: disc outside none; 
+    margin-left: 0; 
+    padding-left: 9px;
+}
+
+.empiarDepositInstructions li, .empiarFaq li {
+    margin-left: 1em;
+}
+
+.empiarDepositInstructions ul ul, .empiarFaq ul ul {
+	list-style: circle outside none;
+	margin-left:2em;
+}
+
+.empiarAbout>div {
+	padding-left: 9px;
+}
+
+.empiarAbout>h3 {
+	margin-top: 30px;
+	margin-bottom: 5px;
+}
+
+.empiarDepositInstructions .yui-button, .empiarDepositInstructions .yui-button .first-child {
+	background:none;
+	border-width: 0;
+}
+
+.empiarDepositInstructions .uploadInterfaceDiv {
+	width:400px;
+	height:30px;
+}
+
+.empiarDepositInstructions .uploadDiv {
+	//float: right;
+	//position: relative;
+    //top: -5px;
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 5px;
+}
+
+.empiarIntroImage {
+	margin: 1px;
+	background-color: #fff;
+	padding:10px;
+	text-align: center;
+	height: auto;
+}
+
+.empiarIntroImage img {
+	width: 100%;
+}
+
+div.empiarAdditionalAuthorInformation {
+	padding: 0px 0px 10px;
+}
+
+empiarDataLabel {
+	font-style: italic;
+}
+
+.empiarDownloadButton {
+    background-color: #668680;
+    background-image: none;
+    border: 2px solid #ffffff;
+    border-radius: 5px;
+    color: #ffffff;
+    font-family: verdana;
+    font-weight: bold;
+    margin: 0.15em;
+    min-width: 8em;
+    text-align: center;
+}
+
+empiarBanner {
+    border-bottom: 0 none;
+    height: 120px;
+    position: absolute;
+    top: 0;
+    width: 120px;
+    z-index: 1;
+}
+
+@media only screen and (max-width: 640px) {
+	body.section-pdbe div#local-title #empiarBanner img {
+		width: 400%;
+		max-width: 400%;
+	}
+	
+	#global-masthead {
+		display: none;
+	}
+	
+    #intro h3 {
+        padding: 0;
+        font-size: 90%;
+    }
+    body.section-pdbe div#local-title a {
+        width: 40%;
+        margin: 0;
+        display: block;
+    }
+    body.section-pdbe div#local-title img {
+		margin: 5% 0 5% 2%;
+		width: 60%;
+		height: 100%;
+	}
+	
+	body.section-pdbe div#local-title.logo-title-strapline h1 {
+		font-size: 143.3%;
+		width: 59%;
+		display: block;
+		margin: 3% 0 0 1%;
+		padding: 0 0 0 1%;
+		white-space: nowrap;
+		line-height: 1;
+	}
+}
+
+div.ui-tooltip-content {
+    font-style: normal;
+    font-weight: normal;
+    font-size: 80%;
+    text-align: left;
+    text-decoration: none;
+    text-indent: 0;
+}
+
+.image.no-underline>img {
+	vertical-align: -50%;
+}
+
+div#empiarLoader,#empiarLoaderGif,#empiarChooseDl {
+	display: none;
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	z-index: 10000;
+	width: 100%;
+	height: 100%;
+	background: #000;
+	opacity: 0.7;
+}
+
+div.empiarLoaderInner {
+	margin: 5% auto;
+	width: 66px;
+}
+
+div#empiarChooseDlInner {
+	color: #fff;
+	text-align: center;
+	margin: 5% auto;
+	width: 220px;
+}
+
+#empiarChooseDlInner .empiarDownloadButton {
+	width: 220px;
+}
+
+.empiarCloser {
+    color: #fff;
+    cursor: pointer;
+    position: relative;
+    right: -220px;
+    top: -20px;
+    width: 10px;
+}
+
+.jstree-icon.jstree-checkbox {
+	cursor: pointer;
+}
+
+/* Spinning loader wheel */
+#circularG{
+	position:relative;
+	width:128px;
+	height:128px
+}
+
+.circularG{
+	position:absolute;
+	background-color:#FFFFFF;
+	width:29px;
+	height:29px;
+	-moz-border-radius:19px;
+	-moz-animation-name:bounce_circularG;
+	-moz-animation-duration:1.04s;
+	-moz-animation-iteration-count:infinite;
+	-moz-animation-direction:linear;
+	-webkit-border-radius:19px;
+	-webkit-animation-name:bounce_circularG;
+	-webkit-animation-duration:1.04s;
+	-webkit-animation-iteration-count:infinite;
+	-webkit-animation-direction:linear;
+	-ms-border-radius:19px;
+	-ms-animation-name:bounce_circularG;
+	-ms-animation-duration:1.04s;
+	-ms-animation-iteration-count:infinite;
+	-ms-animation-direction:linear;
+	-o-border-radius:19px;
+	-o-animation-name:bounce_circularG;
+	-o-animation-duration:1.04s;
+	-o-animation-iteration-count:infinite;
+	-o-animation-direction:linear;
+	border-radius:19px;
+	animation-name:bounce_circularG;
+	animation-duration:1.04s;
+	animation-iteration-count:infinite;
+	animation-direction:linear;
+}
+
+#circularG_1{
+	left:0;
+	top:50px;
+	-moz-animation-delay:0.39s;
+	-webkit-animation-delay:0.39s;
+	-ms-animation-delay:0.39s;
+	-o-animation-delay:0.39s;
+	animation-delay:0.39s;
+}
+
+#circularG_2{
+	left:14px;
+	top:14px;
+	-moz-animation-delay:0.52s;
+	-webkit-animation-delay:0.52s;
+	-ms-animation-delay:0.52s;
+	-o-animation-delay:0.52s;
+	animation-delay:0.52s;
+}
+
+#circularG_3{
+	top:0;
+	left:50px;
+	-moz-animation-delay:0.65s;
+	-webkit-animation-delay:0.65s;
+	-ms-animation-delay:0.65s;
+	-o-animation-delay:0.65s;
+	animation-delay:0.65s;
+}
+
+#circularG_4{
+	right:14px;
+	top:14px;
+	-moz-animation-delay:0.78s;
+	-webkit-animation-delay:0.78s;
+	-ms-animation-delay:0.78s;
+	-o-animation-delay:0.78s;
+	animation-delay:0.78s;
+}
+
+#circularG_5{
+	right:0;
+	top:50px;
+	-moz-animation-delay:0.91s;
+	-webkit-animation-delay:0.91s;
+	-ms-animation-delay:0.91s;
+	-o-animation-delay:0.91s;
+	animation-delay:0.91s;
+}
+
+#circularG_6{
+	right:14px;
+	bottom:14px;
+	-moz-animation-delay:1.04s;
+	-webkit-animation-delay:1.04s;
+	-ms-animation-delay:1.04s;
+	-o-animation-delay:1.04s;
+	animation-delay:1.04s;
+}
+
+#circularG_7{
+	left:50px;
+	bottom:0;
+	-moz-animation-delay:1.17s;
+	-webkit-animation-delay:1.17s;
+	-ms-animation-delay:1.17s;
+	-o-animation-delay:1.17s;
+	animation-delay:1.17s;
+}
+
+#circularG_8{
+	left:14px;
+	bottom:14px;
+	-moz-animation-delay:1.3s;
+	-webkit-animation-delay:1.3s;
+	-ms-animation-delay:1.3s;
+	-o-animation-delay:1.3s;
+	animation-delay:1.3s;
+}
+
+@-moz-keyframes bounce_circularG{
+	0%{
+		-moz-transform:scale(1)
+	}
+	
+	100%{
+		-moz-transform:scale(.3)
+	}
+}
+
+@-webkit-keyframes bounce_circularG{
+	0%{
+		-webkit-transform:scale(1)
+	}
+
+	100%{
+		-webkit-transform:scale(.3)
+	}
+}
+
+@-ms-keyframes bounce_circularG{
+	0%{
+		-ms-transform:scale(1)
+	}
+
+	100%{
+		-ms-transform:scale(.3)
+	}
+}
+
+@-o-keyframes bounce_circularG{
+	0%{
+		-o-transform:scale(1)
+	}
+
+	100%{
+		-o-transform:scale(.3)
+	}
+}
+
+@keyframes bounce_circularG{
+	0%{
+		transform:scale(1)
+	}
+
+	100%{
+		transform:scale(.3)
+	}
+}
+/* End spinning loader wheel */
+
+.empiarAuthorList {
+	white-space: nowrap
+}
+
+.empiarAuthorList {
+	white-space: nowrap
+}
+
+.empiarInlineFormField {
+	display: inline-block;
+	width: 100%;
+}
+
+.empiarInputField {
+	width: 100%;
+	margin:-3px;
+	border:2px inset #eee;
+}
+
+td.delete input, .hiddenRow { display: none; }
+
+table tbody tr th {
+	width: 30%;
+}
+
+.annotation_warning, .deposition_warning, .annotation_tbr_warning {
+	display: none;
+    border: 2px solid #f00;
+    padding: 5px;
+    color: black;
+}
+
+h2>span>div.browser_warning {
+    border: 2px solid #f00;
+    padding: 5px;
+    color: red;
+}
+
+h2>span>div.browser_warning>a, h2>span>div.browser_warning>a:link, h2>span>div.browser_warning>a:visited {
+    border-bottom-style: dotted;
+    border-bottom-width: 1px;
+    border-bottom-color: black;
+}
+
+html.fontface .black_icon.icon-functional::before {
+    color: black;
+}
+
+table.empiarTable.no-footer {
+    border-bottom: 1px solid #ddd !important;
+    border-left: 1px solid #ddd;
+    border-top: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+table.empiarTable thead tr th, table.empiarTable thead tr td {
+	border: 0px;
+    padding: 10px 18px;
+}
+
+table.dataTable tbody tr:first-child th, table.dataTable tbody tr td {
+	border-left: 0px solid #D9D9D9 !important;
+	border-right: 0px solid #D9D9D9;
+	border-bottom: 0px;
+	border-top: 0px;
+}
+
+.empiarTable tbody tr:nth-child(2n+1) td:first-child {
+	background: #ededed;
+}
+
+.empiarTable tbody tr:nth-child(2n) td:first-child {
+	background: #fdfdfd;
+}
+
+.empiarTable tbody tr:nth-child(2n) {
+	background: none;
+}
+
+.empiarTable tbody tr:nth-child(2n+1) {
+	background: #f0f0f0 none repeat scroll 0 0;
+}
+
+div.ui-progressbar-value.ui-widget-header.ui-corner-left {
+	background: green repeat-x scroll 50% 50%;
+}
+
+.ui-widget-header {
+	background: none;
+	border: 1px solid black;
+}
+
+.asperaControlElement {
+	display: none;
+}
+
+.noAsperaControlElement {
+	display: inline;
+}
+
+iframe.aspera-iframe-container {
+	position: relative;
+	float: left;
+}
+
+.ui-state-default a, .ui-state-default a:link, .ui-state-default a:visited {
+	color: black;
+	border-bottom-width: 0px;
+	outline: none;
+}
+
+.ui-state-active a, .ui-state-active a:link, .ui-state-active a:visited {
+	color: #eb8f00;
+	border-bottom-width: 0px;
+	outline: none;
+}
+
+.ui-dialog-titlebar.ui-widget-header.ui-corner-all.ui-helper-clearfix.ui-draggable-handle {
+	background: red;
+	text: black;
+}
+
+.ui-tabs-nav.ui-helper-reset.ui-helper-clearfix.ui-widget-header.ui-corner-all {
+	border-bottom-right-radius: 0;
+	border-bottom-left-radius: 0;
+}
+
+.ui-tabs.ui-widget.ui-widget-content.ui-corner-all {
+	border: none;
+}
+
+.ui-state-default.ui-corner-top.ui-tabs-active.ui-state-active {
+	border-color: black;
+}
+
+.all_citations>a {
+	padding-left:10px;
+}
+
+.shortcuts.clearfix> .pdbe_quick_related_reviews.pane-content {
+	padding-top:10px;
+}
+
+.browser_warning {
+	display: none;
+	font-size: 0.6em;
+}
+
+#close_emp_browser_warning{
+	color: black;
+    cursor: pointer;
+    float: right;
+    overflow: hidden;
+}
+
+#emp_browser_warning_text{
+	clear: both;
+}
+
+#emp_browser_warning_text>a{
+	border-bottom-color: inherit;
+    border-bottom-style: dotted;
+    border-bottom-width: 1px;	
+}
+
+#dialog-check-data {
+	display: none;
+}
+
+div#omeroviewport {
+ 	display: none;
+}

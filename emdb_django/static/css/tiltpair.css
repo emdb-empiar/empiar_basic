@@ -1,0 +1,202 @@
+.ui-datepicker-calendar {
+    display: none;
+}
+div#pdbeCenterContent {
+    margin-bottom: 4em;
+}
+div#pdbeCenterContent h2 {
+    margin-bottom: 1em;
+}
+
+/*
+.resultsTable thead {
+    font-weight: bold;
+}
+.resultsTable td:first-child {
+    text-align: left;
+}
+.resultsTable td {
+    width: 10em;
+    text-align: right;
+}
+.resultsTable th:first-child {
+    text-align: left;
+}
+.resultsTable th {
+    background-color: #DCECD7;
+    text-align: right;
+}
+.resultsTable tr.grandtotal {
+    font-weight: bold;
+}
+
+*/
+
+form ul {
+    display: inline;
+}
+
+.formTable {
+	display: inline;
+}
+
+.ctfTable {
+	display: block;
+}
+
+.formTable  td:first-child {
+    width: 19em;
+}
+
+.formTable .formFieldError {
+	color: red;
+	font-weight: bold;
+}
+.myform li {
+    list-style-type: none;
+    padding: 0.25em;
+}
+.myform > li > label {
+    display: inline-block;
+    width: 12em;
+}
+.myform > li > ul {
+    display: inline-block;
+}
+.myform > li > ul > li > label {
+    display: inline-block;
+    width: 10em;
+}
+.myform li li {
+    display: inline;
+}
+.myform ul.errorlist {
+    padding: 0;
+}
+.myform ul.errorlist li {
+    color: red;
+    display: block;
+    margin: 5px 0 5px 20px;
+}
+.myform input[type='text'] {
+    width: 6em;
+}
+.correctErrors {
+    color: red; 
+    margin-bottom: 5px;
+}
+.noResults {
+    color: red;
+    margin-top: 2em;
+}
+.firstPlot {
+    min-width: 400px;
+    height: 400px;
+    margin: 10 auto;
+    margin-bottom: 4em;
+}
+.secondPlot{
+    min-width: 400px;
+    height: 400px;
+    margin: 10 auto;
+}
+.searchedFor {
+    margin: 20px 0 20px 0 !important; 
+}
+
+/* Css below is for the display of results */
+
+.summaryGraphicPanelDiv {
+	width: 800px;
+	height: 450px;
+}
+
+.summaryTextPanelDiv {
+	height: 120px;
+}
+
+.parametersDiv {
+	float: left;
+	width: 300px;
+	margin-right: 30px;
+}
+
+.parametersDiv td:first-child {
+	width: 190px;
+}
+
+.textSummaryDiv {
+	float: left;
+	width: 300px;
+}
+
+.textSummaryDiv td:first-child {
+	width: 200px;
+}
+
+.summaryScatterPlotDiv {
+	float: left;
+	width: 400px;
+	height: 400px
+}
+
+.summaryContourPlotDiv {
+	//position: relative;
+	//top: 0px;
+	//left: 50px;
+	float: left
+	
+}
+
+.summaryContourPlotDiv>h3 {
+    left: 70px;
+    position: relative;
+    top: 10px;
+    background: none;
+}
+
+.particlesDiv {
+	float: left;
+}
+
+.particlePanelDiv {
+	width: 1000px;
+	height: 300px;
+}
+
+.particleTextDiv {
+	float: left;
+	width:300px;
+	padding-top: 20px;
+}
+
+.particleTextDiv td:first-child {
+	width: 180px;
+}
+
+.particleImagesDiv {
+	float: left;
+	width: 275px;
+	padding-top: 20px;
+}
+
+.particleContourPlotDiv {
+	float: left;
+	width: 400px;
+	
+}
+.summaryContourPlotDiv img, .particleContourPlotDiv img {
+	width:400px; 
+	height: 300px;
+}
+
+.projImageDiv {
+	float: left;
+}
+
+.particleImagesDiv img {
+	width: 128px;
+	height: 128px;
+}
+
+

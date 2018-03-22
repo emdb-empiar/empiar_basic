@@ -1,0 +1,15 @@
+{% extends "base.html" %} 
+{% block title %} 
+The Electron Microscopy Data
+Bank - Page not found error
+{% endblock %} 
+{% block content %}
+
+<h1>The requested page "{{ request.path }}" was not found on the
+server</h1>
+<p>Please use the menu to the left to navigate to another page or
+send us a <a
+	href="mailto:{{ emdb_global.help_email}}?Subject=Page not found error (404): {{ request.build_absolute_uri }}&body=User agent: {{ request.META.HTTP_USER_AGENT }}%0DDetails:">
+message</a>.</p>
+
+{% endblock %}	                                                

@@ -1,0 +1,257 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="eng">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <meta name="robots" content="index,follow"/>
+        <meta name="googlebot" content="all"/>
+        <!--meta http-equiv="cache-control" content="public"/-->
+        <meta name="keywords" content="EMBL EBI PDBe PDB Protein Data Bank Europe,
+                                       electron microscopy data bank (EMDB), electron tomography, electron crystallography,
+                                       single particle, 3D"/>
+        <meta name="description" content="{% block description %}{% endblock %}"/>
+        
+		<title>{% block title %}{% endblock %}</title>
+        <meta name="author" content="PDBe Protein Data Bank Europe" />
+        <meta name="google-site-verification" content="q0FTPhAwLixFGuAtcZGekvzusnHiWOxjlMKAa5-rha8" />
+
+        <link rel="shortcut icon" type="image/x-icon" href="/pdbe/favicon.ico"/>
+        <link rel="search" type="application/opensearchdescription+xml" title="PDBe Search" href="//www.ebi.ac.uk/pdbe/docs/pdbe-view.xml" />
+
+        <!-- EMBL-EBI specific -->
+        <link rel="stylesheet" href="//www.ebi.ac.uk/inc/css/contents.css" type="text/css" />
+        <link rel="stylesheet" href="//www.ebi.ac.uk/inc/css/userstyles.css" type="text/css" />
+        <!-- <link rel="stylesheet" href="//www.ebi.ac.uk/inc/css/sidebars.css" type="text/css" /> -->
+
+        <!-- Uncomment only if you are using YUI panels and buttons in your page -->
+        <link type="text/css" rel="stylesheet" href="//www.ebi.ac.uk/pdbe/static/css/index-combo-min.css"/>
+        <script type="text/javascript" src="//www.ebi.ac.uk/pdbe/js/index-combo-min.js"></script>
+
+        <link type="text/css" rel="stylesheet" href="//www.ebi.ac.uk/pdbe/static/css/pdbe.css"/>
+        <link rel="stylesheet" type="text/css" href="//www.ebi.ac.uk/pdbe/static/css/pdbeSidePanels.css"/>
+        <link type="text/css" rel="stylesheet" href="//www.ebi.ac.uk/pdbe/static/css/pdbeContent.css"/>
+
+        <link type="text/css" rel="stylesheet" href="//www.ebi.ac.uk/web_guidelines/css/mitigation/develop/ebi-mitigation.css"/>
+        <script type="text/javascript" defer="defer" src="//www.ebi.ac.uk/web_guidelines/js/cookiebanner.js"></script>
+        <script type="text/javascript" defer="defer" src="//www.ebi.ac.uk/web_guidelines/js/foot.js"></script>
+
+        <link type="text/css" rel="stylesheet" href="//www.ebi.ac.uk/pdbe/static/frontier/css/pdbe-green-colours.css"/>
+        <link type="text/css" rel="stylesheet" href="//www.ebi.ac.uk/pdbe/static/frontier/css/local-service.css"/>
+        <link type="text/css" rel="stylesheet" href="//www.ebi.ac.uk/pdbe/css/print.css" media="print"/>
+
+        <style type="text/css">
+            html, body {
+                font-size: 9pt;
+                line-height: inherit;
+            }
+        </style>
+
+        <!-- <script type="text/javascript" src="//www.ebi.ac.uk/pdbe/js/pdbe-search.js"></script>-->
+        <!-- <script type="text/javascript" src="//www.ebi.ac.uk/pdbe/js/tools.js"></script>-->
+
+        <script type="text/javascript" src="//www.ebi.ac.uk/web_guidelines/js/libs/modernizr.custom.49274.js"></script>
+        <script type="text/javascript" src="//www.ebi.ac.uk/pdbe/static/frontier/js/libs/respond.min.js"></script>
+
+
+        <!--[if IE 7]>
+            <link rel="stylesheet" type="text/css" href="//www.ebi.ac.uk/pdbe/static/css/ie7.css">
+        <![endif]-->
+        
+        {% block codeheader %}
+		{% endblock %}
+    </head>
+    <body class="yui-skin-sam">
+    	{% block codebody %}
+    	{% endblock %}
+        <!-- Uncomment if you are using google analytics (don't forget to change your profile id UA-16614786-X -->
+        
+        <script type="text/javascript">
+            var _gaq = _gaq || [];
+            _gaq.push(['_setAccount', '{{emdb_global.google_analytics_id}}']);
+            _gaq.push(['_trackPageview']);
+
+            (function() {
+                var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+                ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+                var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+            })();
+            
+            function displayMoreToggle(entryId){
+            	var initialDiv = document.getElementById('InitialSampleList' + entryId);
+            	var extendedDiv = document.getElementById('ExtendedSampleList' + entryId);
+            	if (initialDiv != null && extendedDiv != null)
+            		{
+		            	if(initialDiv.style.display == 'none'){
+		            		initialDiv.style.display = 'block';
+		            		extendedDiv.style.display = 'none';
+		            	}
+		            	else{
+		            		initialDiv.style.display = 'none';
+		            		extendedDiv.style.display ='block';
+		            	}
+            		}
+            }
+
+        </script>
+        
+        <!-- Header -->
+        <div class="headerdiv" id="headerdiv">
+            <div class="header">
+                <div id="global-masthead" class="masthead grid_24">
+                    <!-- <p>EMBL-EBI</p> -->
+                    <p id="logo">
+                        <!--This has to be one line and no newline characters-->
+                        <a href="/" title="Go to the EMBL-EBI homepage"><img src="//www.ebi.ac.uk/web_guidelines/images/logos/EMBL-EBI/logo.png" alt="European Bioinformatics Institute"/></a>
+                    </p>
+
+                    <div class="nav">
+                        <ul id="global-nav">
+                            <li class="first" id="services">
+                                <a href="/services" title="">Services</a>
+                            </li>
+                            <li id="research">
+                                <a href="/research" title="">Research</a>
+                            </li>
+                            <li id="training">
+                                <a href="/training" title="">Training</a>
+                            </li>
+                            <li id="industry">
+                                <a href="/industry" title="">Industry</a>
+                            </li>
+                            <li id="about" class="last">
+                                <a href="/about" title="">About us</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div id="local-masthead" class="masthead grid_24">
+
+                    <!-- CHOOSE -->
+                    <div id="local-logo" class="grid_8 alpha">
+                        <div class="grid_24">
+                            <h1 class="float-l heading">
+                                <a href="//www.ebi.ac.uk/pdbe" style="border-bottom-width: 0px;">
+                                    <img alt="Protein Data Bank in Europe" title="Go to the Protein Data Bank in Europe homepage" class="logo" src="//www.ebi.ac.uk/pdbe/static/frontier/images/logos/PDBe/logo.png"/>
+                                </a>
+                                <span>Protein Data Bank <br/>in Europe</span>
+
+                            </h1>
+                        </div>
+                        <div class="grid_24">
+                            <h1 class="float-l strapline">Bringing Structure to Biology</h1>
+                        </div>
+                    </div>
+                    <div id="local-service" class="grid_16 alpha omega">
+                        <div class="grid_12 omega" style="margin-top: 1em; text-align: center;">
+                            <h1 class="heading">{% block pageHeading %}
+													EM resources
+												{% endblock %}
+                            </h1>
+                        </div>
+                        <div class="grid_12 omega" style="float: right; text-align: center;">
+                            <div class="affiliate-list omega" style="float: right">
+                                <div class="affiliate" style="background: none;">
+                                    <a href="http://www.wwpdb.org" title="Go to the wwPDB homepage" target="_wwpdb">
+                                        <img alt="wwPDB" src="//www.ebi.ac.uk/pdbe/static/frontier/images/logos/wwPDB/wwpdb.png"/>
+                                    </a>
+                                </div>
+                                <div class="affiliate" style="background: none;">
+                                    <a href="http://pdbe.org/emdb" title="Go to EMDataBank homepage" target="_empdb">
+                                        <img style="padding-top: 0;" alt="EMDataBank" src="//www.ebi.ac.uk/pdbe/static/frontier/images/logos/EMDataBank/EMDataBank.png"/>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <nav>
+                        <ul id="local-nav" class="grid_24">
+                            <li class="action last">
+                                <div>
+                                    <a href="http://www.ebi.ac.uk/support/emdb">
+                                        <img height="16" style="border:none; text-decoration: none;" alt="" src="//www.ebi.ac.uk/pdbe/static/frontier/images/icons/feedback_w_16.png"/>
+                                        <span>Feedback</span>
+                                    </a>
+                                </div>
+                            </li>
+                            <li class="action">
+                                <div>
+                                    <!-- AddThis Button BEGIN -->
+                                    <a href="//www.addthis.com/bookmark.php?v=250&amp;pubid=ra-5017dfbd59a8b9f0" class="addthis_button">
+                                        <img height="16" style="border:0" alt="" src="//www.ebi.ac.uk/pdbe/static/frontier/images/icons/share_w_16.png"/>
+                                        <span>Share</span>
+                                    </a>
+                                    <script type="text/javascript">var addthis_config = {"data_track_addressbar":false};</script>
+                                    <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5017dfbd59a8b9f0"></script>
+                                    <!-- AddThis Button END -->
+
+                                </div><!-- do not delete this --><!-- it fixes the IE duplicate characters -->
+                            </li>
+                        </ul>
+                    </nav>
+
+                </div>
+            </div>
+        </div>
+        <div class="contents">
+            <table>
+                <tr>
+                    <td id="contentLeft" valign="top" style="padding-right: 1.5em;">
+                        {% include  'leftmenu.html' %}
+                    </td>
+                    <td id="contentMain" width="100%" valign="top">
+                        <div id="pdbeCenterContent" class="tab0">
+                        	{% block content %}
+                        	{% endblock %}
+                        </div>
+                    </td>
+                    <td id="contentRight" valign="top" style="padding-left: 1.5em;">
+                        
+                    </td>
+                </tr>
+            </table>
+
+
+
+        </div>
+                    <!-- Footer -->
+            <div class="footerdiv" id="footerdiv">
+                <div class="footer">
+                    <!-- Optional local footer (insert citation / project-specific copyright / etc here -->
+                    <div id="local-footer" class="grid_24 clearfix"></div> 
+                    <script type="text/javascript" src="//www.ebi.ac.uk/pdbe/js/pdbe-script.js"></script>
+                    <!-- End optional local footer -->
+
+                    <div id="global-footer" class="grid_24 clearfix">
+                        <div class="nav" id="global-nav-expanded">
+                            <div class="grid_4 alpha">
+                                <h3 class="embl-ebi"><a href="/" title="Go to the EMBL-EBI homepage">EMBL-EBI</a></h3>
+                            </div>
+                            <div class="grid_4">
+                                <h3 class="services"><a href="/services" title="Services">Services</a></h3>
+                            </div>
+                            <div class="grid_4">
+                                <h3 class="research"><a href="/research" title="Research">Research</a></h3>
+                            </div>
+                            <div class="grid_4">
+                                <h3 class="training"><a href="/training" title="Training">Training</a></h3>
+                            </div>
+                            <div class="grid_4">
+                                <h3 class="industry"><a href="/industry" title="Industry">Industry</a></h3>
+                            </div>
+                            <div class="grid_4 omega">
+                                <h3 class="about"><a href="/about" title="About us">About us</a></h3>
+                            </div>
+                        </div>
+
+                        <div class="section" id="ebi-footer-meta">
+                            <p class="address">EMBL-EBI, Wellcome Trust Genome Campus, Hinxton, Cambridgeshire, CB10 1SD, UK &nbsp; &nbsp; +44 (0)1223 49 44 44</p>
+                            <p>Copyright &copy; EMBL-EBI 2012 | EBI is an Outstation of the <a href="http://www.embl.org">European Molecular Biology Laboratory​</a> | <a href="/about/privacy" title="">Privacy</a> | <a href="/about/cookies" title="">Cookies</a> | <a href="/about/terms-of-use" title="">Terms of use</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </body>
+{% block codeend %}
+{% endblock %}
+</html>

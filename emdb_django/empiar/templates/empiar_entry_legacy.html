@@ -1,0 +1,513 @@
+{% extends "base_empiar.html" %} 
+
+{% load empiar_tags %} 
+
+{% block title %} 
+EMPIAR - Electron Microscopy Public Image Archive
+{% endblock %} 
+
+
+{% block description %}
+EMPIAR is an archive for 2D image data related to EMDB. It includes micrographs, particle sets and tilt-series.
+{% endblock %}
+
+
+{% block codeHeader %}
+<!-- for progress bar-->
+<link type="text/css" rel="stylesheet" href="{{emdb_global.static_empiar_path}}/jquery-ui/jquery-ui.css">
+
+
+<link rel="stylesheet" type="text/css" href="{{emdb_global.static_empiar_path}}/empiar.css">
+
+<!-- for lightbox -->
+<link rel="stylesheet" type="text/css"  href="{{emdb_global.static_empiar_path}}/lightbox.css">
+
+<!-- for DT -->
+<link type="text/css" rel="stylesheet" href="{{emdb_global.static_empiar_path}}/jquery.dataTables.css">
+
+<!-- for directory tree -->
+<link rel="stylesheet" type="text/css" href="{{emdb_global.static_empiar_path}}/jstree/jstree.css">
+
+<link rel="stylesheet" type="text/css"  rel="stylesheet" media="print" href="{{emdb_global.static_empiar_path}}/empiar_print.css">
+{% endblock %}
+
+{% block contentHeading %}
+<div class="browser_warning">
+	<div id="close_emp_browser_warning">X</div>
+	<div id="emp_browser_warning_text">You are browsing legacy entry pages. Please make sure that your browser is up to date. Install any of the following browsers to use EMPIAR. Once this is done, 
+	click <a href="{{emdb_global.project_root}}/empiar/entry/{{entryName}}/">here</a> for the latest version of this EMPIAR entry page.<br/>
+		<a href="https://whatbrowser.org/ ">More about browsers</a>
+		<div class="grid_24" style="float: none; display: inline-block">
+			<div class="grid_6">
+				<a href="https://www.google.com/chrome/?hl=en_GB" aria-label="Download Google Chrome">
+				<img src="{{emdb_global.static_empiar_path}}/img/chrome.jpg" width="60px" height="60px">
+				<span>Google Chrome</span></a>
+			</div>
+			
+			<div class="grid_6">
+				<a href="//www.microsoft.com/windows/internet-explorer/default.aspx" aria-label="Download Internet Explorer">
+				<img src="{{emdb_global.static_empiar_path}}/img/ie.jpg" width="60px" height="60px">
+				<span>Internet Explorer</span></a>
+			</div>
+			
+			<div class="grid_6">
+				<a href="https://www.mozilla.com/firefox/" aria-label="Download Firefox">
+				<img src="{{emdb_global.static_empiar_path}}/img/firefox.jpg" width="60px" height="60px">
+				<span>Firefox</span></a>
+			</div>
+			
+			<div class="grid_6">
+				<a href="https://www.apple.com/safari/" aria-label="Download Safari">
+				<img src="{{emdb_global.static_empiar_path}}/img/safari.jpg" width="60px" height="60px">
+				<span>Safari</span></a>
+			</div>
+		</div>
+	</div>
+</div>
+
+<a href="{{empiar_entry}}">EMPIAR-{{entryName}}</a>
+{% endblock %}
+
+{% block contentIntroTitle %}{{title}}{% endblock %}
+
+
+{% block contentIntro %}
+<div class="grid_17">
+	{% if not publicationInfoTitle|safe == "No publication information available" %}
+		<span class="data-label grid_7 alpha">Publication:</span>
+		<div class="grid_17">
+			<div>{{publicationInfoTitle|safe}}</div>
+			<div>
+			{% for author in publicationInfoAuthors %}
+				<span class="empiarAuthorList">{{author|safe}}{% if not author == publicationInfoAuthors|last %},{% endif %}</span>
+			{% endfor %}
+			</div>
+			<div>{{publicationInfoJournal|safe}}</div>
+		</div>
+		
+		{% if relatedPDBEntries|first %}
+			<div class="grid_24">
+				<span class="data-label grid_7 alpha">Related PDB entr{{ relatedPDBEntries|pluralize:"y,ies" }}:</span>
+				<span class="grid_17">
+					{% for item in relatedPDBEntries %}
+						<a href="http://pdbe.org/{{item}}">{{item}}</a>{% if not item == relatedPDBEntries|last %},{% endif %}
+					{% endfor %}
+				</span>
+			</div>
+		{% endif %}
+	{% else %}
+		<span class="data-label grid_24">No publication information available</span>
+		{% if authors %}
+			<span class="data-label grid_7 alpha">Author{% if ', ' in authors %}s{% endif %}:</span>
+		{% endif %}
+		<div class="grid_17">{{ authors|safe }}</div>
+	{% endif %}
+	
+	{% if relatedEMDBEntries|first %}
+	<div class="grid_24">
+		<span class="data-label grid_7 alpha">Related EMDB entr{{ relatedEMDBEntries|pluralize:"y,ies" }}:</span>
+		<span class="grid_17">
+			{% for item in relatedEMDBEntries %}
+				<a href="http://pdbe.org/EMD-{{item}}">{{item}}</a>{% if not item == relatedEMDBEntries|last %},{% endif %}
+			{% endfor %}
+		</span>
+	</div>
+	{% endif %}
+	<div class="grid_24">
+		<span class="data-label grid_7 alpha">Deposited:</span>
+		<span class="grid_17">{{depositionDate|date:"j M Y"}}</span>
+	</div>
+	
+	<div class="grid_24">
+		{% if status != "OBSOLETE" %}
+			<span class="data-label grid_7 alpha">Released:</span>
+			<span class="grid_17">{{releaseDate|date:"j M Y"}}</span>
+		{% else %}
+			<span class="data-label grid_7 alpha">Obsoleted:</span>
+			<span class="grid_17">{{obsoleteDate|date:"j M Y"}}</span>
+		{% endif %}
+	</div>
+	
+	<div class="grid_24">
+		<span class="data-label grid_7 alpha">Last modified:</span>
+		<span class="grid_17">{{updateDate|date:"j M Y"}}</span>
+	</div>
+	
+	<div class="grid_24">
+		<span class="data-label grid_7 alpha">Dataset size:</span>
+		<span class="grid_17">{{datasetSize}}</span>
+	</div>
+	
+	<div class="grid_24">
+		<span class="data-label grid_7 alpha">Dataset DOI:</span>
+		<span class="grid_17"> <a href="http://dx.doi.org/10.6019/EMPIAR-{{entryName}}">10.6019/EMPIAR-{{entryName}}</a></span>
+	</div>
+	
+	{% if versionHistory %}
+		<div class="grid_24">
+			<span class="data-label grid_7 alpha">Version history:</span>
+			<span class="grid_17">
+				{% for versionHistoryElement in versionHistory %}
+					<span class="grid_24">
+						<div class="grid_3">{{versionHistoryElement.versionNumber}}</div>
+						<div class="grid_4">{{versionHistoryElement.date}}</div>
+						<div class="grid_17">{{versionHistoryElement.details}}</div>
+					</span>
+				{% endfor %}
+			</span>
+		</div>
+	{% endif %}
+	
+	{% if volumeSlicerLink %}
+		<div class="grid_24">
+			<span class="grid_24"> <br/> <a href="{{volumeSlicerLink}}" class="black_icon icon icon-functional" data-icon="4">View data in volume slicer</a></span>
+		</div>
+	{% endif %}
+</div>
+
+<div class="grid_7 omega reset_100">
+	<div>
+		<span class="data-label">Contains:</span>
+		<span class="grid_24">
+			{% for item in imageSetCategories %}
+				{% if "micrographs" in item %}
+					<img src="{{emdb_global.static_images}}/micrographs.png" class="micro_icon" alt=""/>    micrographs
+				{% elif "picked particles" in item %}
+					<img src="{{emdb_global.static_images}}/picked%20particles.png" class="micro_icon" alt=""/>    picked particles
+				{% elif "tilt series" in item %}
+					<img src="{{emdb_global.static_images}}/micrographs.png" class="micro_icon" alt=""/>    tilt series
+				{% endif %}
+				<br/>
+			{% endfor %}
+		</span>
+	</div>
+</div>
+
+{% if status != "OBSOLETE" %}
+<div class="pdbe-intro-image grid_7 alpha reset_100">
+	<div class="image-x empiarIntroImage" typeof="ImageObject" vocab="http://schema.org/" property="image">
+		<meta content="1" property="representativeOfPage">
+		<img src="{{emdb_global.empiar_icon_url}}/{{entryName}}-l.gif" onerror="this.src='{{emdb_global.static_rel_path}}/images/noimage.png'" alt="Image not available"/>
+	</div>
+</div>
+{% endif %}
+{% endblock %}
+
+
+{% block content %}
+<!-- Aspera plugin container has to be visible at all times for Aspera to work properly -->
+{% for imageSet in imageSets %}
+	<div id="pluginContainer{{entryName|safe}}_{{imageSet.name|specialchar2under|stringformat:".15s"}}{{forloop.counter0}}"></div>
+{% endfor %}
+<div id="pluginContainer{{entryName|safe}}"></div>
+
+<section class="grid_24 pdbe-topic">
+		<div id="noAspera{{entryName|safe}}" class="noAspera{{entryName|safe}}"></div>	
+		<h4 class="slideToggle icon icon-functional" data-icon="w">Image set{{ imageSets|pluralize }}</h4>
+		<div class="pdbe-topic-content">
+			<div class="grid_24 alpha">
+				{% for imageSet in imageSets %}
+				<section class="pdbe-topic grid_24">
+
+				<h5 class="slideToggle icon icon-functional" data-icon="w">{{imageSet.name}}</h5>
+
+				<div class="grid_24">
+						<div class="grid_24">
+							<span class="data-label grid_6">Category:</span>
+							<span class="grid_17">{{imageSet.category}}</span>
+						</div>
+					
+						<div class="grid_24">
+							<span class="data-label grid_6">Image format:</span>
+							<span class="grid_17">{{imageSet.headerFormat}}</span>
+						</div>
+					
+						<div class="grid_24">
+							<span class="data-label grid_6">No. of images or tilt series:</span>
+							<span class="grid_17">{{imageSet.numImagesOrTiltSeries}}</span>
+						</div>
+					
+						{% if not 'single frame' in imageSet.category and not 'tilt series' in imageSet.category %}
+						<div class="grid_24">
+							<span class="data-label grid_6">Frames per image:</span>
+							<span class="grid_17">{{imageSet.framesPerImage}}</span>
+						</div>
+						{% endif %}
+					
+						<div class="grid_24">
+							<span class="data-label grid_6">Image size:</span>
+							<span class="grid_17">{{imageSet.imageSize}}</span>
+						</div>
+												
+						<div class="grid_24">
+							<span class="data-label grid_6">Pixel type:</span>
+							<span class="grid_17">{{imageSet.voxelType}}</span>
+						</div>
+						
+						{% autoescape off %}
+						<div class="grid_24">
+							<span class="data-label grid_6">Pixel spacing:</span>
+							<span class="grid_17">{{imageSet.pixelSpacing}}</span>
+						</div>							
+						{% endautoescape %}
+						
+						{% if imageSet.details %}
+						<div class="grid_24">
+							<span class="data-label grid_6">Details:</span>
+							<span class="grid_17 comment">{{imageSet.details | linebreaksbr}}</span>
+						</div>
+						{% endif %}
+						
+						{% if status != "OBSOLETE" %}
+						<div class="grid_24 alpha">
+							<div id="transferDiv{{entryName|safe}}_{{imageSet.name|specialchar2under|stringformat:".15s"}}{{forloop.counter0}}" class="transferDiv"></div>
+						</div>
+						<div class="grid_24 alpha">
+							<div class="grid_11">
+								<div id="jstree{{entryName|safe}}_{{imageSet.name|specialchar2under|stringformat:".15s"}}{{forloop.counter0}}"></div>	
+							</div>
+							<div class="grid_13">
+								<div id="dlImageSet{{entryName|safe}}_{{imageSet.name|specialchar2under|stringformat:".15s"}}{{forloop.counter0}}"></div>
+							</div>
+						</div>
+						{% endif %}
+				</div>
+				</section>
+				{% endfor %}
+		
+			</div>
+		</div>
+
+	<div id="empiarLoaderGif">
+		<div class="empiarLoaderInner">
+			<img src="{{emdb_global.static_images}}/loadingCircle.gif" alt="Loading..."></img>
+		</div>
+	</div>
+	<div id="empiarChooseDl">
+		<div id="empiarChooseDlInner">
+		<span class="empiarCloser">X</span>
+		Available download options:
+		</div>
+	</div>
+	<div id="empiarLoader">
+		<div class="empiarLoaderInner">
+			<div id="circularG">
+				<div id="circularG_1" class="circularG">
+				</div>
+				<div id="circularG_2" class="circularG">
+				</div>
+				<div id="circularG_3" class="circularG">
+				</div>
+				<div id="circularG_4" class="circularG">
+				</div>
+				<div id="circularG_5" class="circularG">
+				</div>
+				<div id="circularG_6" class="circularG">
+				</div>
+				<div id="circularG_7" class="circularG">
+				</div>
+				<div id="circularG_8" class="circularG">
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+{% if status != "OBSOLETE" %}
+	<div id="empiarBrowseAllFilesDiv" class="pdbe-topic grid_24 ">
+		<h4>Browse All Files</h4>
+		<div class="grid_24 alpha">
+			<div id="transferDiv{{entryName|safe}}" class="transferDiv"></div>
+		</div>
+		<div class="grid_11">
+			<div id="jstree_json{{entryName|safe}}"></div>	
+		</div>
+		<div class="grid_13">
+			<div id="mybuttonid{{entryName|safe}}"></div>
+		</div>
+	</div>
+{% endif %}
+<div class="grid_24 pdbe-topic">
+	<div id="browseFtp"></div>
+</div>
+
+{% endblock %}
+
+
+{% block codeBody %}
+<script type="text/javascript" src="{{emdb_global.jquery}}"></script>
+
+<script type="text/javascript" src="{{emdb_global.static_empiar_path}}/wait_for_element.js"></script>
+
+<script type="text/javascript" src="{{emdb_global.static_empiar_path}}/asperaweb-4.js"></script>
+<script>document.write('<script src="{{emdb_global.static_empiar_path}}/connectversions.js?'+ new Date().getTime() + '"><\/script>')</script>
+<script type="text/javascript" src="{{emdb_global.static_empiar_path}}/connectinstaller-4.js"></script>
+<script type="text/javascript" src="{{emdb_global.static_empiar_path}}/localize-en-US.js"></script>
+<script type="text/javascript" src="{{emdb_global.static_empiar_path}}/install.js"></script>
+<script type="text/javascript" src="{{emdb_global.static_empiar_path}}/jquery-namespace.js"></script>
+
+<!-- wait for the thumbnail to be loaded before displaying lightbox buttons -->
+<script type="text/javascript" src="{{emdb_global.static_empiar_path}}/jquery.waitforimages.min.js"></script>
+
+<!-- for progress bar-->
+<script type="text/javascript" src="{{emdb_global.static_empiar_path}}/jquery-ui/jquery-ui.js"></script>
+
+<script type="text/javascript" src="{{emdb_global.static_empiar_path}}/configFileControl-jquery-newpaths.js"></script>
+<script type="text/javascript" src="{{emdb_global.static_empiar_path}}/empiar-jquery.js"></script>
+<script type="text/javascript" src="{{emdb_global.static_empiar_path}}/jstree/jstree.js"></script>
+<script type="text/javascript" src="{{emdb_global.static_empiar_path}}/jquery.collapser.min.js"></script>
+<script type="text/javascript" src="{{emdb_global.static_empiar_path}}/check-file-type.js"></script>
+<script type="text/javascript" src="{{emdb_global.static_empiar_path}}/open-lightbox.js"></script>
+
+<script type="text/javascript">
+if (typeof String.prototype.endsWith !== 'function') {
+    String.prototype.endsWith = function(suffix) {
+        return this.indexOf(suffix, this.length - suffix.length) !== -1;
+    };
+}
+
+
+function displayThumb(treeDiv) {
+	// On hover over a jsTree node, if the file thumbnail represented by the node exists, then
+	// change the cursor to an eye
+	$(treeDiv).on('hover_node.jstree', function(e, data) {
+		var hoveredNode = data.node;
+		var filepath = $(treeDiv).jstree("get_path", hoveredNode, '/');
+		var elementToChange = document.getElementsByClassName('jstree-anchor jstree-hovered')[0];
+		if ( !(elementToChange.hasAttribute("eye")) ) {
+			if ( ($(hoveredNode)[0].original.type == "file") && isImageFile(filepath) ) {
+				$.ajax({
+		            type: "get",
+		            cache: true,
+		            url: '{{emdb_global.project_root}}/empiar/entry_thumbnail/' + filepath,
+		            success: function(dataPy){
+						if (dataPy == "True") {
+							if ( typeof elementToChange != 'undefined' ) {
+								elementToChange.style.cursor = "url('{{emdb_global.static_rel_path}}/empiar/img/view.cur'), auto";
+							}
+						}
+		            },
+		        });
+			}
+			elementToChange.setAttribute("eye", true);
+		};
+	});
+}
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i = 0; i <ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+} 
+
+$(document).ready(function () {
+	
+	if (!getCookie('emp_browser_warning')) {
+        $('.browser_warning').show();
+    }
+
+	// Add the event that closes the popup and sets the cookie that tells us to
+	// not show it again until one day has passed.
+	$('#close_emp_browser_warning').click(function() {
+  		$('.browser_warning').hide();
+  		document.cookie = "emp_browser_warning=1; path=/";
+  		return false;
+	});
+
+	$(".comment").collapser({
+	    mode: 'lines',
+	    truncate: 3,
+	    dynamic: true,
+	})
+	
+	var entryUrl = '{{emdb_global.empiar_entry}}' + '{{entryName|safe}}';
+	
+	// Add the jsTree element that represents the whole directory
+	if (navigator.userAgent.indexOf("Safari") > -1)
+		waitTime = 1000;
+	else
+		waitTime = 0;
+	setTimeout(function(){
+		// Add a FileController for Aspera for the jsTree element that represents the whole directory
+		var trfc = new EMPIAR.FileControl({ sessionId: 'empiar-download{{entryName|safe}}',
+				transferContainer: '#transferDiv{{entryName|safe}}',
+				messageContainer: '#noAspera{{entryName|safe}}',
+				id: '{{entryName|safe}}'
+			});
+		
+		browserTree ('{{emdb_global.ftp_server}}', '{{emdb_global.empiar_json_dirstruct_dir}}', {{entryName|safe}}, '#jstree_json{{entryName|safe}}', 'mybuttonid{{entryName|safe}}', 'archive/', trfc, entryUrl, null, null, '{{csrf_token}}');
+		displayThumb('#jstree_json{{entryName|safe}}');
+		handleNodeClick('#jstree_json{{entryName|safe}}', '{{emdb_global.project_root}}/empiar/entry_thumbnail/', 'True', '{{emdb_global.project_root}}/empiar/render_thumbnail/', '{{emdb_global.static_images}}/loadingCircle.gif', '{{emdb_global.static_empiar_path}}/img/nextPAGEdown.png', '{{emdb_global.static_empiar_path}}/img/prevPAGEup.png');
+	}, waitTime);
+	
+	var trfcImageSets = new Array();
+	// Add FileControllers for Aspera for jsTree elements that represent separate image sets
+	// and add those jsTree elements
+	{% for imageSet in imageSets %}
+		if (navigator.userAgent.indexOf("Safari") > -1)
+			waitTime = 1000;
+		else
+			waitTime = 0;
+		
+		setTimeout(function(){
+			trfcImageSets[{{forloop.counter0}}] = new EMPIAR.FileControl({ sessionId: 'empiar-download{{entryName|safe}}_{{imageSet.name|specialchar2under|stringformat:".15s"}}{{forloop.counter0}}',
+				transferContainer: '#transferDiv{{entryName|safe}}_{{imageSet.name|specialchar2under|stringformat:".15s"}}{{forloop.counter0}}',
+				messageContainer: '#noAspera{{entryName|safe}}',
+				id: '{{entryName|safe}}_{{imageSet.name|specialchar2under|stringformat:".15s"}}{{forloop.counter0}}' 
+			});
+			browserTree ('{{emdb_global.ftp_server}}', '{{emdb_global.empiar_json_dirstruct_dir}}', '{{entryName|safe}}', '#jstree{{entryName|safe}}_{{imageSet.name|specialchar2under|stringformat:".15s"}}{{forloop.counter0}}', 
+			             'dlImageSet{{entryName|safe}}_{{imageSet.name|specialchar2under|stringformat:".15s"}}{{forloop.counter0}}', 'archive/', trfcImageSets[{{forloop.counter0}}], entryUrl, {{forloop.counter0}}, null, '{{csrf_token}}');
+			displayThumb('#jstree{{entryName|safe}}_{{imageSet.name|specialchar2under|stringformat:".15s"}}{{forloop.counter0}}');
+			handleNodeClick('#jstree{{entryName|safe}}_{{imageSet.name|specialchar2under|stringformat:".15s"}}{{forloop.counter0}}', '{{emdb_global.project_root}}/empiar/entry_thumbnail/', 'True', '{{emdb_global.project_root}}/empiar/render_thumbnail/', '{{emdb_global.static_images}}/loadingCircle.gif', '{{emdb_global.static_empiar_path}}/img/nextPAGEdown.png', '{{emdb_global.static_empiar_path}}/img/prevPAGEup.png');
+		}, waitTime);
+	{% endfor %}
+	
+	// Add a button to browse the FTP directory of the entry
+	var downloadButtonFtp = $('<button/>',
+		    {
+				id: 'browseFtpButtonId',
+		        label: 'Browse Ftp',
+		        text: 'Browse Ftp',
+		    });
+	downloadButtonFtp.addClass("empiarDownloadButton icon icon-functional");
+    $("#browseFtp").append(downloadButtonFtp);
+    var downloadButtonFtpClick = function (e) {
+        window.open("{% if status != "OBSOLETE" %}{{emdb_global.ftp_empiar_public_archive}}{% else %}{{emdb_global.ftp_empiar_obsolete_archive}}{% endif %}/" + "{{ entryName }}");
+	};
+	downloadButtonFtp.on("click", downloadButtonFtpClick);
+	
+	// Add event to close the menu of download options upon clicking anywhere on the part
+	// of the screen covered by the #empiarChooseDl shadowbox
+	$("#empiarChooseDl").on("click", function(e) {
+       	$('#empiarChooseDlInner').children("div").remove()
+       	$('#empiarChooseDl').hide();
+	});
+
+	// Display the warning for the EMPIAR main page
+	$.ajax({
+    	    type: "GET",
+    	    cache: false,
+            url: "{{emdb_global.project_root}}/empiar/entry/{{entryName}}/get_rel_warning/",
+            success: function(dataPy){
+				    if (dataPy != "") {
+				    	$('.deposition_warning').html("Warning:<br/>"+dataPy);
+				    	$('.deposition_warning').show();
+					}
+    		},
+    		error: function(response){
+            	if (response.status==403)
+            		alert("Forbidden");
+            },
+	});
+});
+
+</script>
+{% endblock %}

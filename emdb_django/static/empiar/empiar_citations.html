@@ -1,0 +1,79 @@
+<!--
+empiar_citations.html
+
+Authors:
+	Andrii Iudin
+
+Description:
+	The web component for the citations related to the EMPIAR.
+
+Date:
+   20171114
+
+Copyright [2014-17] EMBL - European Bioinformatics Institute
+Licensed under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in
+compliance with the License. You may obtain a copy of
+the License at
+http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on
+an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied. See the License for the
+specific language governing permissions and limitations
+under the License.
+
+Version history
+1.0, 2017/11/14: Initial version.
+-->
+
+<dom-module id="empiar-citations">
+	<template>
+		<iron-ajax
+		    auto
+		    url="{{empiarCitationsUrl}}"
+		    handle-as="json"
+		    last-response="{{data}}"></iron-ajax>
+		<template is="dom-if" if="{{data}}">
+
+			<div class="shortcuts clearfix">
+	            <h3 class="pane-title">EMPIAR citations</h3>
+
+				<div class="pdbe_quick_related_reviews pane-content">
+					<template is="dom-repeat" items="{{data}}">
+
+						<section class="grid_24 omega" style="margin-bottom: 9px;">
+							<div class="prefix_1">
+			                    <a href="http://europepmc.org/abstract/MED/{{ item.pmid }}" class="ext title">{{ item.title }}</a>
+			                    <div>{{ item.author_string }} ({{ item.pub_year }})</div>
+							</div>
+						</section>
+
+					</template>
+
+					<div class="all_citations">
+						<a class="ext active icon icon-functional" data-icon="4" target="_blank" href="http://europepmc.org/search?query=empiar&page=1">See all citations</a>
+		           	</div>
+				</div>
+			</div>
+
+        </template>
+	</template>
+
+	<script>
+	Polymer({
+		is: "empiar-citations",
+		properties: {
+			empiarCitationsUrl: String
+        },
+		ready: function () {
+		},
+		_notLastElement: function(length, index){
+			if( (parseInt(length) - 1) != parseInt(index))
+				{ return true; } 
+			else 
+				{ return false; }
+		},
+	});
+	</script>
+</dom-module>

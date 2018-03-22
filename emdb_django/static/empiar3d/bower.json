@@ -1,0 +1,27 @@
+{
+  "name": "empiar3d",
+  "version": "1.0",
+  "authors": [
+    "Jose Salavert Torres <josator@ebi.ac.uk>"
+  ],
+  "description": "Empiar3D Volume browser",
+  "main": "mw_element.html",
+  "keywords": [
+    "pdbe",
+    "emdb",
+    "empiar3d"
+  ],
+  "license": "Apache v2.0",
+  "homepage": "www.ebi.ac.uk/pdbe/emdb",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.0.0",
+    "iron-ajax": "PolymerElements/iron-ajax#^1.4.3"
+  }
+}

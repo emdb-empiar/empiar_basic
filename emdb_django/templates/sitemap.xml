@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+     xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+{% spaceless %}
+{% for url in urlset %}
+  <url>
+    <loc>{{ url.loc }}</loc>
+    {% if url.lastmod %}<lastmod>{{ url.lastmod|date:"Y-m-d" }}</lastmod>{% endif %}
+    {% if url.changefreq %}<changefreq>{{ url.changefreq }}</changefreq>{% endif %}
+    {% if url.priority %}<priority>{{ url.priority }}</priority>{% endif %}
+    {% if url.image %}<image:image>
+        <image:loc>{{ url.image.loc }}</image:loc>
+        <image:title>{{ url.image.title }}</image:title>
+        <image:caption>{{ url.image.caption }}</image:caption>
+    </image:image>{% endif %}
+   </url>
+{% endfor %}
+{% endspaceless %}
+</urlset>

@@ -1,0 +1,114 @@
+fieldset {
+    display: none;
+}
+
+div#global-masthead {
+    display: none;
+}
+
+
+img.micro_icon {
+    max-width: 20px;
+}
+
+.pdbe-intro-image div.image-x.empiarIntroImage {
+	width: 256px;
+}
+
+div.transferDiv {
+	display: none !important;
+}
+
+nav#global-nav-expanded {
+	display: none;
+}
+
+#skip-to {
+	display: none;
+}
+
+div.jstree {
+	display: none;
+}
+
+.empiarDownloadButton {
+	display: none;
+}
+
+.grid_6.pdbe-quick-info {
+	display: none;
+}
+
+#local-masthead {
+	width: 100%;
+}
+
+#beta-banner, a:after {
+	display: none;
+}
+
+/* #ebi-footer-meta>p>a:not(:first-child) {
+	display: none;
+} */
+
+#ebi-footer-meta>p:nth-of-type(2) {
+    display: none;
+}
+#ebi-footer-meta>p:nth-of-type(1):after {
+	left: 200px;
+  	content: " | Copyright © EMBL-EBI 2015 | EBI is an outstation of the European Molecular Biology Laboratory";
+}
+
+#empiarBanner>img {
+	top: 0 !important;
+}
+
+* {
+	background: white !important;
+	background-color: white !important;
+}
+
+body.section-pdbe div#local-title.logo-title-strapline h1 {
+	width: auto !important;
+	font-size: 160% !important;
+}
+
+body.section-pdbe div#local-title a {
+	width: 20% !important;
+}
+
+.noAspera {
+	display: none !important;
+}
+
+#pdbeCenterContent>p {
+	display: none;
+}
+
+#empiarTable1_length {
+	display: none;
+}
+
+#empiarTable1_filter {
+	display: none;
+}
+
+#empiarBrowseAllFilesDiv {
+	display: none;
+}
+
+h5.slideToggle.icon.icon-functional {
+	-webkit-margin-after: 0.2em;
+}
+
+body:not(:-moz-handler-blocked) .entryIcon {
+    page-break-before: always;
+}
+
+.entry-content {
+    page-break-before: avoid !important;
+}
+
+.image.no-underline>img {
+  vertical-align: 0%;
+}

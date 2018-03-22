@@ -1,0 +1,43 @@
+<div class="grid_6 pdbe-quick-info">
+    <div style="height: 9px;"></div>
+    <div class="shortcuts pdbe_quick_links">
+        <div class="clearfix hide_in_print">
+            <h3 class="pane-title"><span style="padding-left:5px">Quick links</span></h3>
+
+            <ul>
+            	<li>
+                    <a href="{{ emdb_global.pdbe_emdb }}" class="icon icon-generic" data-icon="L">EMDB</a>
+                </li>   
+            	<li>
+                    <a href="{{ emdb_global.pdbe_short }}" class="icon icon-generic" data-icon="L">PDBe</a>
+                </li>                	         	            
+                <li>
+                    <a target="_blank" href="http://www-ebi.emdatabank.org" class="icon icon-generic" data-icon="x">EMDataBank</a>
+                </li>
+            	<br/>
+            	<li>
+                    <a target="_blank" href="https://www.ebi.ac.uk/training/online/course/empiar-quick-tour" class="icon icon-generic" data-icon="t">EMPIAR: Quick tour</a>
+                </li>
+<!--             	<br/>
+            	<li>
+                    <a target="_blank" href="{{emdb_global.project_root}}/statistics_empiar_entry_releases.html/" class="icon icon-generic" data-icon="g">EMPIAR statistics</a>
+                </li> -->
+            </ul>
+            {% if entryName %}
+	            <ul>
+		            <li>
+		            	<a target="_blank" href="ftp://ftp.ebi.ac.uk/pub/databases/empiar/archive/{{entryName}}/{{entryName}}.xml" class="icon icon-functional" data-icon="=">Download experimental metadata (xml)</a>
+		            </li>
+		        </ul>
+            {% endif %}
+        </div>
+    </div>
+
+	<div class="grid_6 panel-separator"></div>
+	
+	<empiar-citations
+		empiar-citations-url="{{emdb_global.empiar_citations_url}}"
+	></empiar-citations>
+
+</div>
+

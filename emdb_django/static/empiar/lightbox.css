@@ -1,0 +1,176 @@
+/* lightbox.css
+
+ Authors:
+		Andrii Iudin
+
+ Description:
+ 		css file for the lightbox element
+
+ Date:
+		20151116
+
+ Copyright [2013-15] EMBL - European Bioinformatics Institute
+ Licensed under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in
+ compliance with the License. You may obtain a copy of
+ the License at
+ http://www.apache.org/licenses/LICENSE-2.0
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on
+ an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied. See the License for the
+ specific language governing permissions and limitations
+ under the License.
+ */
+
+body>div#jkit-lightbox-bg {
+	display: none;
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	z-index: 10000;
+	width: 100%;
+	height: 100%;
+	background: #000;
+}
+
+body>div#jkit-lightbox-content {
+	display: none;
+    position: fixed;
+    border: none;
+    left: 10%;
+    top: 100px;
+    z-index: 10001;
+    background: #fff;
+    padding: 20px;
+    overflow-y:hidden;
+    -webkit-overflow-scrolling: touch;
+}
+
+body>div#jkit-lightbox-title {
+	display: none;
+	position: fixed;
+	border: none;
+	color: #fff;
+	font-size: 12px;
+	font-weight: bold;
+	height: 20px;
+	z-index: 10002;
+/* 	text-align: left; */
+    -ms-transform: translate(0%, -15%); /* IE 9 */
+    -webkit-transform: translate(0%, -15%); /* Chrome, Safari, Opera */
+     transform: translate(0%, -15%);
+}
+
+body>div>div#loadingLightbox {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    -ms-transform: translate(-28%, -42%); /* IE 9 */
+    -webkit-transform: translate(-28%, -42%); /* Chrome, Safari, Opera */
+    transform: translate(-28%, -42%);
+}
+
+#lightboxSubTitleInner {
+    /* shrink-to-fit width */
+    display: inline-block;
+    position: relative;
+    /* shift left edge of text to center */
+}
+
+#lightboxSubTitleText {
+    /* shift left edge of text half distance to left */
+    /* text should all be on one line */
+    white-space: nowrap;
+}
+
+body>div#jkit-lightbox-nav {
+	display: none;
+	position: fixed;
+	border: none;
+	color: #fff;
+	font-size: 12px;
+	font-weight: bold;
+	height: 20px;
+	left: 0px;
+	top: 0px;
+	z-index: 10003;
+	text-align: right;
+	width: 50px;
+	cursor: auto;
+}
+
+div>span.jkit-lightbox-closer {
+	display: none;
+	color: #000;
+	right: 5px;
+	top: 15px;
+	position: absolute;
+	width: auto;
+	cursor: pointer;
+}
+
+#jkit-lightbox-prevButtonId {
+	background-repeat: no-repeat;
+    background-size: 16px auto;
+    height: 12px;
+    width: 16px;
+    position: absolute;
+    right: 2px;
+    top: 50px;
+    cursor: pointer;
+}
+
+#jkit-lightbox-nextButtonId {
+	background-repeat: no-repeat;
+    background-size: 16px auto;
+    height: 12px;
+    width: 16px;
+    position: absolute;
+    right: 2px;
+    top: 68px;
+    cursor: pointer;
+}
+
+a.jkit-lightbox-ome {
+    display: block;
+	background-image: url("/static/empiar/img/omero-logo.png");
+	background-repeat: no-repeat;
+	background-size: 19px auto;
+    cursor: pointer;
+    display: block;
+    height: 20px;
+    position: absolute;
+    right: 0px;
+    top: 90px;
+    width: 19px;
+}
+
+.jkit-lightbox-populateButton {
+	background-repeat: no-repeat;
+    background-size: 16px auto;
+    height: 20px;
+    width: 16px;
+    position: absolute;
+    right: -1px;
+    top: 90px;
+    cursor: pointer;
+    border: none;
+    padding: 0 10px 0 11px;
+    background: transparent;
+}
+
+html.fontface .jkit-lightbox-populateButton.icon-functional::before {
+	color: black;
+	font-size: 130%;
+	margin: 0 0 0 -8px;
+}
+
+.header-view>.ui-dialog-titlebar.ui-widget-header.ui-corner-all.ui-helper-clearfix.ui-draggable-handle {
+	background: midnightblue;
+}
+
+.ui-icon
+{
+    background-image: url("jquery-ui/images/ui-icons_222222_256x240.png") !important;
+}

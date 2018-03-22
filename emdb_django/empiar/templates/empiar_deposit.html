@@ -1,0 +1,149 @@
+{% extends "base_empiar.html" %} 
+
+{% block title %} 
+EMPIAR - Electron Microscopy Public Image Archive
+{% endblock %} 
+
+{% block description %}
+This page details instructions for depositing data to EMPIAR. EMPIAR is an archive for 2D image data related to EMDB. 
+{% endblock %}
+
+
+{% block codeHeader %}
+
+
+
+<!-- for progress bar-->
+<link type="text/css" rel="stylesheet" href="{{emdb_global.static_empiar_path}}/jquery-ui/jquery-ui.css">
+
+<link rel="stylesheet" type="text/css" href="{{emdb_global.static_empiar_path}}/empiar.css">
+
+<!-- for DT -->
+<link type="text/css" rel="stylesheet" href="{{emdb_global.static_empiar_path}}/jquery.dataTables.css">
+
+
+{% endblock %}
+
+{% block contentHeading %}
+Data deposition to EMPIAR
+{% endblock %}
+
+{% block contentIntroTitle %} 
+{% endblock %}
+
+{% block contentIntro %} 
+Below are stepwise instructions on how to deposit. Please bear with us as we are still in the process of building the deposition system! 
+{% endblock %}
+
+
+{% block content %}
+<div id="noAspera" class="noAspera"></div>
+
+<div class="empiarDepositInstructions">
+	<h3>Step 1: Send an <a href="mailto:{{ emdb_global.help_email}}?Subject=EMPIAR:%20Please%20send%20me%20an%20upload%20token">email</a> with the following information to us to receive an upload token code</h3>
+	<ul>
+		<li>Your full name, affiliation, address and email</li>
+		<li>Authors (or EMDB ID if identical to your EMDB entry)</li>
+		<li>Brief title for dataset</li>		
+		<li>Related EMDB entries - include modelled PDB ID's if appropriate</li>
+		<li>Type of data: micrographs, particles, or tilt-series</li>
+		<li>For micrographs and particles:
+			<ul>
+				<li>Whether the images are raw (unprocessed) or processed</li>
+				<li>Whether these are multiframe images (as taken on direct electron detector)</li>
+				<li>If last question is (y), range of frames used ( 1 refers to first frame) </li>
+				<li>Image format</li>
+				<li>Number of images</li>
+				<li>Image width and height</li>
+				<li>Pixel size</li>
+				<li>Pixel type (unsigned byte, byte, 32 bit float etc)</li>	
+			</ul>
+		</li>
+		<li>For tilt series:
+			<ul>
+				<li>Number of tilt series</li>
+				<li>Single or dual tilt?</li>
+				<li>Tilt min, max, increment, and number of images in each tilt series </li>
+				<li>Are the images raw (unprocessed) or processed?</li>
+				<li>Are these multiframe images (as taken on direct electron detector)?</li>
+				<li>If last question is (y), range of frames used ( 1 refers to first frame) </li>
+				<li>Image format</li>
+				<li>Image width and height</li>
+				<li>Pixel size</li>
+				<li>Pixel type (unsigned byte, byte, 32 bit float etc)</li>	
+			</ul>	
+		</li>							
+	</ul>
+	<br/>
+	<h3>Step 2: Download and install the Aspera client if you have not done so already</h3>
+	<ul>
+		<li>Download <a href="{{emdb_global.aspera_download_connect_path}}" target="_blank">Aspera Connect</a> for the correct operating system</li>	
+		<li>On a Linux machine, you will either download a shell script or a .tar.gz file. If you have dowloaded the .sh file, download and excecute it. If you downloaded a .tar.gz file then unzip/untar the package and follow install instructions.</li>
+		<li>The Aspera copy command is installed by default in the ~/.aspera/connect/bin directory on Linux machines and in the ~/Applications/Aspera\ Connect.app/Contents/Resources directory on Macs. You will find the ascp program in this directory</li>
+	</ul>
+	<br/>
+	<h3>Step 3: Upload data</h3>
+	<h4>Use the terminal client ...</h4>
+	<ul>
+		<li>Following step 1 you will receive an email with an upload token code yyyy and password zzzz</li>
+		<li>To copy a file (or directory) xxxx to our Aspera command use the following: ./ascp -QT -l200m xxxx emp_dep@ah01.ebi.ac.uk:upload/yyyy</li>
+		<li>When prompted for a password enter: zzzz</li>
+		<li>Note that the upload token code is private for you. Only one dataset should be transferred using each token. If you would like to transfer more sets please <a href="mailto:{{ emdb_global.help_email}}?Subject=EMPIAR:%20Request%20for%20upload%20token%20codes">email</a> us and we will send you additional tokens.</li>
+		<li>Note it is very important to use the switches -QT  as this are required for fair use of network bandwidth and failure to do so may lead to your connection being throttled by your network support!!</li>
+		<li>The -l200m limits connection speed to 200Mb/s. You can try and experimenting with this, for example -l400m will double this if the network allows.</li>
+		<li>Please <a href="mailto:{{ emdb_global.help_email}}?Subject=EMPIAR:%20Upload%20status">email</a> us to let us know that the transfer has completed</li>		
+	</ul>
+	<br/>
+	<h4>... or Globus</h4>
+	<p>For instructions on uploading data via Globus, please <a href="mailto:{{ emdb_global.help_email}}?Subject=EMPIAR:%20Globus%20upload">email</a> us.</p>
+	<br/>
+	<h4>... or use the interface below</h4>	
+	<br/>
+	<p><i>Please note that the upload process will popup a few windows that will have to be manually dismissed in order to proceed. These may be hidden behind you current browser window.</i></p>
+	<br/>
+	<div class="uploadInterfaceDiv">
+		<span style="vertical-align:middle;width:130px">Upload token code:</span>
+		<input type="text" id='uploadTokenCode'   size="16" style="vertical-align:middle;width:100px"  />
+	    <div class="uploadDiv" id="uploadButtonContainer"></div>
+	</div>
+</div>
+<div id="transferDiv" class="transferDiv"></div>
+{% endblock %}	
+
+{% block codeBody %}
+<!-- for DT -->
+<script type="text/javascript" src="{{emdb_global.jquery}}"></script>
+<script type="text/javascript" src="{{emdb_global.jquery_datatables}}"></script>
+
+
+
+<script type="text/javascript" src="{{emdb_global.static_empiar_path}}/asperaweb-2.js"></script>
+<script>document.write('<script src="{{emdb_global.static_empiar_path}}/connectversions.js?'+ new Date().getTime() + '"><\/script>')</script>
+<script type="text/javascript" src="{{emdb_global.static_empiar_path}}/connectinstaller-2.js"></script>
+<script type="text/javascript" src="{{emdb_global.static_empiar_path}}/localize-en-US.js"></script>
+<script type="text/javascript" src="{{emdb_global.static_empiar_path}}/install.js"></script>
+
+<script type="text/javascript" src="{{emdb_global.static_empiar_path}}/jquery-namespace.js"></script>
+<script type="text/javascript" src="{{emdb_global.static_empiar_path}}/jquery-ui/jquery-ui.js"></script>
+<script type="text/javascript" src="{{emdb_global.static_empiar_path}}/configFileControl-jquery-newpaths.js"></script>
+<script type="text/javascript" src="{{emdb_global.static_empiar_path}}/empiar-jquery.js"></script>
+
+<script type="text/javascript">
+
+$(document).ready(function () {
+	navbarSetActive("navbar_deposition");
+	var fc = new EMPIAR.FileControl( { 	sessionId: 'empiar-upload',
+										transferContainer: '#transferDiv',
+										messageContainer: '#noAspera' });
+	
+	fc.addUploadButton( { buttonId: 'uploadButton',
+							buttonLabel: 'uploadButton',
+							buttonText: 'Upload',
+							//buttonText: '<img src="{{emdb_global.static_rel_path}}/images/upload.png" alt="Upload" width="16" height="14" />',
+							uploadContainer: 'uploadButtonContainer',
+							uploadTokenCodeInputId: 'uploadTokenCode' } ); 
+});
+
+
+</script>
+{% endblock %}	                                                     

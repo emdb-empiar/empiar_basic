@@ -1,0 +1,13 @@
+{% extends "base.html" %} 
+{% block title %} 
+The Electron Microscopy Data
+Bank - Internal server error
+{% endblock %} 
+{% block content %}
+
+<h1>The requested page "{{ request.build_absolute_uri }}" precipitated an internal server error</h1>
+<p>An email has been sent to our web team. We are thankful for any additional details you may be able to provide by sending us a  <a
+	href="mailto:{{ emdb_global.help_email}}?Subject=Internal server error (404): {{ request.build_absolute_uri }}&body=User agent: {{ request.META.HTTP_USER_AGENT }}%0DDetails:">
+message</a>.</p>
+
+{% endblock %}	                                                

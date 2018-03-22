@@ -1,0 +1,715 @@
+<!--
+entry_info.html
+
+Authors:
+	Andrii Iudin
+
+Description:
+	The main web component for EMPIAR entry pages.
+
+Date:
+   20160919
+
+Copyright [2014-17] EMBL - European Bioinformatics Institute
+Licensed under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in
+compliance with the License. You may obtain a copy of
+the License at
+http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on
+an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied. See the License for the
+specific language governing permissions and limitations
+under the License.
+
+Version history
+1.0, 2016/09/19: Initial version.
+-->
+
+<dom-module id="entry-info">
+	<style type="text/css">
+		.entry_info_panel {
+			background-color: #ededed;
+			border-radius: 5px;
+			padding-left: 4px;
+			padding-bottom: 6px;
+		}
+	</style>
+
+	<template>
+		<iron-ajax
+		    auto
+		    url="{{apiEntryUrl}}{{empiarId}}"
+		    handle-as="json"
+		    last-response="{{entryAjaxResponse}}"></iron-ajax>
+
+		<template if="{{entryAjaxResponse}}" is="dom-repeat" items="{{_toArray(entryAjaxResponse)}}">
+			<div id="intro" class="grid_24 reset_100">
+				<div class="pdbe-intro-heading">
+					<div class="pdbe-intro-title grid_17 alpha reset_100"
+						property="title">
+						<h3>{{item.value.title}}</h3>
+					</div>
+				</div>
+
+				<div class="grid_24 alpha omega">
+					<div class="grid_17">
+						<template is="dom-if" if="{{_citationAvailable(item.value.citation)}}">
+							<span class="data-label grid_7 alpha">Publication:</span>
+							<div class="grid_17">
+								<div>{{item.value.citation.0.title}}</div>
+
+								<div>
+									<template is="dom-repeat" items="{{item.value.citation.0.authors}}" as="author">
+										<template is="dom-if" if="{{author.author_orcid}}" on-dom-change="_handleTooltip">
+											<a href="http://europepmc.org/search?query=AUTHORID:%22{{author.author_orcid}}%22&sortby=Date" target = "_blank">{{author.name}}</a> <a class="image no-underline" title="ORCID - Connecting Research and Researchers" href="https://orcid.org/{{author.author_orcid}}" target = "_blank"><span class="tooltip" title="ORCID iD: {{author.author_orcid}}"><img src="//www.ebi.ac.uk/web_guidelines/images/logos/orcid/orcid_16x16.png"></span></a></template><template is="dom-if" if="{{!author.author_orcid}}">
+											<span class="empiarAuthorList">{{author.name}}</span></template><template is="dom-if" if="{{_notLastElement(item.value.citation.0.authors.length, index)}}">, </template>
+									</template>
+								</div>
+
+								<div>
+									<i><template is="dom-if" if="{{item.value.citation.0.journal_abbreviation}}">{{item.value.citation.0.journal_abbreviation}}</template><template is="dom-if" if="{{!item.value.citation.0.journal_abbreviation}}">{{item.value.citation.0.journal}}</template></i>
+									<template is="dom-if" if="{{item.value.citation.0.volume}}">
+										<b>{{item.value.citation.0.volume}}</b>
+									</template>
+									<template is="dom-if" if="{{item.value.citation.0.first_page}}">{{item.value.citation.0.first_page}}</template><template is="dom-if" if="{{item.value.citation.0.last_page}}">-{{item.value.citation.0.last_page}}</template><template is="dom-if" if="{{item.value.citation.0.year}}"> ({{item.value.citation.0.year}})</template>
+									<template is="dom-if" if="{{item.value.citation.0.pubmedid}}">
+										<br/>
+										PMID:
+										<a href="http://europepmc.org/abstract/MED/{{item.value.citation.0.pubmedid}}">{{item.value.citation.0.pubmedid}}</a>
+									</template>
+									<template is="dom-if" if="{{item.value.citation.0.doi}}">
+										<br/>
+										DOI:
+										<a href="http://doi.org/{{item.value.citation.0.doi}}">{{_formatDoi(item.value.citation.0.doi)}}</a>
+									</template>
+								</div>
+							</div>
+						</template>
+						<template is="dom-if" if="{{!_citationAvailable(item.value.citation)}}">
+							<span class="data-label grid_24">No publication information available</span>
+							<span class="data-label grid_7 alpha">Author{{_pluralize(item.value.authors)}}:</span>
+							<div class="grid_17">
+								<template is="dom-repeat" items="{{item.value.authors}}" as="author">
+									<template is="dom-if" if="{{author.author.author_orcid}}" on-dom-change="_handleTooltip">
+										<a href="http://europepmc.org/search?query=AUTHORID:%22{{author.author.author_orcid}}%22&sortby=Date" target = "_blank">{{author.author.name}}</a> <a class="image no-underline" title="ORCID - Connecting Research and Researchers" href="https://orcid.org/{{author.author.author_orcid}}" target = "_blank"><span class="tooltip" title="ORCID iD: {{author.author.author_orcid}}"><img src="//www.ebi.ac.uk/web_guidelines/images/logos/orcid/orcid_16x16.png"></span></a></template><template is="dom-if" if="{{!author.author.author_orcid}}">
+										<span class="empiarAuthorList">{{author.author.name}}</span></template><template is="dom-if" if="{{_notLastElement(item.value.authors.length, index)}}">, </template>
+								</template>
+							</div>
+						</template>
+						
+						<template is="dom-if" if="{{item.value.related_pdb_entries}}">
+							<div class="grid_24">
+								<span class="data-label grid_7 alpha">Related PDB entr<template is="dom-if" if="{{item.value.related_pdb_entries.1}}">ies</template><template is="dom-if" if="{{!item.value.related_pdb_entries.1}}">y</template>:</span>
+								<span class="grid_17">
+									<template is="dom-repeat" items="{{item.value.related_pdb_entries}}" as="related_pdb_entry">
+										<a href="http://pdbe.org/{{related_pdb_entry}}">{{related_pdb_entry}}</a><template is="dom-if" if="{{_notLastElement(item.value.related_pdb_entries.length, index)}}">, </template>
+									</template>
+								</span>
+							</div>
+						</template>						
+						
+						<template is="dom-if" if="{{item.value.cross_references.0}}">
+							<div class="grid_24">
+								<span class="data-label grid_7 alpha">Related EMDB entr<template is="dom-if" if="{{item.value.cross_references.1}}">ies</template><template is="dom-if" if="{{!item.value.cross_references.1}}">y</template>:</span>
+								<span class="grid_17">
+									<template is="dom-repeat" items="{{item.value.cross_references}}" as="cross_reference">
+										<a href="http://pdbe.org/{{cross_reference.name}}">{{cross_reference.name}}</a><template is="dom-if" if="{{_notLastElement(item.value.cross_references.length, index)}}">, </template>
+									</template>
+								</span>
+							</div>
+						</template>
+						
+						<div class="grid_24">
+							<span class="data-label grid_7 alpha">Deposited:</span>
+							<span class="grid_17">{{item.value.deposition_date}}</span>
+						</div>
+						
+						<div class="grid_24">
+							<template is="dom-if" if="{{_variablesAreEqual(item.value.status, 'REL')}}">
+								<span class="data-label grid_7 alpha">Released:</span>
+								<span class="grid_17">{{item.value.release_date}}</span>
+							</template>
+							<template is="dom-if" if="{{!_variablesAreEqual(item.value.status, 'REL')}}">
+								<span class="data-label grid_7 alpha">Obsoleted:</span>
+								<span class="grid_17">{{item.value.obsolete_date}}</span>
+							</template>
+						</div>
+						
+						<div class="grid_24">
+							<span class="data-label grid_7 alpha">Last modified:</span>
+							<span class="grid_17">{{item.value.update_date}}</span>
+						</div>
+						
+						<div class="grid_24">
+							<span class="data-label grid_7 alpha">Dataset size:</span>
+							<span class="grid_17">{{item.value.dataset_size}}</span>
+						</div>
+						
+						<div class="grid_24">
+							<span class="data-label grid_7 alpha">Dataset DOI:</span>
+							<span class="grid_17"> <a href="http://dx.doi.org/10.6019/EMPIAR-{{empiarId}}">10.6019/EMPIAR-{{empiarId}}</a></span>
+						</div>
+						
+						
+						<template is="dom-if" if="{{_arrayIsNotEmpty(item.value.version_history)}}">
+							<div class="grid_24">
+								<span class="data-label grid_7 alpha">Version history:</span>
+								<span class="grid_17">
+									<template is="dom-repeat" items="{{item.value.version_history}}" as="version_history">
+										<span class="grid_24">
+											<div class="grid_2">{{version_history.version_number}}</div>
+											<div class="grid_6">{{version_history.date}}</div>
+											<div class="grid_16">{{version_history.details}}</div>
+										</span>
+									</template>
+								</span>
+							</div>
+						</template>
+						
+						<template is="dom-if" if="{{item.value.volume_slicer_links}}">
+							<div class="grid_24">
+								<br/>
+								<span class="data-label grid_7 alpha">View data in volume slicer:</span>
+								<span class="grid_17">
+									<template is="dom-repeat" items="{{item.value.volume_slicer_links}}" as="volume_slicer_link">
+										<div class="grid_24"><a href="{{volume_slicer_link}}">{{_vs_filename(volume_slicer_link)}}</a></div>
+									</template>
+								</span>
+							</div>
+						</template>
+					</div>
+					
+					
+					
+					<div class="grid_7 omega reset_100">
+						<div>
+							<span class="data-label">Contains:</span>
+							<span class="grid_24">
+								<template is="dom-repeat" items="{{_imagesetCategories(item.value.imagesets)}}" as="category">
+									<template is="dom-if" if="{{_variableContains(category, 'micrographs')}}">
+										<img src="{{staticImg}}/micrographs.png" class="micro_icon" alt=""/>    micrographs
+									</template>
+									<template is="dom-if" if="{{!_variableContains(category, 'micrographs')}}">
+										<template is="dom-if" if="{{_variableContains(category, 'picked particles')}}">
+											<img src="{{staticImg}}/picked%20particles.png" class="micro_icon" alt=""/>    picked particles
+										</template>
+										<template is="dom-if" if="{{!_variableContains(category, 'picked particles')}}">
+											<template is="dom-if" if="{{_variableContains(category, 'tilt series')}}">
+												<img src="{{staticImg}}/micrographs.png" class="micro_icon" alt=""/>    tilt series
+											</template>
+										</template>
+									</template>
+									<br/>
+								</template>
+							</span>
+						</div>
+					</div>
+					
+					<template is="dom-if" if="{{!_variablesAreEqual(item.value.status, 'OBSOLETE')}}">
+						<div class="pdbe-intro-image grid_7 alpha reset_100">
+							<div class="image-x empiarIntroImage" typeof="ImageObject" vocab="http://schema.org/" property="image">
+								<meta content="1" property="representativeOfPage">
+								<img src="{{empiarIconDir}}/{{empiarId}}-l.gif" onerror="this.src='{{staticRelPath}}/images/noimage.png'" alt="Image not available"/>
+							</div>
+						</div>
+					</template>
+					
+				</div>
+			</div>
+			
+			<div id="contentMain" class="entry-content">
+				<div id="pdbeCenterContent" class="grid_24">
+					<!-- Aspera plugin container has to be visible at all times for Aspera to work properly -->
+					<template is="dom-repeat" items="{{item.value.imagesets}}">
+						<div id="pluginContainer{{empiarId}}_imgs_{{index}}"></div>
+					</template>
+					<div id="pluginContainer{{empiarId}}"></div>
+					
+					
+					<section class="grid_24 pdbe-topic">
+						<div id="noAspera{{empiarId}}" class="noAspera{{empiarId}}"></div>	
+						<h4 class="slideToggle icon icon-functional" data-icon="w">Image set{{_pluralize(item.value.imagesets)}}</h4>
+						<div class="pdbe-topic-content">
+							<div class="grid_24 alpha">
+								<template is="dom-if" if="{{!_variablesAreEqual(item.value.status, 'OBSOLETE')}}">
+									<template is="dom-repeat" items="{{item.value.imagesets}}" as="imageset" on-dom-change="_handleJsTreeImageset">
+										<section class="pdbe-topic grid_24">
+						
+										<h5 class="slideToggle icon icon-functional" data-icon="w">{{imageset.name}}</h5>
+						
+										<div class="grid_24">
+												<div class="grid_24">
+													<span class="data-label grid_6">Category:</span>
+													<span class="grid_17">{{imageset.category}}</span>
+												</div>
+											
+												<div class="grid_24">
+													<span class="data-label grid_6">Image format:</span>
+													<span class="grid_17">{{imageset.header_format}}</span>
+												</div>
+											
+												<div class="grid_24">
+													<span class="data-label grid_6">No. of images or tilt series:</span>
+													<span class="grid_17">{{imageset.num_images_or_tilt_series}}</span>
+												</div>
+												
+												<template is="dom-if" if="{{!_variableContains(imageset.category, 'single frame')}}">
+													<template is="dom-if" if="{{!_variableContains(imageset.category, 'tilt series')}}">
+														<div class="grid_24">
+															<span class="data-label grid_6">Frames per image:</span>
+															<span class="grid_17">{{imageset.frames_per_image}}</span>
+														</div>
+													</template>
+												</template>
+
+												<div class="grid_24">
+													<span class="data-label grid_6">Image size:</span>
+													<span class="grid_17">({{imageset.image_width}}, {{imageset.image_height}})</span>
+												</div>
+
+												<div class="grid_24">
+													<span class="data-label grid_6">Pixel type:</span>
+													<span class="grid_17">{{imageset.voxel_type}}</span>
+												</div>
+
+												<template is="dom-if" if="{{!_variablesAreEqual(imageset.pixel_width, null)}}">
+													<template is="dom-if" if="{{!_variablesAreEqual(imageset.pixel_height, null)}}">
+														<div class="grid_24">
+															<span class="data-label grid_6">Pixel spacing:</span>
+															<span class="grid_17">({{imageset.pixel_width}} &#8491;, {{imageset.pixel_height}} &#8491;)</span>
+														</div>
+													</template>
+												</template>					
+												
+												<template is="dom-if" if="{{imageset.details}}" on-dom-change="_handleDetails">
+													<div class="grid_24">
+														<span class="data-label grid_6">Details:</span>
+														<span class="grid_17 comment">{{_nl2br(imageset.details)}}</span>
+													</div>
+												</template>
+												
+												
+												<div class="grid_24 alpha">
+													<div id="transferDiv{{empiarId}}_imgs_{{index}}" class="transferDiv"></div>
+												</div>
+												<div class="grid_24 alpha">
+													<div class="grid_11">
+														<div id="jstree{{empiarId}}_imgs_{{index}}"></div>	
+													</div>
+													<div class="grid_13">
+														<div id="dlImageSet{{empiarId}}_imgs_{{index}}"></div>
+													</div>
+												</div>
+										</div>
+										</section>
+									</template>
+								</template>
+								
+								
+								
+								
+								<template is="dom-if" if="{{_variablesAreEqual(item.value.status, 'OBSOLETE')}}">
+									<template is="dom-repeat" items="{{item.value.imagesets}}" as="imageset">
+										<section class="pdbe-topic grid_24">
+						
+										<h5 class="slideToggle icon icon-functional" data-icon="w">{{imageset.name}}</h5>
+						
+										<div class="grid_24">
+												<div class="grid_24">
+													<span class="data-label grid_6">Category:</span>
+													<span class="grid_17">{{imageset.category}}</span>
+												</div>
+											
+												<div class="grid_24">
+													<span class="data-label grid_6">Image format:</span>
+													<span class="grid_17">{{imageset.header_format}}</span>
+												</div>
+											
+												<div class="grid_24">
+													<span class="data-label grid_6">No. of images or tilt series:</span>
+													<span class="grid_17">{{imageset.num_images_or_tilt_series}}</span>
+												</div>
+												
+												<template is="dom-if" if="{{!_variableContains(imageset.category, 'single frame')}}">
+													<template is="dom-if" if="{{!_variableContains(imageset.category, 'tilt series')}}">
+														<div class="grid_24">
+															<span class="data-label grid_6">Frames per image:</span>
+															<span class="grid_17">{{imageset.frames_per_image}}</span>
+														</div>
+													</template>
+												</template>
+											
+												<div class="grid_24">
+													<span class="data-label grid_6">Image size:</span>
+													<span class="grid_17">({{imageset.image_width}}, {{imageset.image_height}})</span>
+												</div>
+																		
+												<div class="grid_24">
+													<span class="data-label grid_6">Pixel type:</span>
+													<span class="grid_17">{{imageset.voxel_type}}</span>
+												</div>
+												
+												<template is="dom-if" if="{{!_variablesAreEqual(imageset.pixel_width, null)}}">
+													<template is="dom-if" if="{{!_variablesAreEqual(imageset.pixel_height, null)}}">
+														<div class="grid_24">
+															<span class="data-label grid_6">Pixel spacing:</span>
+															<span class="grid_17">({{imageset.pixel_width}} &#8491;, {{imageset.pixel_height}} &#8491;)</span>
+														</div>
+													</template>
+												</template>
+												
+												<template is="dom-if" if="{{imageset.details}}" on-dom-change="_handleDetails">
+													<div class="grid_24">
+														<span class="data-label grid_6">Details:</span>
+														<span class="grid_17 comment">{{_nl2br(imageset.details)}}</span>
+													</div>
+												</template>
+										</div>
+										</section>
+									</template>
+								</template>
+							</div>
+						</div>
+				
+						<div id="empiarLoaderGif">
+							<div class="empiarLoaderInner">
+								<img src="{{loadingCircleImg}}" alt="Loading..."></img>
+							</div>
+						</div>
+						<div id="empiarChooseDl">
+							<div id="empiarChooseDlInner">
+							<span class="empiarCloser">X</span>
+							Available download options:
+							</div>
+						</div>
+						<div id="empiarLoader">
+							<div class="empiarLoaderInner">
+								<div id="circularG">
+									<div id="circularG_1" class="circularG">
+									</div>
+									<div id="circularG_2" class="circularG">
+									</div>
+									<div id="circularG_3" class="circularG">
+									</div>
+									<div id="circularG_4" class="circularG">
+									</div>
+									<div id="circularG_5" class="circularG">
+									</div>
+									<div id="circularG_6" class="circularG">
+									</div>
+									<div id="circularG_7" class="circularG">
+									</div>
+									<div id="circularG_8" class="circularG">
+									</div>
+								</div>
+							</div>
+						</div>
+					</section>
+					
+					<template is="dom-if" if="{{!_variablesAreEqual(item.value.status, 'OBSOLETE')}}" on-dom-change="_handleJsTree">
+						<div id="empiarBrowseAllFilesDiv" class="pdbe-topic grid_24 ">
+							<h4>Browse All Files</h4>
+							<div class="grid_24 alpha">
+								<div id="transferDiv{{empiarId}}" class="transferDiv"></div>
+							</div>
+							<div class="grid_11">
+								<div id="jstree_json{{empiarId}}"></div>	
+							</div>
+							<div class="grid_13">
+								<div id="mybuttonid{{empiarId}}"></div>
+							</div>
+						</div>
+					</template>
+					
+					<div class="grid_24 pdbe-topic">
+						<div id="browseFtp"></div>
+					</div>
+
+				</div>
+				
+				
+				
+				
+				<div class="grid_24">
+					
+				</div>						
+		
+			</div>
+        </template>
+        
+        <template if="{{!entryAjaxResponse}}" is="dom-if">
+        	<h2>
+				<span property="title"><a href="">The requested entry does not exist</a></span>
+			</h2>
+			<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+			<div class="grid_24 reset_100"></div>
+			<div class="grid_24 reset_100"></div>
+        </template>
+	</template>
+	
+	
+	<script>
+	Object.size = function(obj) {
+	    var size = 0, key;
+	    for (key in obj) {
+	        if (obj.hasOwnProperty(key)) size++;
+	    }
+	    return size;
+	};
+	
+	function displayThumb(treeDiv, thumbnailsCheckUrl, staticRelPath, csrfToken) {
+		// On hover over a jsTree node, if the file thumbnail represented by the node exists, then
+		// change the cursor to an eye
+		$(treeDiv).on('hover_node.jstree', function(e, data) {
+			var hoveredNode = data.node;
+			var filepath = $(treeDiv).jstree("get_path", hoveredNode, '/');
+			var elementToChange = document.getElementsByClassName('jstree-anchor jstree-hovered')[0];
+			if ( !(elementToChange.hasAttribute("eye")) ) {
+				if ( ($(hoveredNode)[0].original.type == "file") && isImageFile(filepath) ) {
+					$.ajax({
+			            type: "post",
+			            cache: true,
+			            url: thumbnailsCheckUrl,
+			            data: { 'path': filepath, 'nodeId': hoveredNode.id, 'csrfmiddlewaretoken': csrfToken },
+			            dataType : 'json',
+			            success: function(dataPy){
+							if (dataPy.cur_node) {
+								if ( typeof elementToChange != 'undefined' ) {
+									elementToChange.style.cursor = "url('" + staticRelPath + "/empiar/img/view.cur'), auto";
+								}
+							}
+			            },
+			        });
+				}
+				elementToChange.setAttribute("eye", true);
+			};
+		});
+	}
+	
+	
+    function pathJoin(parts, sep){
+	   var separator = sep || '/';
+	   var replace   = new RegExp(separator+'{1,}', 'g');
+	   return parts.join(separator).replace(replace, separator);
+	}
+	
+    function downloadButtonFtpClick(e) {
+    	if (e.data.status != 'OBSOLETE')
+        	window.open(pathJoin([e.data.publicArchiveFtpUrl, e.data.empiarId]));
+        else
+        	window.open(pathJoin([e.data.obsoleteArchiveFtpUrl, e.data.empiarId]));
+	};
+	
+	Polymer({
+		is: "entry-info",
+		properties: {
+			apiEntryUrl: String,
+			entryUrl: String,
+			empiarId: String,
+			staticImg: String,
+			empiarIconDir: String,
+			staticRelPath: String,
+			loadingCircleImg: String,
+			ftpServer: String,
+			jsonDirstructDir: String,
+			thumbnailsCheckUrl: String,
+			thumbnailsRenderUrl: String,
+			nextPageDown: String,
+			nextPageUp: String,
+			publicArchiveFtpUrl: String,
+			obsoleteArchiveFtpUrl: String,
+			csrfToken: String,
+			omeroUrl: String,
+			asperaTokenUrl: String
+        },
+		_arrayIsNotEmpty: function(a) {
+			if ( a.length > 0 )
+        		{ return true; }
+        	else
+        		{ return false; }
+        },
+        _toArray: function(obj) {
+        	if (obj !== 'undefined' && obj !==null)
+	            return Object.keys(obj).map(function(key) {
+	                return {
+	                    name: key,
+	                    value: obj[key]
+	                };
+	            });
+	        else
+	        	return null;
+        },
+        _pluralize: function(obj, suffix_single, suffix_plural) {
+        	if ( obj.length > 1 )
+        		{ return typeof suffix_plural !== 'undefined' ? suffix_plural : 's'; }
+        	else
+        		{ return typeof suffix_single !== 'undefined' ? suffix_single : ''; }
+        },
+        _handleTooltip: function() {
+        	$('.tooltip').tooltip({
+		        open: function(){
+		            // Make sure all other tooltips are closed when opening a new one
+		        $('.tooltip').not(this).tooltip('close');
+		        }
+		    }).on('mouseleave', function(e){
+		        var that = this;
+		
+		        // Close the tooltip later
+		        mouseLeaveTimer = setTimeout(function(){
+		        	$(that).tooltip('close');
+		        }, 300);
+		
+		        // Prevent tooltip widget to close the tooltip now
+		        e.stopImmediatePropagation(); 
+		    });
+		
+		    $(document).on('mouseenter', '.ui-tooltip', function(e){
+		        // Cancel tooltip closing on hover
+		        clearTimeout(mouseLeaveTimer);
+		    });
+		
+		    $(document).on('mouseleave', '.ui-tooltip', function(){
+		        // Make sure tooltip is closed when the mouse is gone
+		        $('.tooltip').tooltip('close');
+		    });
+        },
+        _citationAvailable: function(citation) {
+        	if ( Object.size(citation[0]) > 1 ) {
+
+        		if ( citation[0].authors.length > 1) {
+        			if ( citation[0].j_or_nj_citation ) {
+        				if ( citation[0].journal != null && citation[0].journal != 'N/A' ) {
+        					return true;
+        				}
+        			} else {
+        				if ( citation[0].publisher != null && citation[0].publisher != 'N/A' ) {
+        					return true;
+        				}
+        			}
+        		}
+        	}
+        	return false;
+        },
+        _handleDetails: function() {
+    	    $(".comment").collapser({
+			    mode: 'lines',
+			    truncate: 3,
+			    dynamic: true,
+			    escapeHtml: false
+			});
+        },
+        _handleJsTreeImageset: function() {
+        	var entryUrl = this.entryUrl + this.empiarId;
+        	var trfcImageSets = new Array();
+			// Add FileControllers for Aspera for jsTree elements that represent separate image sets
+			// and add those jsTree elements
+			var imagesets = this.entryAjaxResponse['EMPIAR-'+this.empiarId].imagesets;
+
+			for (i=0; i<imagesets.length; ++i) {
+				trfcImageSets[i] = new EMPIAR.FileControl({ sessionId: 'empiar-download'+this.empiarId+'_imgs_'+i,
+					transferContainer: '#transferDiv'+this.empiarId+'_imgs_'+i,
+					messageContainer: '#noAspera'+this.empiarId,
+					id: this.empiarId+'_imgs_'+i 
+				});
+				browserTree (this.ftpServer, this.jsonDirstructDir, this.empiarId, '#jstree'+this.empiarId+'_imgs_'+i, 
+				             'dlImageSet'+this.empiarId+'_imgs_'+i, 'archive/', trfcImageSets[i], entryUrl, i, null, this.csrfToken, this.asperaTokenUrl);
+				displayThumb('#jstree'+this.empiarId+'_imgs_'+i, this.thumbnailsCheckUrl, this.staticRelPath, this.csrfToken);
+				handleNodeClick('#jstree'+this.empiarId+'_imgs_'+i, this.thumbnailsCheckUrl, this.thumbnailsRenderUrl, this.loadingCircleImg, this.nextPageDown, this.nextPageUp, this.csrfToken, this.omeroUrl);
+			}
+
+			$.getScript(this.staticRelPath+'/compliant_layout/ODEKYYoULfFJwFiqgDseaNqJsm1m8XDZFH5rRzMTCOv.js');
+        },
+        _handleJsTree: function() {
+        	if (this.entryAjaxResponse['EMPIAR-'+this.empiarId].status != 'OBSOLETE') {
+				var entryUrl = this.entryUrl + this.empiarId;
+				
+				// Add a FileController for Aspera for the jsTree element that represents the whole directory
+				var trfc = new EMPIAR.FileControl({ sessionId: 'empiar-download{{empiarId}}',
+						transferContainer: '#transferDiv'+this.empiarId,
+						messageContainer: '#noAspera'+this.empiarId,
+						id: this.empiarId
+					});
+				
+				// Add the jsTree element that represents the whole directory
+				browserTree(this.ftpServer, this.jsonDirstructDir, this.empiarId, '#jstree_json'+this.empiarId, 'mybuttonid'+this.empiarId, 'archive/', trfc, entryUrl, null, null, this.csrfToken, this.asperaTokenUrl);
+				displayThumb('#jstree_json'+this.empiarId, this.thumbnailsCheckUrl, this.staticRelPath, this.csrfToken);
+				handleNodeClick('#jstree_json'+this.empiarId, this.thumbnailsCheckUrl, this.thumbnailsRenderUrl, this.loadingCircleImg, this.nextPageDown, this.nextPageUp, this.csrfToken, this.omeroUrl);
+			}
+			
+			// Add a button to browse the FTP directory of the entry
+			var downloadButtonFtp = $('<button/>',
+				    {
+						id: 'browseFtpButtonId',
+				        label: 'Browse Ftp',
+				        text: 'Browse Ftp',
+				    });
+			downloadButtonFtp.addClass("empiarDownloadButton icon icon-functional");
+		    $("#browseFtp").append(downloadButtonFtp);
+			downloadButtonFtp.on("click", {status: this.entryAjaxResponse['EMPIAR-'+this.empiarId].status,
+										   publicArchiveFtpUrl: this.publicArchiveFtpUrl,
+										   obsoleteArchiveFtpUrl: this.obsoleteArchiveFtpUrl,
+										   empiarId: this.empiarId}, downloadButtonFtpClick);
+			
+			// Add event to close the menu of download options upon clicking anywhere on the part
+			// of the screen covered by the #empiarChooseDl shadowbox
+			$("#empiarChooseDl").on("click", function(e) {
+		       	$('#empiarChooseDlInner').children("div").remove()
+		       	$('#empiarChooseDl').hide();
+			});
+        },
+        _formatDoi: function(doi) {
+        	return doi.replace('doi:','');
+        },
+        _variableContains: function (a, b) {
+        	if ( a.indexOf(b) >= 0 )
+        		{ return true; }
+        	else
+        		{ return false; }
+        },
+        _variablesAreEqual: function (a, b) {
+        	if (a == b)
+        		{ return true; }
+        	else
+        		{ return false; }
+        },
+        _nl2br: function(str){
+			return str.replace(new RegExp('\n', 'g'), '<br/>');
+		},
+        _vs_filename: function (vs_url) {
+        	var parts = vs_url.split('/empiar_'+this.empiarId+'_');
+        	if ( parts.length > 1 )
+        		return parts[1] + '.mrc';
+        	return 'name unavailable';
+        },
+		ready: function () {
+		},
+		_notLastElement: function(length, index){
+			if( (parseInt(length) - 1) != parseInt(index))
+				{ return true; } 
+			else 
+				{ return false; }
+		},
+		_imagesetCategories: function(imagesets) {
+			var result = [];
+			for (i=0; i<imagesets.length; ++i) {
+				var full_imageset_category = imagesets[i].category;
+				var short_imageset_category = '';
+				if (full_imageset_category.indexOf('micrographs') > -1)
+					short_imageset_category = 'micrographs';
+				else if (full_imageset_category.indexOf('picked particles') > -1)
+					short_imageset_category = 'picked particles';
+				else if (full_imageset_category.indexOf('tilt series') > -1)
+					short_imageset_category = 'tilt series';
+				
+				if ( (short_imageset_category!='') && ($.inArray(short_imageset_category, result) == -1) ) {
+					result.push(short_imageset_category);
+				}
+			}
+			return result;
+		},
+	});
+	
+	</script>
+</dom-module>

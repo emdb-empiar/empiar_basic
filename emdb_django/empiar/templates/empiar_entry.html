@@ -1,0 +1,131 @@
+{% extends "base_empiar_polymer.html" %}
+
+{% block title %} 
+EMPIAR - Electron Microscopy Public Image Archive
+{% endblock %}
+
+{% block description %}
+EMPIAR is an archive for 2D image data related to EMDB. It includes micrographs, particle sets and tilt-series.
+{% endblock %}
+
+{% block codeHeader %}
+<!-- for progress bar-->
+<link type="text/css" rel="stylesheet" href="{{emdb_global.static_empiar_path}}/jquery-ui/jquery-ui.css">
+
+
+<link rel="stylesheet" type="text/css" href="{{emdb_global.static_empiar_path}}/empiar.css">
+
+<!-- for lightbox -->
+<link rel="stylesheet" type="text/css"  href="{{emdb_global.static_empiar_path}}/lightbox.css">
+
+<!-- for DT -->
+<link type="text/css" rel="stylesheet" href="{{emdb_global.static_empiar_path}}/jquery.dataTables.css">
+
+<!-- for directory tree -->
+<link rel="stylesheet" type="text/css" href="{{emdb_global.static_empiar_path}}/jstree/jstree.css">
+
+<link rel="stylesheet" type="text/css"  rel="stylesheet" media="print" href="{{emdb_global.static_empiar_path}}/empiar_print.css">
+
+<script type="text/javascript" src="{{emdb_global.jquery}}"></script>
+
+<script type="text/javascript" src="{{emdb_global.static_empiar_path}}/wait_for_element.js"></script>
+
+<script type="text/javascript" src="{{emdb_global.static_empiar_path}}/asperaweb-4.js"></script>
+<script>document.write('<script src="{{emdb_global.static_empiar_path}}/connectversions.js?'+ new Date().getTime() + '"><\/script>')</script>
+<script type="text/javascript" src="{{emdb_global.static_empiar_path}}/connectinstaller-4.js"></script>
+<script type="text/javascript" src="{{emdb_global.static_empiar_path}}/localize-en-US.js"></script>
+<script type="text/javascript" src="{{emdb_global.static_empiar_path}}/install.js"></script>
+<script type="text/javascript" src="{{emdb_global.static_empiar_path}}/jquery-namespace.js"></script>
+
+<!-- wait for the thumbnail to be loaded before displaying lightbox buttons -->
+<script type="text/javascript" src="{{emdb_global.static_empiar_path}}/jquery.waitforimages.min.js"></script>
+
+<!-- for progress bar-->
+<script type="text/javascript" src="{{emdb_global.static_empiar_path}}/jquery-ui/jquery-ui.js"></script>
+
+<script type="text/javascript" src="{{emdb_global.static_empiar_path}}/configFileControl-jquery-newpaths.js"></script>
+<script type="text/javascript" src="{{emdb_global.static_empiar_path}}/empiar-jquery.js"></script>
+<script type="text/javascript" src="{{emdb_global.static_empiar_path}}/jstree/jstree.js"></script>
+<script type="text/javascript" src="{{emdb_global.static_empiar_path}}/jquery.collapser.min.js"></script>
+<script type="text/javascript" src="{{emdb_global.static_empiar_path}}/check-file-type.js"></script>
+<script type="text/javascript" src="{{emdb_global.static_empiar_path}}/open-lightbox.js"></script>
+<script type="text/javascript" src="{{emdb_global.static_empiar_path}}/getBrowser.js"></script>
+
+<!-- for OMERO viewer -->
+<link type="text/css" rel="stylesheet" href="{{emdb_global.static_empiar_path}}/appmedia/webgateway/css/ome.gs_slider.css">
+<link type="text/css" rel="stylesheet" href="{{emdb_global.static_empiar_path}}/appmedia/webgateway/css/ome.viewport.css">
+
+<script type="text/javascript" src="{{emdb_global.static_empiar_path}}/appmedia/webgateway/js/ome.viewport.js"></script>
+<script type="text/javascript" src="{{emdb_global.static_empiar_path}}/appmedia/webgateway/js/ome.viewportImage.js"></script>
+<script type="text/javascript" src="{{emdb_global.static_empiar_path}}/appmedia/webgateway/js/ome.gs_slider.js"></script>
+<script type="text/javascript" src="{{emdb_global.static_empiar_path}}/appmedia/webgateway/js/ome.gs_utils.js"></script>
+{% endblock %}
+
+{% block content %}
+<style type="text/css">
+	#mobile-menu {display: none !important}
+	#wrapper {min-width: 1000px}
+	@media only screen and (max-width: 1400px) {
+	    .pdbe-quick-info {display: none !important}
+	}
+</style>
+
+<script src="{{emdb_global.static_empiar3d_path}}/bower_components/webcomponentsjs/webcomponents-lite.min.js"></script>
+
+<link rel="import" href="{{emdb_global.static_empiar3d_path}}/bower_components/polymer/polymer.html">
+<link rel="import" href="{{emdb_global.static_empiar3d_path}}/bower_components/iron-ajax/iron-ajax.html">
+
+<link rel="import" href="{{emdb_global.static_empiar_path}}/entry_info.html">
+
+<entry-info
+			entry-url="{{emdb_global.empiar_entry}}"
+			api-entry-url="{{emdb_global.empiar_api_entry_url}}"
+			empiar-id="{{entryName}}"
+			static-img="{{emdb_global.static_images}}"
+			empiar-icon-dir="{{emdb_global.empiar_icon_url}}"
+			static-rel-path="{{emdb_global.static_rel_path}}"
+			loading-circle-img="{{emdb_global.static_images}}/loadingCircle.gif"
+			next-page-down="{{emdb_global.static_empiar_path}}/img/nextPAGEdown.png"
+			next-page-up="{{emdb_global.static_empiar_path}}/img/prevPAGEup.png"
+			ftp-server="{{emdb_global.ftp_server}}"
+			json-dirstruct-dir="{{emdb_global.empiar_json_dirstruct_dir}}"
+			thumbnails-check-url="{{emdb_global.project_root}}/empiar/entry/{{entryName}}/entry_thumbnail/"
+			thumbnails-render-url='{{emdb_global.project_root}}/empiar/render_thumbnail/'
+			public-archive-ftp-url='{{emdb_global.ftp_empiar_public_archive}}'
+			obsolete-archive-ftp-url='{{emdb_global.ftp_empiar_obsolete_archive}}'
+			csrf-token='{{csrf_token}}'
+			omero-url='{{emdb_global.empiar_omero_webclient_url}}'
+			aspera-token-url='{{emdb_global.aspera_token_url}}'
+></entry-info>
+
+<div class="grid_24">
+	<div id="omeroviewport"><iframe width="850" height="600" src="" id="omeroviewport" name="omeroviewport"></iframe></div>
+</div>
+<div class="miniview" id="viewport"></div>
+{% endblock %}
+
+
+{% block codeBody %}
+<script async type="text/javascript">
+{% if emdb_global.emdb_env != "Japan" %}
+$(document).ready(function () {
+	// Display the warning for the EMPIAR main page
+	$.ajax({
+    	    type: "GET",
+    	    cache: false,
+            url: "{{emdb_global.project_root}}/empiar/entry/{{entryName}}/get_rel_warning/",
+            success: function(dataPy){
+				    if (dataPy != "") {
+				    	$('.deposition_warning').html("Warning:<br/>"+dataPy);
+				    	$('.deposition_warning').show();
+					}
+    		},
+    		error: function(response){
+            	if (response.status==403)
+            		alert("Forbidden");
+            },
+	});
+});
+{% endif %}
+</script>
+{% endblock %}

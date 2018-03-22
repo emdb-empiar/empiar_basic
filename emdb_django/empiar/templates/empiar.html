@@ -1,0 +1,319 @@
+{% extends "base_empiar.html" %} 
+
+{% block title %} 
+EMPIAR - Electron Microscopy Public Image Archive
+{% endblock %} 
+
+{% block description %}
+EMPIAR is an archive for 2D image data related to EMDB. It includes micrographs, particle sets and tilt-series.
+{% endblock %}
+
+
+{% block codeHeader %}
+<link type="text/css" rel="stylesheet" href="{{emdb_global.static_empiar_path}}/jquery-ui/jquery-ui.css">
+<link rel="stylesheet" type="text/css" href="{{emdb_global.static_empiar_path}}/empiar.css">
+
+<!-- for DT -->
+<link type="text/css" rel="stylesheet" href="{{emdb_global.static_empiar_path}}/jquery.dataTables.css">
+
+<link rel="stylesheet" type="text/css"  rel="stylesheet" media="print" href="{{emdb_global.static_empiar_path}}/empiar_print.css">
+{% endblock %}
+
+
+{% block contentIntroTitle %} 
+{% endblock %}
+
+{% block contentIntro %} 
+EMPIAR, the Electron Microscopy Public Image Archive, is a public resource for raw, 2D electron microscopy images. Here, you can browse, upload, and download and reprocess the thousands of raw, 2D images used to build a 3D structure. 
+<a target="_top" href="{{emdb_global.project_root}}/empiar/about">More ...</a>
+
+{% endblock %}
+
+{% block content %}
+<div id="pluginContainer0"></div>
+
+<div id="button_container" class="button_container"></div>
+
+<br/>
+<div id="noAspera" class="noAspera"></div>
+
+<p><b><a href="https:{{emdb_global.project_root}}/empiar/deposition/">Deposit your data</a></b> in EMPIAR to share it with the structural biology community.</p>
+
+<p>Browse and <a target="_top" href="{{emdb_global.project_root}}/empiar/faq#question_Download">download</a> EMPIAR datasets using the table below.</p>
+
+<table id="empiarTable1" class="empiarTable">
+	<thead>
+		<tr>
+			<th>Dataset</th>
+			<th>Title</th>
+			<th>Authors</th>
+			<th>Related EMDB/PDB entries</th>
+			<th>Size</th>
+			<th>Resolution</th>
+		</tr>
+	</thead>
+</table>
+<br/>
+
+{% endblock %}
+{% block codeBody %}
+<!-- for DT-->
+<script type="text/javascript" src="{{emdb_global.jquery}}"></script>
+<script type="text/javascript" src="{{emdb_global.jquery_datatables}}"></script>
+<script type="text/javascript" src="{{emdb_global.static_empiar_path}}/jquery-namespace.js"></script>
+<script type="text/javascript" src="{{emdb_global.static_empiar_path}}/empiar-jquery.js"></script>
+<script async type="text/javascript">
+
+/* for DT */
+jQuery.extend( jQuery.fn.dataTableExt.oSort, {
+    "file-size-pre": function ( a ) {
+        var x = a.substring(0,a.length - 2);
+ 
+        var x_unit = (a.substring(a.length - 2, a.length) === "MB" ?
+            1000 : (a.substring(a.length - 2, a.length) === "GB" ? 1000000 : (a.substring(a.length - 2, a.length) === "TB" ? 1000000000 : 1)));
+ 
+        return parseInt( x * x_unit, 10 );
+    },
+ 
+    "file-size-asc": function ( a, b ) {
+        return ((a < b) ? -1 : ((a > b) ? 1 : 0));
+    },
+ 
+    "file-size-desc": function ( a, b ) {
+        return ((a < b) ? 1 : ((a > b) ? -1 : 0));
+    }
+} );
+
+function isNumber(n) {
+  return !isNaN(parseFloat(n)) && isFinite(n);
+}
+
+jQuery.extend( jQuery.fn.dataTableExt.oSort, {
+    "empiar-id-pre": function ( a ) {
+        var x1 = a.split(">",2),
+        	x2,
+        	x3;
+        	
+       	x1 = x1[1].split("<",1);
+        
+        x2 = x1[0] || '-';
+        
+ 		if (x2.length > 7 && x2.substr(0,7) === 'EMPIAR-') {
+ 			x3 = x2.substr(7);
+ 		}
+ 		else if (isNumber(x2)) {
+ 			x3 = x2;
+ 		}
+ 		else {
+ 			x3 = -1;
+ 		}
+ 
+        return x3;
+    },
+ 
+    "empiar-id-asc": function ( a, b ) {
+        return ((a < b) ? -1 : ((a > b) ? 1 : 0));
+    },
+ 
+    "empiar-id-desc": function ( a, b ) {
+        return ((a < b) ? 1 : ((a > b) ? -1 : 0));
+    },
+
+    "resolution-pre": function ( a ) {
+    	var x1 = parseFloat(a.split("-")[0]);
+    	if ( isNumber(x1) )
+    		return x1;
+        else
+        	return -1.0;
+    },
+
+    "resolution-asc": function ( a, b ) {
+        return ((a < b) ? -1 : ((a > b) ? 1 : 0));
+    },
+
+    "resolution-desc": function ( a, b ) {
+        return ((a < b) ? 1 : ((a > b) ? -1 : 0));
+    }
+} );
+
+/* Render ID code 
+@param data: data in table cell
+@param type: data type
+@param row: array of table elements on row
+ */
+function renderIDCode( data, type, row) {
+	var dataOut,
+		tag1 = '',
+		tag2 = '',
+		tag3 = '',
+		imagePath;
+	if(data === '-') {
+		tag1 = '-';
+		tag2 = 'EMPIAR-test';
+	} 
+	else {
+		tag1 = '<a href="' + '{{emdb_global.project_root}}/empiar/entry/' + data.replace("EMPIAR-","") + '" target="_blank">' + data + '</a>';
+		tag2 = data;
+		imagePath = row[5];
+		tag3 = '<img class="entryIcon" src="{{emdb_global.empiar_icon_url}}/' + imagePath + '" ' + 'onerror="this.src=\'{{emdb_global.static_rel_path}}/images/noimage.png\'" alt="Image not available"' + ' />';
+	}
+	dataOut =  tag1  + '<div id="dlc' + tag2 + '"' + ' class="downloadDiv"></div>' + tag3;
+	return dataOut;
+}
+
+/* Render Authors column with pubmed and doi
+@param data: data in table cell
+@param type: data type
+@param row: array of table elements on row
+ */
+function renderAuthors( data, type, row ) {
+	var dataOut,
+		pubmed,
+		doi;
+	
+	dataOut = data;
+	if (row[6] !== undefined && row[6] !== "") {
+		pubmed = '{{ emdb_global.pubmed_prefix}}' + row[6];
+		dataOut += '<br/>' + '[Pubmed: <a target="_blank" href="' + pubmed + '">' + row[6] + '</a>]';
+	}
+	if (row[7] !== undefined && row[7] !== "") {
+		doi = '{{ emdb_global.doi_prefix}}' + row[7];
+		dataOut += '<br/>' + '[DOI: <a target="_blank" href="' + doi + '">' + row[7] + '</a>]';
+	}
+	return dataOut;
+}
+
+/* Render EMDB and PDB accession codes in table
+@param data: data in table cell
+@param type: data type
+@param row: array of table elements on row
+ */
+function renderAccessionCodes( data, type, row ) {
+	var id,
+		ids,
+		idsOut,
+		dataOut, 
+		max,
+		i;
+		
+	/* Assume list of EMDB and PDB entry IDs */
+	ids = data.split(",");
+	max = ids.length;
+	idsOut = [];
+	for (i=0; i<max; i++) {
+		id = ids[i].replace(/\s+/,"");
+		idsOut.push('<a href="{{emdb_global.pdbe_short}}/' + id + '">' + id + '</a>');
+	}
+	dataOut = idsOut.join(", ")
+	return dataOut;
+}
+
+/* Render EMDB resolution in table
+@param data: data in table cell
+@param type: data type
+@param row: array of table elements on row
+ */
+function emdbResolution( data, type, row ) {
+	/* Assume EMDB resolution (min-max range, if available) */
+	return row[8];
+}
+
+$(document).ready(function () {
+	if (navigator.userAgent.indexOf("Safari") > -1)
+		waitTime = 1000;
+	else
+		waitTime = 0;
+	setTimeout(function(){
+		navbarSetActive("navbar_empiar");
+		
+		var oTable = $('#empiarTable1').dataTable({
+			"bAutoWidth":false,
+			"lengthMenu": [25, 50, 100],
+			"pageLength": 50,
+			"order": [[ 0, "desc" ]],
+			"ajax": {
+				// On servers
+				"url": "{{emdb_global.empiar_json_url}}",
+				// Local development
+				//"url": "/static/empiar/empiar_out.json",
+				error: function(data){
+					},
+				},
+			"processing": true,
+			
+			// Callback function executed after rendition of each row.
+			// Adds a download button to the first column
+			"fnCreatedRow": function( nRow, aData, iDataIndex ) {
+		      	var dlcDiv = $($(nRow).children()[0]).children()[1];
+		      	
+		      	var dlcDivId = $(dlcDiv).attr('id');
+				if (dlcDivId === undefined) {
+					dlcDiv = $($(nRow).children()[0]).children()[0];
+					dlcDivId = $(dlcDiv).attr('id');
+				}
+				
+				// Adds an input element download button
+				var downloadButton = $('<input/>',
+			    {
+			    	type: "image",
+					id: 'Button' + dlcDivId,
+			        src: "{{emdb_global.static_rel_path}}/images/download.png",
+			        style: "width:1.5em;"
+			    });
+			    $(dlcDiv).append(downloadButton);
+		    	var downloadButtonClick = function (e) {
+                    window.location = '{{ emdb_global.ftp_empiar_public_archive }}/' + this.id.slice(16);
+				};
+				downloadButton.on("click", downloadButtonClick);
+		    },
+			columnDefs: [
+				{	type: 'empiar-id', 
+					width: '120px',
+					targets: 0, 
+					render: renderIDCode
+				},
+				{
+					targets: 1,
+					width: '350px',
+				},
+				{
+					targets: 2,
+					width: '250px',
+					render: renderAuthors
+				},
+				{ targets: 3, render: renderAccessionCodes },
+		        { type: 'file-size', targets: 4 },
+		        {
+		        	type: 'resolution',
+		        	targets: 5,
+		        	width: '10px',
+		        	render: emdbResolution
+		        }
+		    ]
+		});
+	}, waitTime);
+});
+
+// Display the warning for the EMPIAR main page
+{% if emdb_global.emdb_env != "Japan" %}
+$(document).ready(function () {
+	$.ajax({
+    	    type: "GET",
+    	    cache: false,
+            url: "{{emdb_global.project_root}}/empiar/get_rel_warning/",
+            success: function(dataPy){
+				    if (dataPy != "") {
+				    	$('.deposition_warning').html("Warning:<br/>"+dataPy);
+				    	$('.deposition_warning').show();
+					}
+    		},
+    		error: function(response){
+            	if (response.status==403)
+            		alert("Forbidden");
+            },
+	});
+});
+{% endif %}
+</script>
+
+{% endblock %}	                                                     

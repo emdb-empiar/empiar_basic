@@ -1,0 +1,86 @@
+<!--
+related_pdb.html
+
+Authors:
+	Andrii Iudin
+
+Description:
+	The web component for PDB entries related to the EMPIAR entry, 
+	used on EMPIAR entry pages.
+
+Date:
+   20171110
+
+Copyright [2014-17] EMBL - European Bioinformatics Institute
+Licensed under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in
+compliance with the License. You may obtain a copy of
+the License at
+http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on
+an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied. See the License for the
+specific language governing permissions and limitations
+under the License.
+
+Version history
+1.0, 2017/11/10: Initial version.
+-->
+
+<dom-module id="related-pdb">
+	<template>
+		<iron-ajax
+		    auto
+		    url="{{apiRelatedPdbUrl}}{{emdbId}}"
+		    handle-as="json"
+		    last-response="{{entryAjaxResponse}}"></iron-ajax>
+
+		<template if="{{entryAjaxResponse}}" is="dom-repeat" items="{{_toArray(entryAjaxResponse)}}">
+			<template is="dom-if" if="{{item.value.0.deposition.fitted_pdb_id_list}}">
+				<template is="dom-if" if="{{item.value.0.deposition.fitted_pdb_id_list.pdb_id}}">
+					<div class="grid_24">
+						<span class="data-label grid_7 alpha">Related PDB entr<template is="dom-if" if="{{item.value.0.deposition.fitted_pdb_id_list.pdb_id.1}}">ies</template><template is="dom-if" if="{{!item.value.0.deposition.fitted_pdb_id_list.pdb_id.1}}">y</template>:</span>
+						<span class="grid_17">
+							<template is="dom-repeat" items="{{item.value.0.deposition.fitted_pdb_id_list.pdb_id}}" as="related_pdb_entry">
+								<a href="http://pdbe.org/{{related_pdb_entry}}">{{related_pdb_entry}}</a><template is="dom-if" if="{{_notLastElement(item.value.0.deposition.fitted_pdb_id_list.pdb_id.length, index)}}">, </template>
+							</template>
+						</span>
+					</div>
+				</template>
+			</template>						
+
+        </template>
+	</template>
+
+
+	<script>
+	Polymer({
+		is: "related-pdb",
+		properties: {
+			apiRelatedPdbUrl: String,
+			emdbId: String
+        },
+        _toArray: function(obj) {
+        	if (obj !== 'undefined' && obj !==null) {
+	            return Object.keys(obj).map(function(key) {
+	                return {
+	                    name: key,
+	                    value: obj[key]
+	                };
+	            });
+	        } else
+	        	return null;
+        },
+		ready: function () {
+		},
+		_notLastElement: function(length, index){
+			if( (parseInt(length) - 1) != parseInt(index))
+				{ return true; } 
+			else 
+				{ return false; }
+		},
+	});
+	
+	</script>
+</dom-module>

@@ -1,0 +1,83 @@
+.ui-datepicker-calendar {
+    display: none;
+}
+div#pdbeCenterContent {
+    margin-bottom: 4em;
+}
+div#pdbeCenterContent h2 {
+    margin-bottom: 1em;
+}
+.resultsTable thead {
+    font-weight: bold;
+}
+.resultsTable td:first-child {
+    text-align: left;
+}
+.resultsTable td {
+    width: 10em;
+    text-align: right;
+}
+.resultsTable th:first-child {
+    text-align: left;
+}
+.resultsTable th {
+    background-color: #DCECD7;
+    text-align: right;
+}
+.resultsTable tr.grandtotal {
+    font-weight: bold;
+}
+form ul {
+    display: inline;
+}
+.myform li {
+    list-style-type: none;
+    padding: 0.25em;
+}
+.myform > li > label {
+    display: inline-block;
+    width: 12em;
+}
+.myform > li > ul {
+    display: inline-block;
+}
+.myform > li > ul > li > label {
+    display: inline-block;
+    width: 10em;
+}
+.myform li li {
+    display: inline;
+}
+.myform ul.errorlist {
+    padding: 0;
+}
+.myform ul.errorlist li {
+    color: red;
+    display: block;
+    margin: 5px 0 5px 20px;
+}
+.myform input[type='text'] {
+    width: 6em;
+}
+.correctErrors {
+    color: red; 
+    margin-bottom: 5px;
+}
+.noResults {
+    color: red;
+    margin-top: 2em;
+}
+.firstPlot {
+    min-width: 400px;
+    height: 400px;
+    margin: 10 auto;
+    margin-bottom: 4em;
+}
+.secondPlot{
+    min-width: 400px;
+    height: 400px;
+    margin: 10 auto;
+}
+.searchedFor {
+    margin: 20px 0 20px 0 !important; 
+}
