@@ -28,7 +28,7 @@ Version history
 -->
 
 <dom-module id="entry-info">
-	<style type="text/css">
+	<style>
 		.entry_info_panel {
 			background-color: #ededed;
 			border-radius: 5px;
@@ -45,182 +45,184 @@ Version history
 		    last-response="{{entryAjaxResponse}}"></iron-ajax>
 
 		<template if="{{entryAjaxResponse}}" is="dom-repeat" items="{{_toArray(entryAjaxResponse)}}">
-			<div id="intro" class="grid_24 reset_100">
-				<div class="pdbe-intro-heading">
-					<div class="pdbe-intro-title grid_17 alpha reset_100"
-						property="title">
-						<h3>{{item.value.title}}</h3>
-					</div>
-				</div>
+            <div class="row">
+                <div class="large-12 columns">
+                    <h3>{{item.value.title}}</h3>
+                </div>
+            </div>
 
-				<div class="grid_24 alpha omega">
-					<div class="grid_17">
-						<template is="dom-if" if="{{_citationAvailable(item.value.citation)}}">
-							<span class="data-label grid_7 alpha">Publication:</span>
-							<div class="grid_17">
-								<div>{{item.value.citation.0.title}}</div>
+            <div class="row">
+                <div class="large-8 columns">
+                    <template is="dom-if" if="{{_citationAvailable(item.value.citation)}}">
+                        <div class="row">
+                            <div class="data-label large-4 columns">Publication:</div>
+                            <div class="large-8 columns">
+                                <div>{{item.value.citation.0.title}}</div>
 
-								<div>
-									<template is="dom-repeat" items="{{item.value.citation.0.authors}}" as="author">
-										<template is="dom-if" if="{{author.author_orcid}}" on-dom-change="_handleTooltip">
-											<a href="http://europepmc.org/search?query=AUTHORID:%22{{author.author_orcid}}%22&sortby=Date" target = "_blank">{{author.name}}</a> <a class="image no-underline" title="ORCID - Connecting Research and Researchers" href="https://orcid.org/{{author.author_orcid}}" target = "_blank"><span class="tooltip" title="ORCID iD: {{author.author_orcid}}"><img src="//www.ebi.ac.uk/web_guidelines/images/logos/orcid/orcid_16x16.png"></span></a></template><template is="dom-if" if="{{!author.author_orcid}}">
-											<span class="empiarAuthorList">{{author.name}}</span></template><template is="dom-if" if="{{_notLastElement(item.value.citation.0.authors.length, index)}}">, </template>
-									</template>
-								</div>
+                                <div>
+                                    <template is="dom-repeat" items="{{item.value.citation.0.authors}}" as="author">
+                                        <template is="dom-if" if="{{author.author_orcid}}" on-dom-change="_handleTooltip">
+                                            <a href="http://europepmc.org/search?query=AUTHORID:%22{{author.author_orcid}}%22&sortby=Date" target = "_blank">{{_formatAuthorName(author.name)}}</a>&nbsp<a class="image no-underline" title="ORCID - Connecting Research and Researchers" href="https://orcid.org/{{author.author_orcid}}" target = "_blank"><span class="copyable_tooltip" title="ORCID iD: {{author.author_orcid}}"><img src="//www.ebi.ac.uk/web_guidelines/images/logos/orcid/orcid_16x16.png"></span></a></template><template is="dom-if" if="{{!author.author_orcid}}">
+                                            <span class="empiarAuthorList">{{author.name}}</span></template><template is="dom-if" if="{{_notLastElement(item.value.citation.0.authors.length, index)}}">, </template>
+                                    </template>
+                                </div>
 
-								<div>
-									<i><template is="dom-if" if="{{item.value.citation.0.journal_abbreviation}}">{{item.value.citation.0.journal_abbreviation}}</template><template is="dom-if" if="{{!item.value.citation.0.journal_abbreviation}}">{{item.value.citation.0.journal}}</template></i>
-									<template is="dom-if" if="{{item.value.citation.0.volume}}">
-										<b>{{item.value.citation.0.volume}}</b>
-									</template>
-									<template is="dom-if" if="{{item.value.citation.0.first_page}}">{{item.value.citation.0.first_page}}</template><template is="dom-if" if="{{item.value.citation.0.last_page}}">-{{item.value.citation.0.last_page}}</template><template is="dom-if" if="{{item.value.citation.0.year}}"> ({{item.value.citation.0.year}})</template>
-									<template is="dom-if" if="{{item.value.citation.0.pubmedid}}">
-										<br/>
-										PMID:
-										<a href="http://europepmc.org/abstract/MED/{{item.value.citation.0.pubmedid}}">{{item.value.citation.0.pubmedid}}</a>
-									</template>
-									<template is="dom-if" if="{{item.value.citation.0.doi}}">
-										<br/>
-										DOI:
-										<a href="http://doi.org/{{item.value.citation.0.doi}}">{{_formatDoi(item.value.citation.0.doi)}}</a>
-									</template>
-								</div>
-							</div>
-						</template>
-						<template is="dom-if" if="{{!_citationAvailable(item.value.citation)}}">
-							<span class="data-label grid_24">No publication information available</span>
-							<span class="data-label grid_7 alpha">Author{{_pluralize(item.value.authors)}}:</span>
-							<div class="grid_17">
-								<template is="dom-repeat" items="{{item.value.authors}}" as="author">
-									<template is="dom-if" if="{{author.author.author_orcid}}" on-dom-change="_handleTooltip">
-										<a href="http://europepmc.org/search?query=AUTHORID:%22{{author.author.author_orcid}}%22&sortby=Date" target = "_blank">{{author.author.name}}</a> <a class="image no-underline" title="ORCID - Connecting Research and Researchers" href="https://orcid.org/{{author.author.author_orcid}}" target = "_blank"><span class="tooltip" title="ORCID iD: {{author.author.author_orcid}}"><img src="//www.ebi.ac.uk/web_guidelines/images/logos/orcid/orcid_16x16.png"></span></a></template><template is="dom-if" if="{{!author.author.author_orcid}}">
-										<span class="empiarAuthorList">{{author.author.name}}</span></template><template is="dom-if" if="{{_notLastElement(item.value.authors.length, index)}}">, </template>
-								</template>
-							</div>
-						</template>
-						
-						<template is="dom-if" if="{{item.value.related_pdb_entries}}">
-							<div class="grid_24">
-								<span class="data-label grid_7 alpha">Related PDB entr<template is="dom-if" if="{{item.value.related_pdb_entries.1}}">ies</template><template is="dom-if" if="{{!item.value.related_pdb_entries.1}}">y</template>:</span>
-								<span class="grid_17">
-									<template is="dom-repeat" items="{{item.value.related_pdb_entries}}" as="related_pdb_entry">
-										<a href="http://pdbe.org/{{related_pdb_entry}}">{{related_pdb_entry}}</a><template is="dom-if" if="{{_notLastElement(item.value.related_pdb_entries.length, index)}}">, </template>
-									</template>
-								</span>
-							</div>
-						</template>						
-						
-						<template is="dom-if" if="{{item.value.cross_references.0}}">
-							<div class="grid_24">
-								<span class="data-label grid_7 alpha">Related EMDB entr<template is="dom-if" if="{{item.value.cross_references.1}}">ies</template><template is="dom-if" if="{{!item.value.cross_references.1}}">y</template>:</span>
-								<span class="grid_17">
-									<template is="dom-repeat" items="{{item.value.cross_references}}" as="cross_reference">
-										<a href="http://pdbe.org/{{cross_reference.name}}">{{cross_reference.name}}</a><template is="dom-if" if="{{_notLastElement(item.value.cross_references.length, index)}}">, </template>
-									</template>
-								</span>
-							</div>
-						</template>
-						
-						<div class="grid_24">
-							<span class="data-label grid_7 alpha">Deposited:</span>
-							<span class="grid_17">{{item.value.deposition_date}}</span>
-						</div>
-						
-						<div class="grid_24">
-							<template is="dom-if" if="{{_variablesAreEqual(item.value.status, 'REL')}}">
-								<span class="data-label grid_7 alpha">Released:</span>
-								<span class="grid_17">{{item.value.release_date}}</span>
-							</template>
-							<template is="dom-if" if="{{!_variablesAreEqual(item.value.status, 'REL')}}">
-								<span class="data-label grid_7 alpha">Obsoleted:</span>
-								<span class="grid_17">{{item.value.obsolete_date}}</span>
-							</template>
-						</div>
-						
-						<div class="grid_24">
-							<span class="data-label grid_7 alpha">Last modified:</span>
-							<span class="grid_17">{{item.value.update_date}}</span>
-						</div>
-						
-						<div class="grid_24">
-							<span class="data-label grid_7 alpha">Dataset size:</span>
-							<span class="grid_17">{{item.value.dataset_size}}</span>
-						</div>
-						
-						<div class="grid_24">
-							<span class="data-label grid_7 alpha">Dataset DOI:</span>
-							<span class="grid_17"> <a href="http://dx.doi.org/10.6019/EMPIAR-{{empiarId}}">10.6019/EMPIAR-{{empiarId}}</a></span>
-						</div>
-						
-						
-						<template is="dom-if" if="{{_arrayIsNotEmpty(item.value.version_history)}}">
-							<div class="grid_24">
-								<span class="data-label grid_7 alpha">Version history:</span>
-								<span class="grid_17">
-									<template is="dom-repeat" items="{{item.value.version_history}}" as="version_history">
-										<span class="grid_24">
-											<div class="grid_2">{{version_history.version_number}}</div>
-											<div class="grid_6">{{version_history.date}}</div>
-											<div class="grid_16">{{version_history.details}}</div>
-										</span>
-									</template>
-								</span>
-							</div>
-						</template>
-						
-						<template is="dom-if" if="{{item.value.volume_slicer_links}}">
-							<div class="grid_24">
-								<br/>
-								<span class="data-label grid_7 alpha">View data in volume slicer:</span>
-								<span class="grid_17">
-									<template is="dom-repeat" items="{{item.value.volume_slicer_links}}" as="volume_slicer_link">
-										<div class="grid_24"><a href="{{volume_slicer_link}}">{{_vs_filename(volume_slicer_link)}}</a></div>
-									</template>
-								</span>
-							</div>
-						</template>
-					</div>
-					
-					
-					
-					<div class="grid_7 omega reset_100">
-						<div>
-							<span class="data-label">Contains:</span>
-							<span class="grid_24">
-								<template is="dom-repeat" items="{{_imagesetCategories(item.value.imagesets)}}" as="category">
-									<template is="dom-if" if="{{_variableContains(category, 'micrographs')}}">
-										<img src="{{staticImg}}/micrographs.png" class="micro_icon" alt=""/>    micrographs
-									</template>
-									<template is="dom-if" if="{{!_variableContains(category, 'micrographs')}}">
-										<template is="dom-if" if="{{_variableContains(category, 'picked particles')}}">
-											<img src="{{staticImg}}/picked%20particles.png" class="micro_icon" alt=""/>    picked particles
-										</template>
-										<template is="dom-if" if="{{!_variableContains(category, 'picked particles')}}">
-											<template is="dom-if" if="{{_variableContains(category, 'tilt series')}}">
-												<img src="{{staticImg}}/micrographs.png" class="micro_icon" alt=""/>    tilt series
-											</template>
-										</template>
-									</template>
-									<br/>
-								</template>
-							</span>
-						</div>
-					</div>
-					
-					<template is="dom-if" if="{{!_variablesAreEqual(item.value.status, 'OBSOLETE')}}">
-						<div class="pdbe-intro-image grid_7 alpha reset_100">
-							<div class="image-x empiarIntroImage" typeof="ImageObject" vocab="http://schema.org/" property="image">
-								<meta content="1" property="representativeOfPage">
-								<img src="{{empiarIconDir}}/{{empiarId}}-l.gif" onerror="this.src='{{staticRelPath}}/images/noimage.png'" alt="Image not available"/>
-							</div>
-						</div>
-					</template>
-					
-				</div>
-			</div>
-			
-			<div id="contentMain" class="entry-content">
-				<div id="pdbeCenterContent" class="grid_24">
+                                <div>
+                                    <i><template is="dom-if" if="{{item.value.citation.0.journal_abbreviation}}">{{item.value.citation.0.journal_abbreviation}}</template><template is="dom-if" if="{{!item.value.citation.0.journal_abbreviation}}">{{item.value.citation.0.journal}}</template></i>
+                                    <template is="dom-if" if="{{item.value.citation.0.volume}}">
+                                        <b>{{item.value.citation.0.volume}}</b>
+                                    </template>
+                                    <template is="dom-if" if="{{item.value.citation.0.first_page}}">{{item.value.citation.0.first_page}}</template><template is="dom-if" if="{{item.value.citation.0.last_page}}">-{{item.value.citation.0.last_page}}</template><template is="dom-if" if="{{item.value.citation.0.year}}"> ({{item.value.citation.0.year}})</template>
+                                    <template is="dom-if" if="{{item.value.citation.0.pubmedid}}">
+                                        <div>
+                                            PMID:
+                                            <a href="http://europepmc.org/abstract/MED/{{item.value.citation.0.pubmedid}}">{{item.value.citation.0.pubmedid}}</a>
+                                        </div>
+                                    </template>
+                                    <template is="dom-if" if="{{item.value.citation.0.doi}}">
+                                        <div>
+                                            DOI:
+                                            <a href="http://doi.org/{{item.value.citation.0.doi}}">{{_formatDoi(item.value.citation.0.doi)}}</a>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+
+                    <template is="dom-if" if="{{!_citationAvailable(item.value.citation)}}">
+                        <div class="row">
+                            <div class="data-label large-12 columns">No publication information available</div>
+                            <div class="data-label large-4 columns">Author{{_pluralize(item.value.authors)}}:</div>
+                            <div class="large-8 columns">
+                                <template is="dom-repeat" items="{{item.value.authors}}" as="author">
+                                    <template is="dom-if" if="{{author.author.author_orcid}}" on-dom-change="_handleTooltip">
+                                        <a href="http://europepmc.org/search?query=AUTHORID:%22{{author.author.author_orcid}}%22&sortby=Date" target = "_blank">{{author.author.name}}</a> <a class="image no-underline" title="ORCID - Connecting Research and Researchers" href="https://orcid.org/{{author.author.author_orcid}}" target = "_blank"><span class="copyable_tooltip" title="ORCID iD: {{author.author.author_orcid}}"><img src="//www.ebi.ac.uk/web_guidelines/images/logos/orcid/orcid_16x16.png"></span></a></template><template is="dom-if" if="{{!author.author.author_orcid}}">
+                                        <span class="empiarAuthorList">{{author.author.name}}</span></template><template is="dom-if" if="{{_notLastElement(item.value.authors.length, index)}}">, </template>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+
+                    <template is="dom-if" if="{{item.value.related_pdb_entries}}">
+                        <div class="row">
+                            <div class="data-label large-4 columns">Related PDB entr<template is="dom-if" if="{{item.value.related_pdb_entries.1}}">ies</template><template is="dom-if" if="{{!item.value.related_pdb_entries.1}}">y</template>:</div>
+                            <div class="large-8 columns">
+                                <template is="dom-repeat" items="{{item.value.related_pdb_entries}}" as="related_pdb_entry">
+                                    <a href="http://pdbe.org/{{related_pdb_entry}}">{{related_pdb_entry}}</a><template is="dom-if" if="{{_notLastElement(item.value.related_pdb_entries.length, index)}}">, </template>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+
+                    <template is="dom-if" if="{{item.value.cross_references.0}}">
+                        <div class="row">
+                            <div class="data-label large-4 columns">Related EMDB entr<template is="dom-if" if="{{item.value.cross_references.1}}">ies</template><template is="dom-if" if="{{!item.value.cross_references.1}}">y</template>:</div>
+                            <div class="large-8 columns">
+                                <template is="dom-repeat" items="{{item.value.cross_references}}" as="cross_reference">
+                                    <a href="http://pdbe.org/{{cross_reference.name}}">{{cross_reference.name}}</a><template is="dom-if" if="{{_notLastElement(item.value.cross_references.length, index)}}">, </template>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+
+                    <div class="row">
+                        <div class="data-label large-4 columns">Deposited:</div>
+                        <div class="large-8 columns">{{item.value.deposition_date}}</div>
+                    </div>
+
+                    <div class="row">
+                        <template is="dom-if" if="{{_variablesAreEqual(item.value.status, 'REL')}}">
+                            <div class="data-label large-4 columns"">Released:</div>
+                            <div class="large-8 columns">{{item.value.release_date}}</div>
+                        </template>
+                        <template is="dom-if" if="{{!_variablesAreEqual(item.value.status, 'REL')}}">
+                            <div class="data-label large-4 columns">Obsoleted:</div>
+                            <div class="large-8 columns">{{item.value.obsolete_date}}</div>
+                        </template>
+                    </div>
+
+                    <div class="row">
+                        <div class="data-label large-4 columns">Last modified:</div>
+                        <div class="large-8 columns">{{item.value.update_date}}</div>
+                    </div>
+
+                    <div class="row">
+                        <div class="data-label large-4 columns">Dataset size:</div>
+                        <div class="large-8 columns">{{item.value.dataset_size}}</div>
+                    </div>
+
+                    <div class="row">
+                        <div class="data-label large-4 columns">Dataset DOI:</div>
+                        <div class="large-8 columns"> <a href="http://dx.doi.org/10.6019/EMPIAR-{{empiarId}}">10.6019/EMPIAR-{{empiarId}}</a></div>
+                    </div>
+
+
+                    <template is="dom-if" if="{{_arrayIsNotEmpty(item.value.version_history)}}">
+                        <div class="row">
+                            <div class="data-label large-4 columns">Version history:</div>
+                            <div class="large-8 columns">
+                                <template is="dom-repeat" items="{{item.value.version_history}}" as="version_history">
+                                    <div class="row">
+                                        <div class="large-2 columns">{{version_history.version_number}}</div>
+                                        <div class="large-4 columns">{{version_history.date}}</div>
+                                        <div class="large-6 columns">{{version_history.details}}</div>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+
+                    <template is="dom-if" if="{{item.value.volume_slicer_links}}">
+                        <div class="row">
+                            <br/>
+                            <div class="data-label large-4 columns">View data in volume slicer:</div>
+                            <div class="large-8 columns">
+                                <template is="dom-repeat" items="{{item.value.volume_slicer_links}}" as="volume_slicer_link">
+                                    <a href="{{volume_slicer_link}}">{{_vs_filename(volume_slicer_link)}}</a>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+
+
+                <div class="large-4 columns">
+                    <div>
+                        <div class="data-label">Contains:</div>
+                        <div class="large-12 columns">
+                            <template is="dom-repeat" items="{{_imagesetCategories(item.value.imagesets)}}" as="category">
+                                <template is="dom-if" if="{{_variableContains(category, 'micrographs')}}">
+                                    <img src="{{staticImg}}/micrographs.png" class="micro_icon" alt=""/>    micrographs
+                                </template>
+                                <template is="dom-if" if="{{!_variableContains(category, 'micrographs')}}">
+                                    <template is="dom-if" if="{{_variableContains(category, 'picked particles')}}">
+                                        <img src="{{staticImg}}/picked%20particles.png" class="micro_icon" alt=""/>    picked particles
+                                    </template>
+                                    <template is="dom-if" if="{{!_variableContains(category, 'picked particles')}}">
+                                        <template is="dom-if" if="{{_variableContains(category, 'tilt series')}}">
+                                            <img src="{{staticImg}}/micrographs.png" class="micro_icon" alt=""/>    tilt series
+                                        </template>
+                                    </template>
+                                </template>
+                                <br/>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+
+                <template is="dom-if" if="{{!_variablesAreEqual(item.value.status, 'OBSOLETE')}}">
+                    <div class="small-5 medium-6 large-4 columns">
+                        <div class="image-x empiarIntroImage" typeof="ImageObject" vocab="http://schema.org/" property="image">
+                            <meta content="1" property="representativeOfPage">
+                            <img src="{{empiarIconDir}}/{{empiarId}}-l.gif" onerror="this.src='{{staticRelPath}}/images/noimage.png'" alt="Image not available"/>
+                        </div>
+                    </div>
+                </template>
+
+            </div>
+
+				<div class="row">
 					<!-- Aspera plugin container has to be visible at all times for Aspera to work properly -->
 					<template is="dom-repeat" items="{{item.value.imagesets}}">
 						<div id="pluginContainer{{empiarId}}_imgs_{{index}}"></div>
@@ -228,151 +230,154 @@ Version history
 					<div id="pluginContainer{{empiarId}}"></div>
 					
 					
-					<section class="grid_24 pdbe-topic">
+					<section class="large-12 columns padding-top-medium">
 						<div id="noAspera{{empiarId}}" class="noAspera{{empiarId}}"></div>	
 						<h4 class="slideToggle icon icon-functional" data-icon="w">Image set{{_pluralize(item.value.imagesets)}}</h4>
-						<div class="pdbe-topic-content">
-							<div class="grid_24 alpha">
-								<template is="dom-if" if="{{!_variablesAreEqual(item.value.status, 'OBSOLETE')}}">
-									<template is="dom-repeat" items="{{item.value.imagesets}}" as="imageset" on-dom-change="_handleJsTreeImageset">
-										<section class="pdbe-topic grid_24">
-						
-										<h5 class="slideToggle icon icon-functional" data-icon="w">{{imageset.name}}</h5>
-						
-										<div class="grid_24">
-												<div class="grid_24">
-													<span class="data-label grid_6">Category:</span>
-													<span class="grid_17">{{imageset.category}}</span>
-												</div>
-											
-												<div class="grid_24">
-													<span class="data-label grid_6">Image format:</span>
-													<span class="grid_17">{{imageset.header_format}}</span>
-												</div>
-											
-												<div class="grid_24">
-													<span class="data-label grid_6">No. of images or tilt series:</span>
-													<span class="grid_17">{{imageset.num_images_or_tilt_series}}</span>
-												</div>
-												
-												<template is="dom-if" if="{{!_variableContains(imageset.category, 'single frame')}}">
-													<template is="dom-if" if="{{!_variableContains(imageset.category, 'tilt series')}}">
-														<div class="grid_24">
-															<span class="data-label grid_6">Frames per image:</span>
-															<span class="grid_17">{{imageset.frames_per_image}}</span>
-														</div>
-													</template>
-												</template>
+                        <div class="large-12 columns">
+                            <template is="dom-if" if="{{!_variablesAreEqual(item.value.status, 'OBSOLETE')}}">
+                                <template is="dom-repeat" items="{{item.value.imagesets}}" as="imageset" on-dom-change="_handleJsTreeImageset">
 
-												<div class="grid_24">
-													<span class="data-label grid_6">Image size:</span>
-													<span class="grid_17">({{imageset.image_width}}, {{imageset.image_height}})</span>
-												</div>
+                                    <section class="large-12 columns padding-top-small padding-bottom-medium">
 
-												<div class="grid_24">
-													<span class="data-label grid_6">Pixel type:</span>
-													<span class="grid_17">{{imageset.voxel_type}}</span>
-												</div>
+                                        <h5 class="slideToggle icon icon-functional padding-top-medium" data-icon="w">{{imageset.name}}</h5>
 
-												<template is="dom-if" if="{{!_variablesAreEqual(imageset.pixel_width, null)}}">
-													<template is="dom-if" if="{{!_variablesAreEqual(imageset.pixel_height, null)}}">
-														<div class="grid_24">
-															<span class="data-label grid_6">Pixel spacing:</span>
-															<span class="grid_17">({{imageset.pixel_width}} &#8491;, {{imageset.pixel_height}} &#8491;)</span>
-														</div>
-													</template>
-												</template>					
-												
-												<template is="dom-if" if="{{imageset.details}}" on-dom-change="_handleDetails">
-													<div class="grid_24">
-														<span class="data-label grid_6">Details:</span>
-														<span class="grid_17 comment">{{_nl2br(imageset.details)}}</span>
-													</div>
-												</template>
-												
-												
-												<div class="grid_24 alpha">
-													<div id="transferDiv{{empiarId}}_imgs_{{index}}" class="transferDiv"></div>
-												</div>
-												<div class="grid_24 alpha">
-													<div class="grid_11">
-														<div id="jstree{{empiarId}}_imgs_{{index}}"></div>	
-													</div>
-													<div class="grid_13">
-														<div id="dlImageSet{{empiarId}}_imgs_{{index}}"></div>
-													</div>
-												</div>
-										</div>
-										</section>
-									</template>
-								</template>
-								
-								
-								
-								
-								<template is="dom-if" if="{{_variablesAreEqual(item.value.status, 'OBSOLETE')}}">
-									<template is="dom-repeat" items="{{item.value.imagesets}}" as="imageset">
-										<section class="pdbe-topic grid_24">
-						
-										<h5 class="slideToggle icon icon-functional" data-icon="w">{{imageset.name}}</h5>
-						
-										<div class="grid_24">
-												<div class="grid_24">
-													<span class="data-label grid_6">Category:</span>
-													<span class="grid_17">{{imageset.category}}</span>
-												</div>
-											
-												<div class="grid_24">
-													<span class="data-label grid_6">Image format:</span>
-													<span class="grid_17">{{imageset.header_format}}</span>
-												</div>
-											
-												<div class="grid_24">
-													<span class="data-label grid_6">No. of images or tilt series:</span>
-													<span class="grid_17">{{imageset.num_images_or_tilt_series}}</span>
-												</div>
-												
-												<template is="dom-if" if="{{!_variableContains(imageset.category, 'single frame')}}">
-													<template is="dom-if" if="{{!_variableContains(imageset.category, 'tilt series')}}">
-														<div class="grid_24">
-															<span class="data-label grid_6">Frames per image:</span>
-															<span class="grid_17">{{imageset.frames_per_image}}</span>
-														</div>
-													</template>
-												</template>
-											
-												<div class="grid_24">
-													<span class="data-label grid_6">Image size:</span>
-													<span class="grid_17">({{imageset.image_width}}, {{imageset.image_height}})</span>
-												</div>
-																		
-												<div class="grid_24">
-													<span class="data-label grid_6">Pixel type:</span>
-													<span class="grid_17">{{imageset.voxel_type}}</span>
-												</div>
-												
-												<template is="dom-if" if="{{!_variablesAreEqual(imageset.pixel_width, null)}}">
-													<template is="dom-if" if="{{!_variablesAreEqual(imageset.pixel_height, null)}}">
-														<div class="grid_24">
-															<span class="data-label grid_6">Pixel spacing:</span>
-															<span class="grid_17">({{imageset.pixel_width}} &#8491;, {{imageset.pixel_height}} &#8491;)</span>
-														</div>
-													</template>
-												</template>
-												
-												<template is="dom-if" if="{{imageset.details}}" on-dom-change="_handleDetails">
-													<div class="grid_24">
-														<span class="data-label grid_6">Details:</span>
-														<span class="grid_17 comment">{{_nl2br(imageset.details)}}</span>
-													</div>
-												</template>
-										</div>
-										</section>
-									</template>
-								</template>
-							</div>
-						</div>
-				
+                                        <div class="large-12 columns">
+                                            <div class="row">
+                                                <span class="data-label large-4 columns">Category:</span>
+                                                <span class="large-8 columns">{{imageset.category}}</span>
+                                            </div>
+
+                                            <div class="row">
+                                                <span class="data-label large-4 columns">Image format:</span>
+                                                <span class="large-8 columns">{{imageset.header_format}}</span>
+                                            </div>
+
+                                            <div class="row">
+                                                <span class="data-label large-4 columns">No. of images or tilt series:</span>
+                                                <span class="large-8 columns">{{imageset.num_images_or_tilt_series}}</span>
+                                            </div>
+
+                                            <template is="dom-if" if="{{!_variableContains(imageset.category, 'single frame')}}">
+                                                <template is="dom-if" if="{{!_variableContains(imageset.category, 'tilt series')}}">
+                                                    <div class="row">
+                                                        <span class="data-label large-4 columns">Frames per image:</span>
+                                                        <span class="large-8 columns">{{imageset.frames_per_image}}</span>
+                                                    </div>
+                                                </template>
+                                            </template>
+
+                                            <div class="row">
+                                                <span class="data-label large-4 columns">Image size:</span>
+                                                <span class="large-8 columns">({{imageset.image_width}}, {{imageset.image_height}})</span>
+                                            </div>
+
+                                            <div class="row">
+                                                <span class="data-label large-4 columns">Pixel type:</span>
+                                                <span class="large-8 columns">{{imageset.voxel_type}}</span>
+                                            </div>
+
+                                            <template is="dom-if" if="{{!_variablesAreEqual(imageset.pixel_width, null)}}">
+                                                <template is="dom-if" if="{{!_variablesAreEqual(imageset.pixel_height, null)}}">
+                                                    <div class="row">
+                                                        <span class="data-label large-4 columns">Pixel spacing:</span>
+                                                        <span class="large-8 columns">({{imageset.pixel_width}} &#8491;, {{imageset.pixel_height}} &#8491;)</span>
+                                                    </div>
+                                                </template>
+                                            </template>
+
+                                            <template is="dom-if" if="{{ scipionViewerUrl }}">
+                                                <template is="dom-if" if="{{ imageset.scipion_workflow }}">
+                                                    <div class="row">
+                                                        <span class="data-label large-4 columns">SCIPION workflow:</span>
+                                                        <span class="large-8 columns"><a target="_blank" href="{{ scipionViewerUrl }}{{ imageset.scipion_workflow }}">View</a></span>
+                                                    </div>
+                                                </template>
+                                            </template>
+
+                                            <template is="dom-if" if="{{imageset.details}}" on-dom-change="_handleDetails">
+                                                <div class="row">
+                                                    <span class="data-label large-4 columns">Details:</span>
+                                                    <span class="large-8 columns comment">{{_nl2br(imageset.details)}}</span>
+                                                </div>
+                                            </template>
+
+                                            <div class="row">
+                                                <div id="transferDiv{{empiarId}}_imgs_{{index}}" class="transferDiv"></div>
+                                            </div>
+                                            <div class="row">
+                                                <div id="dlImageSet{{empiarId}}_imgs_{{index}}"></div>
+                                            </div>
+                                            <div class="row">
+                                                <div id="jstree{{empiarId}}_imgs_{{index}}"></div>
+                                            </div>
+                                        </div>
+                                    </section>
+
+                                </template>
+                            </template>
+
+                            <template is="dom-if" if="{{_variablesAreEqual(item.value.status, 'OBSOLETE')}}">
+                                <template is="dom-repeat" items="{{item.value.imagesets}}" as="imageset">
+                                    <section class="large-12 columns">
+
+                                    <h5 class="slideToggle icon icon-functional" data-icon="w">{{imageset.name}}</h5>
+
+                                    <div class="large-12 columns">
+                                        <div class="row">
+                                            <span class="data-label large-4 columns">Category:</span>
+                                            <span class="large-8 columns">{{imageset.category}}</span>
+                                        </div>
+
+                                        <div class="row">
+                                            <span class="data-label large-4 columns">Image format:</span>
+                                            <span class="large-8 columns">{{imageset.header_format}}</span>
+                                        </div>
+
+                                        <div class="row">
+                                            <span class="data-label large-4 columns">No. of images or tilt series:</span>
+                                            <span class="large-8 columns">{{imageset.num_images_or_tilt_series}}</span>
+                                        </div>
+
+                                        <template is="dom-if" if="{{!_variableContains(imageset.category, 'single frame')}}">
+                                            <template is="dom-if" if="{{!_variableContains(imageset.category, 'tilt series')}}">
+                                                <div class="large-12 columns">
+                                                    <span class="data-label large-4 columns">Frames per image:</span>
+                                                    <span class="large-8 columns">{{imageset.frames_per_image}}</span>
+                                                </div>
+                                            </template>
+                                        </template>
+
+                                        <div class="row">
+                                            <span class="data-label large-4 columns">Image size:</span>
+                                            <span class="large-8 columns">({{imageset.image_width}}, {{imageset.image_height}})</span>
+                                        </div>
+
+                                        <div class="row">
+                                            <span class="data-label large-4 columns">Pixel type:</span>
+                                            <span class="large-8 columns">{{imageset.voxel_type}}</span>
+                                        </div>
+
+                                        <template is="dom-if" if="{{!_variablesAreEqual(imageset.pixel_width, null)}}">
+                                            <template is="dom-if" if="{{!_variablesAreEqual(imageset.pixel_height, null)}}">
+                                                <div class="row">
+                                                    <span class="data-label large-4 columns">Pixel spacing:</span>
+                                                    <span class="large-8 columns">({{imageset.pixel_width}} &#8491;, {{imageset.pixel_height}} &#8491;)</span>
+                                                </div>
+                                            </template>
+                                        </template>
+
+                                        <template is="dom-if" if="{{imageset.details}}" on-dom-change="_handleDetails">
+                                            <div class="row">
+                                                <span class="data-label large-4 columns">Details:</span>
+                                                <span class="large-8 columns comment">{{_nl2br(imageset.details)}}</span>
+                                            </div>
+                                        </template>
+                                    </div>
+                                    </section>
+                                </template>
+                            </template>
+                        </div>
+
 						<div id="empiarLoaderGif">
 							<div class="empiarLoaderInner">
 								<img src="{{loadingCircleImg}}" alt="Loading..."></img>
@@ -409,47 +414,109 @@ Version history
 					</section>
 					
 					<template is="dom-if" if="{{!_variablesAreEqual(item.value.status, 'OBSOLETE')}}" on-dom-change="_handleJsTree">
-						<div id="empiarBrowseAllFilesDiv" class="pdbe-topic grid_24 ">
+						<div id="empiarBrowseAllFilesDiv" class="large-12 columns padding-top-xlarge">
 							<h4>Browse All Files</h4>
-							<div class="grid_24 alpha">
+							<div class="large-12 columns">
 								<div id="transferDiv{{empiarId}}" class="transferDiv"></div>
 							</div>
-							<div class="grid_11">
-								<div id="jstree_json{{empiarId}}"></div>	
+                            <div class="large-12 columns">
+								<div id="btnid{{empiarId}}"></div>
 							</div>
-							<div class="grid_13">
-								<div id="mybuttonid{{empiarId}}"></div>
+							<div class="large-12 columns">
+								<div id="jstree_json{{empiarId}}"></div>	
 							</div>
 						</div>
 					</template>
 					
-					<div class="grid_24 pdbe-topic">
+					<div class="large-12 columns padding-top-xlarge">
 						<div id="browseFtp"></div>
 					</div>
 
 				</div>
-				
-				
-				
-				
-				<div class="grid_24">
-					
-				</div>						
-		
-			</div>
         </template>
-        
+
         <template if="{{!entryAjaxResponse}}" is="dom-if">
         	<h2>
 				<span property="title"><a href="">The requested entry does not exist</a></span>
 			</h2>
 			<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
-			<div class="grid_24 reset_100"></div>
-			<div class="grid_24 reset_100"></div>
+			<div class="large-12 columns reset_100"></div>
+			<div class="large-12 columns reset_100"></div>
         </template>
-	</template>
-	
-	
+
+
+    <!-- Root element of PhotoSwipe. Must have class pswp. -->
+    <div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+        <!-- Background of PhotoSwipe.
+             It's a separate element as animating opacity is faster than rgba(). -->
+        <div class="pswp__bg"></div>
+
+        <!-- Slides wrapper with overflow:hidden. -->
+        <div class="pswp__scroll-wrap">
+
+            <!-- Container that holds slides.
+                PhotoSwipe keeps only 3 of them in the DOM to save memory.
+                Don't modify these 3 pswp__item elements, data is added later on. -->
+            <div class="pswp__container">
+                <div class="pswp__item"></div>
+                <div class="pswp__item"></div>
+                <div class="pswp__item"></div>
+            </div>
+
+            <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+            <div class="pswp__ui pswp__ui--hidden">
+
+                <div class="pswp__top-bar">
+
+                    <!--  Controls are self-explanatory. Order can be changed. -->
+
+                    <div class="pswp__counter"></div>
+
+                    <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                    <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                    <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                    <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                    <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                    <!-- element will get class pswp__preloader--active when preloader is running -->
+                    <div class="pswp__preloader">
+                        <div class="pswp__preloader__icn">
+                          <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                    <div class="pswp__share-tooltip"></div>
+                </div>
+
+                <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+                </button>
+
+                <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+                </button>
+
+                <div class="pswp__caption">
+                    <div class="pswp__caption__center"></div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    </template>
+
+
 	<script>
 	Object.size = function(obj) {
 	    var size = 0, key;
@@ -458,7 +525,7 @@ Version history
 	    }
 	    return size;
 	};
-	
+
 	function displayThumb(treeDiv, thumbnailsCheckUrl, staticRelPath, csrfToken) {
 		// On hover over a jsTree node, if the file thumbnail represented by the node exists, then
 		// change the cursor to an eye
@@ -472,7 +539,7 @@ Version history
 			            type: "post",
 			            cache: true,
 			            url: thumbnailsCheckUrl,
-			            data: { 'path': filepath, 'nodeId': hoveredNode.id, 'csrfmiddlewaretoken': csrfToken },
+			            data: { 'path': filepath, 'node_id': hoveredNode.id, 'csrfmiddlewaretoken': csrfToken },
 			            dataType : 'json',
 			            success: function(dataPy){
 							if (dataPy.cur_node) {
@@ -512,8 +579,6 @@ Version history
 			empiarIconDir: String,
 			staticRelPath: String,
 			loadingCircleImg: String,
-			ftpServer: String,
-			jsonDirstructDir: String,
 			thumbnailsCheckUrl: String,
 			thumbnailsRenderUrl: String,
 			nextPageDown: String,
@@ -522,7 +587,8 @@ Version history
 			obsoleteArchiveFtpUrl: String,
 			csrfToken: String,
 			omeroUrl: String,
-			asperaTokenUrl: String
+			asperaTokenUrl: String,
+            scipionViewerUrl: String
         },
 		_arrayIsNotEmpty: function(a) {
 			if ( a.length > 0 )
@@ -548,37 +614,37 @@ Version history
         		{ return typeof suffix_single !== 'undefined' ? suffix_single : ''; }
         },
         _handleTooltip: function() {
-        	$('.tooltip').tooltip({
+        	$('.copyable_tooltip').tooltip({
 		        open: function(){
 		            // Make sure all other tooltips are closed when opening a new one
-		        $('.tooltip').not(this).tooltip('close');
+		        $('.copyable_tooltip').not(this).tooltip('close');
 		        }
 		    }).on('mouseleave', function(e){
 		        var that = this;
-		
+
 		        // Close the tooltip later
 		        mouseLeaveTimer = setTimeout(function(){
 		        	$(that).tooltip('close');
 		        }, 300);
-		
+
 		        // Prevent tooltip widget to close the tooltip now
-		        e.stopImmediatePropagation(); 
+		        e.stopImmediatePropagation();
 		    });
-		
+
 		    $(document).on('mouseenter', '.ui-tooltip', function(e){
 		        // Cancel tooltip closing on hover
 		        clearTimeout(mouseLeaveTimer);
 		    });
-		
+
 		    $(document).on('mouseleave', '.ui-tooltip', function(){
 		        // Make sure tooltip is closed when the mouse is gone
-		        $('.tooltip').tooltip('close');
+		        $('.copyable_tooltip').tooltip('close');
 		    });
         },
         _citationAvailable: function(citation) {
         	if ( Object.size(citation[0]) > 1 ) {
 
-        		if ( citation[0].authors.length > 1) {
+        		if ( citation[0].authors.length > 0) {
         			if ( citation[0].j_or_nj_citation ) {
         				if ( citation[0].journal != null && citation[0].journal != 'N/A' ) {
         					return true;
@@ -609,17 +675,65 @@ Version history
 
 			for (i=0; i<imagesets.length; ++i) {
 				trfcImageSets[i] = new EMPIAR.FileControl({ sessionId: 'empiar-download'+this.empiarId+'_imgs_'+i,
-					transferContainer: '#transferDiv'+this.empiarId+'_imgs_'+i,
-					messageContainer: '#noAspera'+this.empiarId,
+					transferContainer: 'transferDiv'+this.empiarId+'_imgs_'+i,
+					messageContainer: 'noAspera'+this.empiarId,
 					id: this.empiarId+'_imgs_'+i 
 				});
-				browserTree (this.ftpServer, this.jsonDirstructDir, this.empiarId, '#jstree'+this.empiarId+'_imgs_'+i, 
-				             'dlImageSet'+this.empiarId+'_imgs_'+i, 'archive/', trfcImageSets[i], entryUrl, i, null, this.csrfToken, this.asperaTokenUrl);
+				browserTree({
+				    dirStruct: 'full',
+                    asperaOnly: false,
+                    entryName: this.empiarId,
+                    treeDiv: '#jstree'+this.empiarId+'_imgs_'+i,
+                    buttonId: 'dlImageSet'+this.empiarId+'_imgs_'+i,
+                    sourcePath: 'archive/',
+                    treeFileController: trfcImageSets[i],
+                    entryUrl: entryUrl,
+                    imageSetId: i,
+                    noCheckbox: null,
+                    csrfToken: this.csrfToken,
+                    asperaTokenUrl: this.asperaTokenUrl
+                });
 				displayThumb('#jstree'+this.empiarId+'_imgs_'+i, this.thumbnailsCheckUrl, this.staticRelPath, this.csrfToken);
 				handleNodeClick('#jstree'+this.empiarId+'_imgs_'+i, this.thumbnailsCheckUrl, this.thumbnailsRenderUrl, this.loadingCircleImg, this.nextPageDown, this.nextPageUp, this.csrfToken, this.omeroUrl);
 			}
 
-			$.getScript(this.staticRelPath+'/compliant_layout/ODEKYYoULfFJwFiqgDseaNqJsm1m8XDZFH5rRzMTCOv.js');
+            // Activate slide-toggle
+            try {
+                jQuery(".slideToggle").unbind("click");
+                jQuery('.slideToggle[data-icon="u"]').next().hide();
+                jQuery('.slideToggle[data-icon="9"]').next().hide();
+                jQuery('.slideToggle[data-icon="u"][data-slideabove="true"]').prev().hide();
+                jQuery('.slideToggle[data-icon="9"][data-slideabove="true"]').prev().hide();
+
+                jQuery(".slideToggle").click(function() {
+                    if (jQuery(this).attr("data-icon") === "u" || jQuery(this).attr("data-icon") === "w") {
+                        if (jQuery(this).attr("data-icon") === "u") {
+                            jQuery(this).attr("data-icon", "w")
+                        } else {
+                            jQuery(this).attr("data-icon", "u")
+                        }
+                    }
+                    if (jQuery(this).attr("data-icon") === "8" || jQuery(this).attr("data-icon") === "9") {
+                        if (jQuery(this).attr("data-icon") === "8") {
+                            jQuery(this).attr("data-icon", "9")
+                        } else {
+                            jQuery(this).attr("data-icon", "8")
+                        }
+                    }
+                    if (jQuery(this).attr("data-slideabove") === "false" || jQuery(this).attr("data-slideabove") === undefined) {
+                        var b = jQuery(this).parent();
+                        jQuery(this).next().slideToggle(200, function() {
+                            if (jQuery(this).css("display") === "none") {
+                                jQuery(this).siblings(".nano-pane").hide()
+                            } else {
+                                jQuery(this).siblings(".nano-pane").show()
+                            }
+                        })
+                    } else {
+                        jQuery(this).prev().slideToggle(200)
+                    }
+                })
+            } catch (a) {}
         },
         _handleJsTree: function() {
         	if (this.entryAjaxResponse['EMPIAR-'+this.empiarId].status != 'OBSOLETE') {
@@ -627,17 +741,31 @@ Version history
 				
 				// Add a FileController for Aspera for the jsTree element that represents the whole directory
 				var trfc = new EMPIAR.FileControl({ sessionId: 'empiar-download{{empiarId}}',
-						transferContainer: '#transferDiv'+this.empiarId,
-						messageContainer: '#noAspera'+this.empiarId,
+						transferContainer: 'transferDiv'+this.empiarId,
+						messageContainer: 'noAspera'+this.empiarId,
 						id: this.empiarId
 					});
-				
+
 				// Add the jsTree element that represents the whole directory
-				browserTree(this.ftpServer, this.jsonDirstructDir, this.empiarId, '#jstree_json'+this.empiarId, 'mybuttonid'+this.empiarId, 'archive/', trfc, entryUrl, null, null, this.csrfToken, this.asperaTokenUrl);
+				browserTree({
+				    dirStruct: 'full',
+                    asperaOnly: false,
+                    entryName: this.empiarId,
+                    treeDiv: '#jstree_json'+this.empiarId,
+                    buttonId: 'btnid'+this.empiarId,
+                    sourcePath: 'archive/',
+                    treeFileController: trfc,
+                    entryUrl: entryUrl,
+                    imageSetId: null,
+                    noCheckbox: null,
+                    csrfToken: this.csrfToken,
+                    asperaTokenUrl: this.asperaTokenUrl
+                });
 				displayThumb('#jstree_json'+this.empiarId, this.thumbnailsCheckUrl, this.staticRelPath, this.csrfToken);
-				handleNodeClick('#jstree_json'+this.empiarId, this.thumbnailsCheckUrl, this.thumbnailsRenderUrl, this.loadingCircleImg, this.nextPageDown, this.nextPageUp, this.csrfToken, this.omeroUrl);
+				handleNodeClick('#jstree_json'+this.empiarId, this.thumbnailsCheckUrl, this.thumbnailsRenderUrl,
+                    this.loadingCircleImg, this.nextPageDown, this.nextPageUp, this.csrfToken, this.omeroUrl);
 			}
-			
+
 			// Add a button to browse the FTP directory of the entry
 			var downloadButtonFtp = $('<button/>',
 				    {
@@ -660,7 +788,10 @@ Version history
 			});
         },
         _formatDoi: function(doi) {
-        	return doi.replace('doi:','');
+        		return doi.replace('doi:','');
+        },
+        _formatAuthorName: function(authorName) {
+        		return authorName.replace(/ /g, "\u00a0");
         },
         _variableContains: function (a, b) {
         	if ( a.indexOf(b) >= 0 )

@@ -1,4 +1,4 @@
-{% extends "base_empiar.html" %} 
+{% extends "base_empiar_foundation.html" %}
 
 {% block title %} 
 EMPIAR - Electron Microscopy Public Image Archive
@@ -8,90 +8,97 @@ EMPIAR - Electron Microscopy Public Image Archive
 Frequently-asked questions about EMPIAR. This includes info about command line upload and download, and how to cite and reference EMPIAR. EMPIAR is an archive for 2D image data related to EMDB. 
 {% endblock %}
 
-
-{% block codeHeader %}
-<style> #intro { display: none !important} </style>
-<link rel="stylesheet" type="text/css" href="{{emdb_global.static_empiar_path}}/empiar.css">
-{% endblock %}
-
 {% block contentHeading %}
 Frequently-asked questions about EMPIAR
 {% endblock %}
 
-{% block contentIntroTitle %} 
-{% endblock %}
-
-{% block contentIntro %} 
-{% endblock %}
-
+{% block noContentIntroTitle %}{% endblock %}
 
 {% block content %}
-<div class="empiarFaq">
-<h3 id="question_Download" class="question">How do I download?</h3>
-<ul>
-	<li>You can either download data using a web interface or via a command line interface</li>
-	<li>To download via the web interface:
-		<ul>
-			<li>Navigate to <a href="{{ emdb_global.pdbe_empiar }}">http://pdbe.org/empiar</a> using any one of the following browsers: Firefox, Chrome, Internet Explorer or Opera</li>
-			<li>To use the web interface you will need to install <a href="{{emdb_global.aspera_download_connect_path}}" target="_blank">Aspera Connect</a> and a web browser plugin. If you have not already done so you will be presented with a link which will take you to the Aspera Connect installation site</li>
-			<li>Once you have installed Aspera Connect and the browser plugin, you can download any of the datasets shown in the table by clicking on the corresponding download icon shown in column 1</li>
-		</ul>
-	</li>
-	<li>Instructions on downloading via a command line interface can be found <a target="_top" href="#question_CLDownload">here</a></li>
-	<li>Instructions on downloading via Globus can be found <a href="#question_Globus">here</a></li>
-	<li>Instructions on downloading via ftp can be found <a href="#question_Select">here</a></li>
-</ul>
-<h3 id="question_AspInstall" class="question">How do I install the Aspera Connect client?</h3>
-<ul>
-		<li>Download <a href="{{emdb_global.aspera_download_connect_path}}" target="_blank">Aspera Connect</a> for the correct operating system</li>	
-		<li>On a Linux machine, you will either download a shell script or a .tar.gz file. If you have dowloaded the .sh file, download and excecute it. If you downloaded a .tar.gz file then unzip/untar the package and follow install instructions.</li>
-		<li>The Aspera copy command is installed by default in the ~/.aspera/connect/bin directory on Linux machines and in the ~/Applications/Aspera\ Connect.app/Contents/Resources directory on Macs. You will find the ascp program in this directory</li>
-</ul>
-<h3 id="question_CLDownload" class="question">How do I download data using a command line interface?</h3>
-<ul>
-	<li><a href="#question_AspInstall">Download and install the Aspera Connect client</a> if you have not done so already</li>
-	<li>As an example, to download EMPIAR-10009, use: <br/>
-	Linux: ascp -QT -k3 -l 200M -P33001 -i ~/.aspera/connect/etc/asperaweb_id_dsa.openssh emp_ext@fasp.ebi.ac.uk:archive/10009 10009 <br/>
-	Mac: ascp  -QT -k3 -l 200M -P33001 -i "/Users/&lt;replace_your_username_here&gt;/Applications/Aspera Connect.app/Contents/Resources/asperaweb_id_dsa.openssh" emp_ext@fasp.ebi.ac.uk:archive/10009 10009</li>	
-</ul>
-<h3 id="question_TestSet" class="question">Do you have a small data set for testing downloads?</h3>
-<ul>
-	<li>The 58MB data set "test" is available for this purpose</li>
-	<li>You can use the <a target="_top" href="{{ emdb_global.pdbe_empiar }}">web interface</a> or the command line interface (Linux: ascp -QT -l 200M -P33001 -i ~/.aspera/connect/etc/asperaweb_id_dsa.openssh emp_ext@fasp.ebi.ac.uk:archive/test testset)</li>
-</ul>
-<h3 id="question_ORCID" class="question">How are ORCIDs used in EMPIAR?</h3>
-<p><a href="https://orcid.org">ORCID</a> iDs are shown on entry pages for every author that has provided us with such during the deposition process. This allows a quick and easy way to access the list of the author's publications from <a href="https://europepmc.org">Europe PMC</a> search or directly from the author's ORCID profile page.</p>
-<p>EMPIAR has now integrated ORCID into the deposition system. The user can sign in into the system using their ORCID account. This would automatically populate such user profile fields and ORCID iD, first and last names and email. Also, the user can automatically populate the deposition information fields using ORCID sign in with <a href="https://project-thor.eu/">THOR</a> project integration in EMPIAR.</p>
-<h3 id="question_Formats" class="question">What formats does EMPIAR support?</h3>
-<p>We provide image data in the formats in which they are uploaded. We recommend the use of common formats in the field including MRC, MRCS, TIFF, DM4, IMAGIC, SPIDER, MRC FEI and RAW FEI.</p>
-<h3 id="question_Deposit" class="question">How do I deposit data to EMPIAR?</h3>
-<p>Use the online <a target="_top" href="https:{{emdb_global.project_root}}/empiar/deposition/">deposition system</a>. Start by checking the <a target="_top" href="https:{{emdb_global.project_root}}/empiar/deposition/manual/">manual</a>.</p>
-<h3 id="question_AccessionCodes" class="question">How do I cite EMPIAR entries?</h3>
-<p>Please cite the original publication and cite the EMPIAR entry using the guidelines provided <a href="{{emdb_global.project_root}}/empiar/about#accessionCodes">here</a></p>
-<h3 id="question_Cite" class="question">How do I cite EMPIAR?</h3>
-<p>We recommend that you follow the guidelines provided <a href="{{emdb_global.project_root}}/empiar/about#citing">here</a></p>
-<h3 id="question_Select" class="question">Can I selectively download files and directories for an entry?</h3>
-<p>Yes, EMPIAR entry pages offer three options - Aspera, download of a tarball via http, and download of individual files via ftp. The file browsers on the EMPIAR entry pages allow you to select files and sub-directories to be 
-downloaded via Aspera or http. Aspera is the recommended option and can be used for any size of download. Please note that the download will be an as-is structure of the selected files and directories and not an archive (tar-ball)!
-The http download option will create a tarball that can be downloaded. This option only works for tarballs < 1.5GB. 
-You can also download individual files (but not sub-directories) using Ftp (select "Browse Ftp").</p>
-<h3 id="question_Globus" class="question">Can I upload/download data via Globus?</h3>
-<p>Yes! To download data use the ebi#pub endpoint and set the directory to: /pub/databases/empiar/archive/. For instructions on uploading data via Globus, please the <a target="_top" href="https:{{emdb_global.project_root}}/empiar/deposition/manual/">deposition manual</a>.</p>
-<h3 id="question_Troubleshooting" class="question">Having trouble with transferring data?</h3>
-<p>Our web transfer interface has the target rate set to 200 000 Kbps and the policy to adaptive. Similarly, the command line displayed above. In case you are having issues with transferring 
-data, it might help to reduce the target rate.</p>
-<p>To do so, please use the command line transfer and change the value of '-l' parameter. 
-For example: ascp -QT -l 10M -P33001 -i ~/.aspera/connect/etc/asperaweb_id_dsa.openssh emp_ext@fasp.ebi.ac.uk:archive/test testset</p>
-<p>Please <a href="mailto:empdep-help@ebi.ac.uk" target="_top">get in touch</a> if the issue persists.</p>
+    <div class="empiarFaq">
 
-</div>
+        <h3 id="question_difference">What is the difference between EMDB and EMPIAR?</h3>
+        <p>The final 3D reconstruction from a single-particle, electron tomography or electron diffraction experiment can be deposited to EMDB.
+        Image data related to EMDB entries, e.g., micrographs, particle-stacks and tilt-series can be deposited to EMPIAR.
+        EMPIAR also supports the following experimental methods (taking image data and final reconstructions where available):</p>
+        <ul>
+            <li>3D Scanning Electron Microscopy (3DSEM)</li>
+            <li>Soft X-ray Tomography (SXT)</li>
+            <li>2D EM image data from integrative/hybrid modelling experiments</li>
+        </ul>
 
-{% endblock %}	
-{% block codeBody %}
-<script type="text/javascript" src="{{emdb_global.jquery}}"></script>
-<script type='text/javascript'>
-$(document).ready(function () {
-	navbarSetActive("navbar_faq");
-});
-</script>
-{% endblock %}                                             
+        <p>For these experimental methods we require that the data set is directly related to a publication or is a part of a community initiative, e.g. as benchmarking data.</p>
+
+        <h3 id="question_Download" class="question">How do I download?</h3>
+        <ul>
+            <li>You can either download data using a web interface or via a command line interface</li>
+            <li>To download via the web interface:
+                <ul>
+                    <li>Navigate to <a href="{{ emdb_global.ebi_empiar }}">https://empiar.org</a> using any one of the following browsers: Firefox, Chrome, Internet Explorer or Opera</li>
+                    <li>To use the web interface you will need to install <a href="{{emdb_global.aspera_download_connect_path}}" target="_blank">Aspera Connect</a> and a web browser plugin. If you have not already done so you will be presented with a link which will take you to the Aspera Connect installation site</li>
+                    <li>Once you have installed Aspera Connect and the browser plugin, you can download any of the datasets shown in the table by clicking on the corresponding download icon shown in column 1</li>
+                </ul>
+            </li>
+            <li>Instructions on downloading via a command line interface can be found <a target="_top" href="#question_CLDownload">here</a></li>
+            <li>Instructions on downloading via Globus can be found <a href="#question_Globus">here</a></li>
+            <li>Instructions on downloading via ftp can be found <a href="#question_Select">here</a></li>
+        </ul>
+
+        <h3 id="question_AspInstall" class="question">How do I install the Aspera Connect client?</h3>
+        <ul>
+                <li>Download <a href="{{emdb_global.aspera_download_connect_path}}" target="_blank">Aspera Connect</a> for the correct operating system</li>
+                <li>On a Linux machine, you will either download a shell script or a .tar.gz file. If you have dowloaded the .sh file, download and excecute it. If you downloaded a .tar.gz file then unzip/untar the package and follow install instructions.</li>
+        </ul>
+
+        <h3 id="question_CLDownload" class="question">How do I download data using a command line interface?</h3>
+        <ul>
+            <li>The Aspera copy command is installed by default in the ~/.aspera/connect/bin directory on Linux machines and in the ~/Applications/Aspera\ Connect.app/Contents/Resources directory on Macs. You will find the <b> ascp </b> program in this directory </li>
+            <li><a href="#question_AspInstall">Download and install the Aspera Connect client</a> if you have not done so already</li>
+            <li>As an example, to download EMPIAR-10009, use: <br/>
+            Linux: ./ascp -QT -k3 -l 200M -P33001 -i ~/.aspera/connect/etc/asperaweb_id_dsa.openssh emp_ext@fasp.ebi.ac.uk:archive/10009 ~/Destination/path/10009 <br/>
+            Mac: ./ascp  -QT -k3 -l 200M -P33001 -i "/Users/&lt;replace_your_username_here&gt;/Applications/Aspera Connect.app/Contents/Resources/asperaweb_id_dsa.openssh" emp_ext@fasp.ebi.ac.uk:archive/10009 ~/Destination/path/10009</li>
+        </ul>
+
+        <h3 id="question_TestSet" class="question">Do you have a small data set for testing downloads?</h3>
+        <ul>
+            <li>The 58MB data set "test" is available for this purpose</li>
+            <li>You can use the <a target="_top" href="{{ emdb_global.ebi_empiar }}">web interface</a> or the command line interface (Linux: ascp -QT -l 200M -P33001 -i ~/.aspera/connect/etc/asperaweb_id_dsa.openssh emp_ext@fasp.ebi.ac.uk:archive/test testset)</li>
+        </ul>
+        <h3 id="question_ORCID" class="question">How are ORCIDs used in EMPIAR?</h3>
+        <p><a href="https://orcid.org">ORCID</a> iDs are shown on entry pages for every author that has provided us with such during the deposition process. This allows a quick and easy way to access the list of the author's publications from <a href="https://europepmc.org">Europe PMC</a> search or directly from the author's ORCID profile page.</p>
+        <p>EMPIAR has now integrated ORCID into the deposition system. The user can sign in into the system using their ORCID account. This would automatically populate user profile fields like ORCID iD, first and last names and email. Also, the user can automatically populate the deposition information fields using ORCID sign in with <a href="https://project-thor.eu/">THOR</a> project integration in EMPIAR.</p>
+
+        <h3 id="question_Formats" class="question">What formats does EMPIAR support?</h3>
+        <p>We provide image data in the formats in which they are uploaded. We recommend the use of common formats in the field including MRC, MRCS, TIFF, DM4, IMAGIC, SPIDER, MRC FEI and RAW FEI.</p>
+
+        <h3 id="question_Deposit" class="question">How do I deposit data to EMPIAR?</h3>
+        <p>Use the online <a target="_top" href="https:{{emdb_global.project_root}}/empiar/deposition/">deposition system</a>. Start by checking the <a target="_top" href="https:{{emdb_global.project_root}}/empiar/deposition/manual/">manual</a>.</p>
+
+        <h3 id="question_AccessionCodes" class="question">How do I cite EMPIAR entries?</h3>
+        <p>Please cite the original publication and cite the EMPIAR entry using the guidelines provided <a href="{{emdb_global.project_root}}/empiar/about#accessionCodes">here</a></p>
+
+        <h3 id="question_Cite" class="question">How do I cite EMPIAR?</h3>
+        <p>We recommend that you follow the guidelines provided <a href="{{emdb_global.project_root}}/empiar/about#citing">here</a></p>
+
+        <h3 id="question_Select" class="question">Can I selectively download files and directories for an entry?</h3>
+        <p>Yes, EMPIAR entry pages offer three options - Aspera, download of a tarball via http, and download of individual files via ftp. The file browsers on the EMPIAR entry pages allow you to select files and sub-directories to be
+        downloaded via Aspera or http. Aspera is the recommended option and can be used for any size of download. Please note that the download will be an as-is structure of the selected files and directories and not an archive (tar-ball)!
+        The http download option will create a tarball that can be downloaded. This option only works for tarballs &lt; 1.5GB.
+        You can also download individual files (but not sub-directories) using Ftp (select "Browse Ftp").</p>
+
+        <h3 id="question_Globus" class="question">Can I upload/download data via Globus?</h3>
+        <p>Yes! To download data use <b>endpoint</b>: <c>ebi#pub</c>  and  <b>directory</b>: <c>/pub/databases/empiar/archive/</c>. For instructions on uploading data via Globus, please the <a target="_top" href="https:{{emdb_global.project_root}}/empiar/deposition/manual/">deposition manual</a>.</p>
+
+        <h3 id="question_Troubleshooting" class="question">Having trouble with transferring data?</h3>
+        <p>First make sure that your Firewall does not block Aspera. You might need to modify the rules to accommodate the following:</p>
+        <p>permit TCP outbound to 193.62.197.71 on port 33001</p>
+        <p>permit UDP outbound to 193.62.197.71 on port 33001</p>
+        <p>permit UDP inbound from 193.62.197.71 on port 33001</p>
+        <p>Our web transfer interface has the target rate set to 200 000 Kbps and the policy to adaptive. Similarly, the command line displayed above. In case you are having issues with transferring
+        data, it might help to reduce the target rate.</p>
+        <p>To do so, please use the command line transfer and change the value of '-l' parameter.
+        For example: ascp -QT -l 10M -P33001 -i ~/.aspera/connect/etc/asperaweb_id_dsa.openssh emp_ext@fasp.ebi.ac.uk:archive/test testset</p>
+        <p>Please <a href="mailto:{{emdb_global.empiar_rt_email}}" target="_top">get in touch</a> if the issue persists. If possible, provide us <a href="https://support.asperasoft.com/hc/en-us/articles/216126178-Where-are-the-Connect-logs-located-">Aspera logs</a>.</p>
+
+    </div>
+{% endblock %}

@@ -1,0 +1,138 @@
+/* empiar_login.css
+
+ Authors:
+		Andrii Iudin
+
+ Description:
+ 		css file for the EMPIAR login buttons
+
+ Date:
+		20160225
+
+ Copyright [2013-16] EMBL - European Bioinformatics Institute
+ Licensed under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in
+ compliance with the License. You may obtain a copy of
+ the License at
+ http://www.apache.org/licenses/LICENSE-2.0
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on
+ an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied. See the License for the
+ specific language governing permissions and limitations
+ under the License.
+ 
+ Version history:
+0.1, 2016/02/25: Initial version.
+
+ */
+
+.loginBtnGoogle {
+	background-color: #4285F4;
+	border-color: #4285F4;
+}
+
+.loginBtnFacebook {
+	background-color: #3b5998;
+	border-color: #3b5998;
+}
+
+.loginBtnORCID {
+	background-color: #fff;
+	border-color: #d3d3d3;
+	margin-right: 10px;
+}
+
+span.loginIcon {
+	background-color: transparent;
+	background-size: 30px 30px;
+	background-repeat: no-repeat;
+	display: inline-block;
+	vertical-align: middle;
+	width: 30px;
+	height: 30px;
+}
+
+span.loginButtonText {
+	display: inline-block;
+   	color: #fff;
+   	vertical-align: middle;
+  	font-size: 16px;
+	font-weight: 500;
+	letter-spacing: .21px;
+   	/* Use the Roboto font that is loaded in the <head> */
+  	font-family: 'Roboto', sans-serif;
+}
+
+span.loginButtonTextGoogle {
+	padding-left: 19px;
+   	padding-right: 19px;
+  	font-family: 'Roboto', sans-serif;
+}
+
+span.loginButtonTextFacebook {
+   	padding-left: 8px;
+   	padding-right: 8px;
+  	font-family: 'Lucida Grande', sans-serif;
+}
+
+span.loginButtonTextORCID {
+   	padding-left: 20px;
+   	padding-right: 20px;
+  	color: #999;
+	font-weight: bold;
+}
+
+.linkUnlinkBtn {
+	padding: 0px;
+}
+
+.linkUnlinkBtn>span.loginIcon {
+	vertical-align: unset;
+}
+
+.linkBtn {
+	height: 32px;
+	width: 373px;
+}
+
+.unlinkBtn {
+	width: 373px;
+}
+
+
+span.unlinkBtnTextGoogle {
+    padding-left: 30px;
+    padding-right: 30px;
+	padding-bottom: 20px;
+}
+
+span.linkBtnTextGoogle {
+    padding-left: 39px;
+    padding-right: 39px;
+	padding-bottom: 20px;
+}
+
+span.unlinkBtnTextFacebook {
+    padding-left: 12px;
+    padding-right: 12px;
+	padding-bottom: 20px;
+}
+
+span.linkBtnTextFacebook {
+    padding-left: 22px;
+    padding-right: 22px;
+	padding-bottom: 20px;
+}
+
+span.unlinkBtnTextORCID {
+    padding-left: 27px;
+    padding-right: 27px;
+	padding-bottom: 20px;
+}
+
+span.linkBtnTextORCID {
+    padding-left: 38px;
+    padding-right: 38px;
+	padding-bottom: 20px;
+}

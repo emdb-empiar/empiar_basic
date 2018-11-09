@@ -2,14 +2,14 @@
  * A small plugin for getting the CSV of a categorized chart
  */
 (function (Highcharts) {
-    
-    
+
+
     var each = Highcharts.each;
     Highcharts.Chart.prototype.getCSV = function () {
         var columns = [],
             line,
             tempLine,
-            csv = "", 
+            csv = "",
             row,
             col,
             options = (this.options.exporting || {}).csv || {},
@@ -19,7 +19,7 @@
             itemDelimiter = options.itemDelimiter || ',', // use ';' for direct import to Excel
             lineDelimiter = options.lineDelimeter || '\n';
 
-        each (this.series, function (series) {
+        each(this.series, function (series) {
             if (series.options.includeInCSVExport !== false) {
                 if (series.xAxis) {
                     var xData = series.xData.slice(),
@@ -64,9 +64,17 @@
         Highcharts.getOptions().exporting.buttons.contextButton.menuItems.push({
             text: Highcharts.getOptions().lang.downloadCSV || "Download CSV",
             onclick: function () {
-                Highcharts.post('http://www.highcharts.com/studies/csv-export/csv.php', {
-                    csv: this.getCSV()
-                });
+                var csv = this.getCSV();
+                var downloadAnchor = document.createElement("a");
+                document.body.appendChild(downloadAnchor);
+                downloadAnchor.style = "display: none";
+                var blob = new Blob([csv], {type: "octet/stream"});
+                var url = window.URL.createObjectURL(blob);
+                downloadAnchor.href = url;
+                downloadAnchor.download = 'chart.csv';
+                downloadAnchor.click();
+                window.URL.revokeObjectURL(url);
+                downloadAnchor.remove();
             }
         });
     }

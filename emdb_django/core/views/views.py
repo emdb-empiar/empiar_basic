@@ -28,15 +28,17 @@ __author__ = 'Ardan Patwardhan, Andrii Iudin'
 __email__ = 'ardan@ebi.ac.uk'
 __date__ = '2012-10-30'
 
-from django.shortcuts import render_to_response
-from django.template import RequestContext
-from settings import EMDBGlobal
+from django.shortcuts import render
+from settings import EMDBGlobal, RATE_LIMIT, BURST_RATE_LIMIT
+from ratelimit.decorators import ratelimit
 
 
+@ratelimit(key='ip', rate=RATE_LIMIT, block=True)
+@ratelimit(key='ip', rate=BURST_RATE_LIMIT, block=True)
 def show_page(request, template_name):
     """
     Render page given by template_name
     @param request: http request object
     @param template_name: dynamic html file to render
     """
-    return render_to_response(template_name, {'emdb_global': EMDBGlobal}, context_instance=RequestContext(request))
+    return render(request, template_name, {'emdb_global': EMDBGlobal})

@@ -36,14 +36,14 @@ Version history
 		    last-response="{{data}}"></iron-ajax>
 		<template is="dom-if" if="{{data}}">
 
-			<div class="shortcuts clearfix">
-	            <h3 class="pane-title">EMPIAR citations</h3>
+			<div class="padding-top-xlarge">
+	            <h4 class="menu-title">EMPIAR citations</h4>
 
-				<div class="pdbe_quick_related_reviews pane-content">
+				<div>
 					<template is="dom-repeat" items="{{data}}">
 
-						<section class="grid_24 omega" style="margin-bottom: 9px;">
-							<div class="prefix_1">
+						<section style="margin-bottom: 9px;">
+							<div>
 			                    <a href="http://europepmc.org/abstract/MED/{{ item.pmid }}" class="ext title">{{ item.title }}</a>
 			                    <div>{{ item.author_string }} ({{ item.pub_year }})</div>
 							</div>

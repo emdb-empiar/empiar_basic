@@ -1,0 +1,641 @@
+/* empiar_da.css
+
+ Authors:
+		Andrii Iudin
+
+ Description:
+ 		css file for the EMPIAR deposition and annotation 
+ 		system
+
+ Date:
+		20160606
+
+ Copyright [2013-16] EMBL - European Bioinformatics Institute
+ Licensed under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in
+ compliance with the License. You may obtain a copy of
+ the License at
+ http://www.apache.org/licenses/LICENSE-2.0
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on
+ an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied. See the License for the
+ specific language governing permissions and limitations
+ under the License.
+ 
+ Version history:
+0.1, 2016/06/06: Separated the deposition-related styles.
+
+ */
+
+body {
+    max-width: 100% !important;
+}
+
+#populate_forms_from_prev {
+	margin-top: 20px;
+	margin-bottom: 10px;
+}
+
+select {
+	max-width: 100%;
+	text-overflow: ellipsis;
+}
+
+select option {
+	max-width: 100%;
+	text-overflow: ellipsis;
+}
+
+select#empiar_deposition_part_select {
+	max-width: 20%;
+	text-overflow: ellipsis;
+}
+
+select#empiar_deposition_fill_select {
+	max-width: 50%;
+	text-overflow: ellipsis;
+}
+
+table.empiarDepositionTable>tbody>tr>td>input[type=text], table.empiarDepositionTable>tbody>tr>td>input[type=email], table.empiarDepositionTable>tbody>tr>td>input[type=password], table.empiarDepositionTable>tbody>tr>td>textarea, table.empiarDepositionTable>tbody>tr>td>select {
+	width: 100%;
+	margin:-3px;
+	border:2px inset #eee;
+}
+
+table.empiarDepositionTable>tbody>tr>td>span.copyable_tooltip.icon-generic::before {
+	color: #000;
+}
+
+table.empiarDepositionTable>tbody>tr>th {
+	vertical-align: top;
+}
+
+table.empiarDepositionTable>tbody>tr>th>label {
+	padding-top: 8px;
+}
+
+.empiarDepositionElement {
+	padding-bottom: 4%;
+}
+
+.empiarCitationElement {
+	border: 5px solid #f1f1f1;
+	padding-bottom: 2%;
+}
+
+.empiar_citation_formset_form {
+	padding-bottom: 2%;
+}
+
+.errorlist,.empiarDepositionWarning {
+	color: red;
+}
+
+.errorlist:empty {
+	display: none;
+}
+
+.empiarRightsSelection {
+	display: none;
+	margin-left: 10px;
+}
+
+.empiar_form_separation {
+	margin-top: 20px;
+}
+
+tr.empiarMandatoryField, table tbody tr:nth-child(2n).empiarMandatoryField {
+	background-color: #ffa50066;
+}
+
+.empiarAuthorMandatoryField, a.empiarAuthorMandatoryField:hover, a.empiarAuthorMandatoryField:focus, a.empiarAuthorMandatoryField:active, .empiarDepositionTable>tbody>tr>th>label>a {
+	border-bottom-style: none;
+	color: #000;
+}
+
+i.empiarFormSavedAndValid:before, i.empiarFormInvalid:before, i.empiarFormNoData:before, i.empiarFormPended:before {
+    content: "";
+    display: block;
+    width: 13px;
+    height: 13px;
+    float: left;
+    position: relative;
+    bottom: 2px;
+}
+
+i.empiarFormSavedAndValid:before {
+    background: url('../images/form_has_been_filled_and_validated.png') no-repeat;
+}
+
+i.empiarFormInvalid:before {
+    background: url('../images/form_has_invalid_data.png') no-repeat;
+}
+
+i.empiarFormNoData:before {
+    background: url('../images/form_has_not_been_opened.png') center center no-repeat;
+}
+
+i.empiarFormPended:before {
+    background: url('../images/form_has_some_data.png') no-repeat;
+}
+
+.empiarDepositionMenuGroup>li>a {
+	border-bottom-style: none;
+}
+
+ul.empiarDepositionMenu {
+	margin: 0 0 0;
+}
+
+#empiarDepositionImage {
+	border: 2px solid #8A8A8A;
+	width: 95%;
+	margin: 0px auto;
+	/* display: none; */
+}
+
+#empiarDepositionImage iframe {
+	display: block;
+	width: 100%;
+	height: 300px;
+	
+}
+
+.empiarWarning {
+	color: red;
+	font-size: 2em;
+	margin: 0 0 2em;
+}
+
+.empiarReleaseError {
+	color: red;
+}
+
+.helptext{
+	color: #4e7713;
+}
+
+.initially_hidden_el {
+	display: none;
+}
+
+#content-main div#locking_notification, .locking_notification {
+    border: 2px solid #f00;
+    padding: 5px;
+    /* background: #fee; */
+    /* font-weight: bold; */
+    display: none;
+	/* width: 510px; */
+}
+
+div.locking_notification {
+    display: inline-block;
+}
+
+.help-tip{
+    position: relative;
+    cursor: default;
+    margin: 0 5px 0 5px;
+}
+
+.help-tip:before{
+
+}
+
+.help-tip:hover p{
+    display:block;
+    transform-origin: 100% 0%;
+
+    -webkit-animation: fadeIn 0.3s ease-in-out;
+    animation: fadeIn 0.3s ease-in-out;
+
+}
+
+.help-tip p{	/* The tooltip */
+    display: none;
+    text-align: left;
+    background-color: #d8e5d8;
+    padding: 10px;
+    position: absolute;
+    border-radius: 3px;
+    box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+    right: -8px;
+    top: 26px;
+    color: black;
+    font-size: 13px;
+    line-height: 1.4;
+    z-index: 99999;
+    width: 300px;
+}
+
+.help-tip.left-help p {
+    right: -4px;
+    top: 22px;
+}
+
+.ui-tooltip-content, div.ui-tooltip, div.ui-tooltip-content {
+	background: #d8e5d8 none repeat scroll 0 0;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 100%;
+    text-align: left;
+    text-decoration: none;
+    text-indent: 0;
+}
+
+.text_tooltip {
+	background-color: antiquewhite;
+}
+
+.help-tip p:before{ /* The pointer of the tooltip */
+    position: absolute;
+    content: '';
+    width:0;
+    height: 0;
+    border:6px solid transparent;
+    border-bottom-color:#1E2021;
+    right:10px;
+    top:-12px;
+}
+
+.help-tip p:after{ /* Prevents the tooltip from being hidden */
+    width:100%;
+    height:40px;
+    content:'';
+    position: absolute;
+    top:-40px;
+    left:0;
+}
+
+/* CSS animation */
+
+@-webkit-keyframes fadeIn {
+    0% { 
+        opacity:0; 
+        transform: scale(0.6);
+    }
+
+    100% {
+        opacity:100%;
+        transform: scale(1);
+    }
+}
+
+@keyframes fadeIn {
+    0% { opacity:0; }
+    100% { opacity:100%; }
+}
+
+.dataTables_wrapper {
+	width:100%;
+}
+
+.annotation_tbr_warning {
+ 	background: none;
+}
+
+#releaseMonitor {
+	border: 2px solid;
+    padding: 5px;
+    font-weight: bold;
+    color: black;
+    word-wrap: break-word;
+}
+
+figcaption {
+	padding-left: 9px;
+	padding-bottom: 18px;
+}
+
+figure>img {
+	padding-left: 9px;
+}
+
+figure>img.small_manual_image {
+	width: 250px;
+}
+
+figure>img.medium_manual_image {
+	width: 450px;
+}
+
+figure>img.large_manual_image {
+	width: 800px;
+}
+
+#toc ul ul, .toc ul ul {
+	margin: 0 0 0 2em;
+}
+
+figure>img {
+   padding:1px;
+   border:1px solid #021a40;
+}
+
+figure>figcaption {
+  font-style: italic;
+  text-indent: 0;
+}
+
+td.wordBreakColum {
+	word-break: break-all;
+}
+
+.scroll_pub_list {
+	height: 400px;
+	overflow-x: hidden;
+	overflow-y: scroll;
+	list-style-type:none
+}
+
+.scroll_pub_list>li>div {
+	padding-top: 7px;
+	padding-bottom: 10px;
+}
+
+.scroll_pub_list>li {
+	border-top: 1px solid rgba(15, 70, 100, 0.12);
+}
+
+.doi_logo {
+	width: 24px;
+	margin: 0;
+}
+
+.europepmc_logo {
+	width:16px;
+	height:16px;
+}
+
+.all_citations {
+	float: right;
+	white-space: nowrap;
+	padding-right: 4px;
+}
+
+.thorOrcidCopy>label>a, .thorOrcidCopy>label>a:visited {
+	border-bottom-style: none;
+}
+
+.thorOrcidCopy>label>a>img {
+	width: 15px;
+	height: 15 px;
+}
+
+li>img.keyboard_key {
+	height: 30px;
+}
+
+table.empiarDepositionTable>tbody>tr>td>span>input, table.empiarDepositionTable>tbody>tr>td>span>textarea, table.empiarDepositionTable>tbody>tr>td>span>select {
+	width: 100%;
+	box-sizing: border-box;
+	border: 2px inset #eee;
+}
+
+table.empiarDepositionTable>tbody>tr>td>br {
+	display: none;
+}
+
+table.empiarDepositionTable>tbody>tr>td {
+	width: 100%;
+}
+
+.flexible_span {
+	overflow: hidden;
+	left: -5px;
+	position: relative;
+}
+
+@media screen and (min-width: 50em) {
+	.flexible_span {
+		display: block;
+	}
+	table.empiarDepositionTable>tbody>tr>td>.help-tip {
+		float: right;
+	}
+
+	table.empiarDepositionTable>tbody>tr>td>button {
+		float: right;
+		margin-top: 5px;
+	}
+}
+
+@media screen and (min-width: 0em) and (max-width: 50em) {
+	.help-tip p::before {
+        right: 87px;
+    }
+
+    span[data-icon="?"].help-tip p {
+		top: 22px;
+    }
+
+	body div#jkit-lightbox-content {
+		top: 10% !important;
+		height: 80% !important;
+		width: 70% !important;
+		left: 15% !important;
+	}
+}
+
+input[readonly]
+{
+    background-color: LightGray;
+}
+
+body div#jkit-lightbox-content {
+	top: 25%;
+	height: 40%;
+	width: 40%;
+	left: 30%;
+}
+
+.line_with_table {
+	padding: 0 18px;
+	margin: 0 0 20px;
+}
+
+html.fontface h4.icon-functional::before {
+	color: black;
+}
+
+table.empiarDepositionTable > tbody > tr > td > input.choice_other_other {
+	border-bottom-color: black;
+    border-right-color: black;
+    margin-top: 10px;
+}
+
+.dialog-success>.ui-dialog-titlebar.ui-corner-all.ui-widget-header.ui-helper-clearfix.ui-draggable-handle {
+	background: green
+}
+
+.ui-widget-header {
+	color: white;
+}
+
+.empiar-tabs li.ui-state-active, .empiar-tabs .ui-widget-content .ui-state-active, .empiar-tabs .ui-widget-header .ui-state-active, .empiar-tabs a.ui-button:active, .empiar-tabs .ui-button:active, .empiar-tabs .ui-button.ui-state-active:hover {
+	background: white;
+}
+
+.upload_verification_button {
+	display: inline-block;
+	width: auto;
+	box-shadow: 1px 1px 1px grey;
+	white-space: nowrap;
+	height: 32px;
+    margin: 20px 0 20px;
+	background-color: darkslateblue;
+	background-image: none;
+	border: 0px;
+    color: white;
+    font-family: verdana;
+    font-weight: 500;
+    line-height: 1.538;
+    padding: 0 19px;
+    position: relative;
+    text-align: center;
+    letter-spacing: .21px;
+    font-size: 14px;
+}
+
+a.upload_verification_button:link, a.upload_verification_button:hover, a.upload_verification_button:visited, a.upload_verification_button:active, a.upload_verification_button:focus {
+	font-size: 21px;
+	color: white;
+}
+
+input[type="submit"]:disabled, button:disabled {
+    background: #dddddd;
+	cursor: default;
+}
+
+pre.code_snippet {
+	padding: 5px;
+}
+
+span.help-submit {
+	margin: 0px;
+}
+
+.help-submit p {
+	right: -234px;
+	top: 29px;
+	width: 370px;
+}
+
+.help-submit p::before {
+	right: 294px;
+}
+
+@media screen and (min-width: 0em) and (max-width: 72em) {
+    .help-tip.left-help p::before {
+        right: 92px;
+    }
+
+    .help-tip.left-help p {
+        right: -85px;
+        width: 100px;
+    }
+
+	.normal-whitespace {
+		white-space: normal;
+	}
+}
+
+.inputfile {
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+}
+
+
+table tbody tr th {
+	width: 18%;
+}
+
+button {
+	width: auto;
+}
+
+@media screen and (min-width: 50em) {
+	span[data-icon="?"].help-tip {
+		padding-top: 8px;
+	}
+
+	span[data-icon="?"].help-tip p {
+		top: 32px;
+	}
+}
+
+.na_button {
+	background-color: gray;
+}
+
+select:-moz-focusring {
+    color: transparent;
+    text-shadow: 0 0 0 #000;
+}
+
+input[value*="Remove"] {
+	background-color: #d4503a;
+	margin-bottom: 40px;
+}
+
+.ui-dialog-titlebar-close {
+	left: auto;
+}
+
+.top-anchor {
+    position: relative;
+    top: -35px;
+    display: block;
+    height: 0;
+    width: 0;
+}
+
+@media screen and (min-width: 10em) and (max-width: 91em) {
+    table#empiarTable1.no-footer {
+		overflow-x: scroll;
+	}
+}
+
+@media screen and (min-width: 76em) {
+    table#empiarTable2.no-footer {
+		overflow-x: hidden;
+	}
+}
+
+@media screen and (min-width: 78.5em) {
+    table#empiarTable3.no-footer {
+		overflow-x: hidden;
+	}
+}
+
+@media screen and (min-width: 10em) and (max-width: 84.5em) {
+    table#empiarTable4.no-footer {
+		overflow-x: scroll;
+	}
+}
+
+@media screen and (min-width: 10em) and (max-width: 80em) {
+    table.empiarTable.no-footer {
+		overflow-x: scroll;
+	}
+}
+
+.ui-widget-content a:hover,
+.ui-widget-content a:focus,
+.ui-widget-content a:active {
+  color: rgb(0,124,130);
+}
+
+.ui-tabs-anchor:focus {
+	box-shadow: none;
+}
+
+.release_text_field {
+	width: auto;
+	display: inline;
+}

@@ -1,75 +1,60 @@
-{% extends "base_empiar.html" %} 
+{% extends "base_empiar_foundation.html" %}
 
 {% block title %} 
-EMPIAR - Electron Microscopy Public Image Archive
+    EMPIAR - Electron Microscopy Public Image Archive
 {% endblock %} 
 
 {% block description %}
-This page provides background information about the EMPIAR archive. EMPIAR is an archive for 2D image data related to EMDB. It includes micrographs, particle sets and tilt-series.
-{% endblock %}
-
-
-{% block codeHeader %}
-<link rel="stylesheet" type="text/css" href="{{emdb_global.static_empiar_path}}/empiar.css">
+    This page provides background information about the EMPIAR archive. EMPIAR is an archive for 2D image data related to EMDB. It includes micrographs, particle sets and tilt-series.
 {% endblock %}
 
 {% block contentHeading %}
-About EMPIAR
+    About EMPIAR
 {% endblock %}
 
-{% block contentIntroTitle %} 
-{% endblock %}
+{% block noContentIntroTitle %}{% endblock %}
 
 {% block contentIntro %} 
-EMPIAR, the Electron Microscopy Public Image Archive, is a public resource for raw, 2D electron microscopy images. Here, you can browse, upload, download and reprocess the thousands of raw, 2D images used to build a 3D structure.
-<br/><br/>
-The purpose of EMPIAR is to provide an easy access to the state-of-the-art raw data to facilitate methods development and validation, which will lead to better 3D structures. It complements the Electron Microscopy Data Bank (EMDB), where 3D images are stored, and uses the fault-tolerant Aspera platform for data transfers.
-EMPIAR is based on input from the EM community, notably at two key workshops organized by the Protein Data Bank in Europe (<a href="{{ emdb_global.pdbe_short }}" target="_blank">PDBe</a>) and the Open Microscopy Environment (<a href="https://www.openmicroscopy.org/" target="_blank">OME</a>) - "Data Management Challenges in Three-dimensional EM" (<a target="_blank" href="http://dx.doi.org/10.1038/nsmb.2426">Patwardhan <i>et al.</i>, <i>Nat. Struct. Mol. Biol.</i> <b>19</b>, 1203-1207 (2012)</a>) and  
-"A 3D Cellular Context for the  Macromolecular World" (<a target="_blank" href="http://dx.doi.org/10.1038/nsmb.2897">Patwardhan <i>et al.</i>, <i>Nat. Struct. Mol. Biol.</i> <b>21</b>, 841-845 (2014)</a>).
-<br/>
+    EMPIAR, the Electron Microscopy Public Image Archive, is a public resource for raw electron microscopy images. Here, you can browse, upload and download the raw images used to build a 3D structure.
+    <br/><br/>
+    The purpose of EMPIAR is to provide easy access to state-of-the-art raw data to facilitate methods development and validation, which will lead to better 3D structures. It complements the Electron Microscopy Data Bank (EMDB), where 3D volumes are stored, and uses the fault-tolerant Aspera platform for data transfers.
+    EMPIAR is based on input from the EM community, notably at two workshops organized by EMBL-EBI and the Open Microscopy Environment (<a href="https://openmicroscopy.org/" target="_blank">OME</a>) - "Data Management Challenges in Three-dimensional EM" (<a target="_blank" href="https://dx.doi.org/10.1038/nsmb.2426">Patwardhan <i>et al.</i>, <i>Nat. Struct. Mol. Biol.</i> <b>19</b>, 1203-1207 (2012)</a>) and
+    "A 3D Cellular Context for the  Macromolecular World" (<a target="_blank" href="https://dx.doi.org/10.1038/nsmb.2897">Patwardhan <i>et al.</i>, <i>Nat. Struct. Mol. Biol.</i> <b>21</b>, 841-845 (2014)</a>).
+    <br/>
 {% endblock %}
 
 {% block content %}
-<div class="empiarAbout">
-<h3 id="accessionCodes">EMPIAR accession codes</h3>
-<div>
-Accession codes for EMPIAR entries have the format: EMPIAR-#####, e.g., EMPIAR-10009. Please use the accession code in this format when citing EMPIAR entries; your support in maintaining consistency will greatly aid discoverability of entries on the web and in full-text articles.
-</div>
-<h3 id="doi">EMPIAR DOI</h3>
-<div>
-Individual EMPIAR entries have DOI assigned that link to the corresponding entry page. These DOI have the following format: <br> http://dx.doi.org/10.6019/EMPIAR-#####, e.g., <a target="_top" href="http://dx.doi.org/10.6019/EMPIAR-10016">http://dx.doi.org/10.6019/EMPIAR-10016</a>.
-</div>
-<h3 id="citing">Citing EMPIAR</h3>
-<div>
-Please cite the following paper in papers and on websites:  A. Iudin, P.K. Korir, J. Salavert-Torres, G.J. Kleywegt & A. Patwardhan. 
-"EMPIAR: A public archive for raw electron microscopy image data." Nature Methods 13 (2016). <a target="_top" href="http://dx.doi.org/10.1038/nmeth.3806">http://dx.doi.org/10.1038/nmeth.3806</a>.
+    <div class="empiarAbout">
+        <h3 id="accessionCodes">EMPIAR accession codes</h3>
+        <div>
+            Accession codes for EMPIAR entries have the format: EMPIAR-#####, e.g., EMPIAR-10009. Please use the accession code in this format when citing EMPIAR entries; your support in maintaining consistency will greatly aid discoverability of entries on the web and in full-text articles.
+        </div>
+        <h3 id="doi">EMPIAR DOI</h3>
+        <div>
+        Individual EMPIAR entries have a DOI assigned that links to the corresponding entry page. These DOIs have the following format: <br> https://dx.doi.org/10.6019/EMPIAR-#####, e.g., <a target="_top" href="https://dx.doi.org/10.6019/EMPIAR-10016">https://dx.doi.org/10.6019/EMPIAR-10016</a>.
+        </div>
+        <h3 id="citing">Citing EMPIAR</h3>
+        <div>
+        Please cite the following publication in your papers and on websites:  A. Iudin, P.K. Korir, J. Salavert-Torres, G.J. Kleywegt & A. Patwardhan.
+        "EMPIAR: A public archive for raw electron microscopy image data." Nature Methods 13 (2016). <a target="_top" href="https://dx.doi.org/10.1038/nmeth.3806">https://dx.doi.org/10.1038/nmeth.3806</a>.
 
-See also the EMBL-EBI press releases of 21 March 2016 <a target="_top" href="http://www.ebi.ac.uk/about/news/press-releases/supporting-bioimaging-revolution">here</a> 
-and <a target="_top" href="http://www.ebi.ac.uk/pdbe/about/news/empiar-supports-method-year">here</a>.
+        See also the EMBL-EBI press releases of 21 March 2016 <a target="_top" href="https://www.ebi.ac.uk/about/news/press-releases/supporting-bioimaging-revolution">here</a>
+        and <a target="_top" href="https://www.ebi.ac.uk/pdbe/about/news/empiar-supports-method-year">here</a>.
 
-To cite individual entries, please quote the EMPIAR accession code (see above - you can also use the DOI to provide a direct link to the entry) and cite the original publication.
-</div>
-<h3>Funding</h3>
-<div style="">
-	<div style="width:400px">The work on EMPIAR is funded by a project grant
-	awarded to PDBe by <a href="http://www.mrc.ac.uk" target="_blank">MRC</a> and <a href="http://www.bbsrc.ac.uk" target="_blank">BBSRC</a>. 
-	It further benefits from funding from the <a href="http://www.wellcome.ac.uk/" target="_blank">Wellcome Trust</a> and <a href="http://www.ebi.ac.uk" target="_blank">EMBL-EBI</a> to PDBe.
-	</div>
-	<div style="position:relative; top:-45px;left:420px">
-		<a href="http://www.mrc.ac.uk" target="_blank"><img style="height:40px" src="{{emdb_global.static_rel_path}}/images/mrc.gif" alt="MRC"  height="40" /></a>
-		<a href="http://www.bbsrc.ac.uk" target="_blank"><img style="height:40px" src="{{emdb_global.static_rel_path}}/images/bbsrc.gif" alt="BBSRC"  height="40" /></a>
-	</div>
-</div>
-</div>
-
+        To cite individual entries, please quote the EMPIAR accession code (see above, in addition, you can also use the DOI to provide a direct link to the entry) and cite the original publication.
+        </div>
+        <h3>Funding</h3>
+        <div>
+            <div class="large-8 columns"><div class="row">The work on EMPIAR is funded by a project grant
+            awarded to <a href="https://www.ebi.ac.uk" target="_blank">EMBL-EBI</a> by <a href="https://mrc.ac.uk" target="_blank">MRC</a> and <a href="https://bbsrc.ac.uk" target="_blank">BBSRC</a>.
+            It further benefits from funding from the <a href="https://wellcome.ac.uk/" target="_blank">Wellcome Trust</a> and <a href="https://www.ebi.ac.uk" target="_blank">EMBL-EBI</a>.
+            </div></div>
+            <div class="large-4 columns">
+                <div class="row">
+                    <a href="https://mrc.ac.uk" target="_blank"><img style="height:40px" src="{{emdb_global.static_rel_path}}/images/mrc.gif" alt="MRC"  height="40" /></a>
+                    <a href="https://bbsrc.ac.uk" target="_blank"><img style="height:40px" src="{{emdb_global.static_rel_path}}/images/bbsrc.gif" alt="BBSRC"  height="40" /></a>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
-
-{% block codeBody %}
-<script type="text/javascript" src="{{emdb_global.jquery}}"></script>
-<script type="text/javascript">
-$(document).ready(function () {
-	navbarSetActive("navbar_about");
-});
-</script>
-
-{% endblock %}	                                                     

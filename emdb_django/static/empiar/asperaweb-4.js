@@ -1,6 +1,6 @@
 /*
-* Revision: 3.7.1.139678
-* Revision date: 02/22/2017
+* Revision: 3.7.4.146696
+* Revision date: 08/08/2017
 *
 * http://www.asperasoft.com/
 *
@@ -32,13 +32,18 @@ AW4.Utils = (function() {
     // MIT License | (c) Dustin Diaz 2014
     ////////////////////////////////////////////////////////////////////////////
     ua = typeof navigator !== 'undefined' ? navigator.userAgent : '',
-
+    check_firefox = function(ua,minver) {
+      var match = ua.match(/(?:firefox|iceweasel|fxios)[ \/](\d+(\.\d+)?)/i);
+      var ver = parseInt((match && match.length > 1 && match[1] || "0"));
+      return (ver < minver);
+    } ,
     /**
      * AW4.Utils.OS -> Object
      *
      * Contains the current OS (based on user agent):
      *
      * 1. `AW4.Utils.OS.MAC_LEGACY` (`Boolean`)
+     * 2. `AW4.Utils.OS.LINUX` (`Boolean`)
      **/
     OS = {
       MAC_LEGACY: ua.indexOf("Intel Mac OS X 10_6") != -1,
@@ -56,7 +61,9 @@ AW4.Utils = (function() {
      * 4. `AW4.Utils.BROWSER.FIREFOX` (`Boolean`)
      * 5. `AW4.Utils.BROWSER.FIREFOX_32` (`Boolean`)
      * 6. `AW4.Utils.BROWSER.FIREFOX_64` (`Boolean`)
-     * 7. `AW4.Utils.BROWSER.SAFARI` (`Boolean`)
+     * 7. `AW4.Utils.BROWSER.FIREFOX_LINUX_NPAPI` (`Boolean`)
+     * 8. `AW4.Utils.BROWSER.EDGE` (`Boolean`)
+     * 9. `AW4.Utils.BROWSER.SAFARI` (`Boolean`)
      **/
     BROWSER = {
       OPERA: /opera|opr/i.test(ua) && !/edge/i.test(ua),
@@ -65,6 +72,8 @@ AW4.Utils = (function() {
       FIREFOX: /firefox|iceweasel/i.test(ua) && !/edge/i.test(ua),
       FIREFOX_32: /firefox|iceweasel/i.test(ua) && !/Win64/i.test(ua) && !/edge/i.test(ua),
       FIREFOX_64: /firefox|iceweasel/i.test(ua) && /Win64/i.test(ua) && !/edge/i.test(ua),
+      FIREFOX_LINUX_NPAPI: /firefox|iceweasel/i.test(ua) && !/Win64/i.test(ua) && 
+        !/edge/i.test(ua) && check_firefox (ua,52),
       EDGE: /edge/i.test(ua),
       SAFARI: /safari/i.test(ua) && !/chrome|crios|crmo/i.test(ua) && !/edge/i.test(ua)
     };
@@ -367,7 +376,7 @@ AW4.NPAPIrequestImplementation = function() {
    * @return {bool} True if the browser supports the aspera NPAPI plugin.
    */
   function isSupportedByBrowser() {
-    if (AW4.Utils.BROWSER.IE || AW4.Utils.BROWSER.SAFARI) {
+    if (AW4.Utils.BROWSER.IE || AW4.Utils.BROWSER.SAFARI || AW4.Utils.BROWSER.FIREFOX_LINUX_NPAPI ) {
       return true;
     }
     return false;

@@ -90,20 +90,6 @@ STATICFILES_FINDERS = (
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'ii-5a0r=u1q@219@$g+tcqil(!w-54wj)x=_$krsd1ua@!8skk'
 
-# List of callables that know how to import templates from various sources.
-TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
-)
-
-MIDDLEWARE_CLASSES = (
-    'django.middleware.common.CommonMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-)
-
 ROOT_URLCONF = 'urls'
 
 TEMPLATE_DIRS = (
@@ -124,6 +110,33 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.messages.context_processors.messages',
 )
 
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [
+            os.path.join(os.path.dirname(__file__), 'templates').replace('\\', '/'),
+            os.path.join(os.path.dirname(__file__), 'core', 'templates').replace('\\', '/'),
+            os.path.join(os.path.dirname(__file__), 'empiar', 'templates').replace('\\', '/'),
+
+        ],
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.i18n',
+                'django.template.context_processors.media',
+                'django.template.context_processors.static',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+            'loaders': [
+                'django.template.loaders.filesystem.Loader',
+                'django.template.loaders.app_directories.Loader',
+            ]
+        },
+    }
+]
+
 # List of test users' emails that should not be displayed in rights granting menu
 TESTUSER_LIST = []
 
@@ -138,6 +151,7 @@ INSTALLED_APPS = (
     'sslserver',
 )
 
+LOCAL_HOSTS = ()
 
 ALLOWED_HOSTS = [
     '127.0.0.1',
@@ -172,6 +186,9 @@ LOGGING = {
     }
 }
 
+# Values for IP-specific throttling using django-ratelimit package
+RATE_LIMIT = '24000/h'
+BURST_RATE_LIMIT = '5000/m'
 
 class EMDBGlobal:
     """
@@ -245,6 +262,7 @@ class EMDBGlobal:
     jquery_dir = os.path.join(static_rel_path, 'inc/jquery')
     jquery = os.path.join(jquery_dir, 'jquery-1.11.1.min.js')
     jquery_datatables = os.path.join(jquery_dir, 'extlib', 'DataTables-1.10.1', 'media/js/jquery.dataTables.min.js')
+    jquery_extlib = os.path.join(jquery_dir, 'extlib')
 
     # EMPIAR settings
     # *_dir is for FTP access, *_path* - for NFS access, *_dep - a separate set of variables for Deposition/Annotation
@@ -293,3 +311,14 @@ class EMDBGlobal:
     empiar_api_doc_url = 'https://www.ebi.ac.uk/pdbe/emdb/empiar/api/documentation/'
     empiar_api_url = 'https://www.ebi.ac.uk/pdbe/emdb/empiar/api/'
     empiar_api_entry_url = os.path.join(empiar_api_url, 'entry/')
+
+    aspera_token_username = ''
+    aspera_token_password = ''
+    aspera_token_url = ''
+    aspera_upload_server = ''
+    aspera_download_authentication = ''
+    apsera_target_rate_kbps = 200000
+    aspera_rate_policy = ''
+    aspera_cipher = ''
+    aspera_download_connect_path = ''
+    aspera_upload_directory_prefix = ''

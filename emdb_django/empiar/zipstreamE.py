@@ -1,8 +1,10 @@
 #!/usr/bin/env python
-import zipfile
 import os
 import struct
 import time
+import zipfile
+
+from builtins import range
 
 __all__ = ("ZipStream",)
 
@@ -63,7 +65,7 @@ class ZipStream(object):
                'flag_bits': 0b00001000,  # flag about using data descriptor is always on
                'volume': 0,
                'internal_attr': 0,
-               'external_attr': (file_stats[0] & 0xFFFF) << 16L,
+               'external_attr': (file_stats[0] & 0xFFFF) << 16,
                'crc': 0,  # will be calculated during data streaming
                "offset": 0,  # file header offset in zip file
                }
@@ -107,8 +109,9 @@ class ZipStream(object):
             self.__files[idx]['version_needed'] = max(ZIP64_VERSION, self.__files[idx]['version_needed'])
             self.__files[idx]['create_version'] = max(ZIP64_VERSION, self.__files[idx]['version_needed'])
 
-        # ZIP requires the file header to have two bytes assigned for the version number, but since it
-        # fits into a single byte (0x14 = 20), then we store an empty byte beside it
+        # ZIP requires the file header to have two bytes assigned for the version number, but since it fits into a
+        # single byte (0x14 = 20), then
+        # we store an empty byte beside it
         empty_byte = 0
         header = struct.pack(LF_STRUCT, LF_MAGIC, self.__files[idx]['version_needed'], empty_byte,
                              self.__files[idx]['flag_bits'],
@@ -176,12 +179,11 @@ class ZipStream(object):
                     b'<HH' + b'Q' * len(extra_info),
                     1, 8 * len(extra_info), *extra_info) + extra_central_directory
 
-                version_needed = max(ZIP64_VERSION, zipped_file['version_needed'])
                 create_version = max(ZIP64_VERSION, zipped_file['create_version'])
             else:
-                version_needed = zipped_file['version_needed']
                 create_version = zipped_file['create_version']
 
+            version_needed = 0
             disk_num_start = 0
             central_dir_header = struct.pack(CDLF_STRUCT, CDFH_MAGIC, create_version, zipped_file['create_system'],
                                              version_needed, version_needed,
@@ -218,7 +220,7 @@ class ZipStream(object):
             # Version needed       : 45 (0x2d)
             # NumDisk              : 0 (0x0)
             # NumDiskWithThisCD    : 0 (0x0)
-            # Entires in this disk : cd_entries (0x2)
+            # Entries in this disk : cd_entries (0x2)
             zip64cd_end_rec = struct.pack(CD_END_STRUCT64, CD_END_MAGIC64, 44, ZIP64_VERSION, ZIP64_VERSION, 0, 0,
                                           cd_entries, cd_entries,
                                           cd_end_offset - cd_head_offset, cd_head_offset)
@@ -274,7 +276,7 @@ class ZipStream(object):
 
     # Stream archive
     def stream(self):
-        for idx in xrange(0, len(self.__files)):
+        for idx in range(len(self.__files)):
             for data in self.stream_single_file(idx):
                 yield data
 

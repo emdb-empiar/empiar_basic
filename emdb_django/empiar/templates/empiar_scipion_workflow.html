@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Scipion workflow viewer</title>
+    <!-- Bootstrap css for grid layout -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+    <!-- External references to include Scipion workflow viewer-->
+    <script src="{{ emdb_global.static_empiar_path }}/web-workflow-viewer/js/webcomponents/webcomponents-loader.js"></script>
+    <link rel="import" href="{{ emdb_global.static_empiar_path }}/web-workflow-viewer/scipion-workflow.html">
+    <!---->
+</head>
+<body style="overflow: hidden">
+        <h1>Scipion workflow viewer - EMPIAR-{{ entryName }}</h1>
+        <div class="row">
+            <div class="col-sm8">
+                <scipion-workflow src="{{emdb_global.project_root}}/empiar/entry/{{ entryName }}/scipion_workflow_json/{{ filepath }}" fullWindow height="600px" width="600px"></scipion-workflow>
+            </div>
+        </div>
+</body>
+
+</html>

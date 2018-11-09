@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- jquery -->
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"
+            integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+            crossorigin="anonymous"></script>
+    <!-- cytoscape -->
+    <script src="https://unpkg.com/cytoscape/dist/cytoscape.min.js"></script>
+    <!-- dagre layout -->
+    <script src="https://cdn.rawgit.com/cpettitt/dagre/v0.7.4/dist/dagre.min.js"></script>
+    <script src="js/cytoscape-dagre.js"></script>
+    <!-- qtip -->
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/qtip2/2.2.0/jquery.qtip.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qtip2/2.2.0/jquery.qtip.js"></script>
+    <script src="js/cytoscape-qtip.js"></script>
+    <title>Scipion workflow</title>
+
+</head>
+<body>
+</body>
+
+<dom-module id="scipion-workflow">
+
+    <style>
+        #cy {
+            z-index: 999;
+        }
+
+        .maxwidth{
+            max-width: 325px;
+            font-family: helvetica;
+        }
+
+    </style>
+    <script>
+
+        function getFormattedProtocolStr(dict){
+            // Formats a protocol object to show its data in the qtip as a table
+            // Returns the table as a html string.
+            var blackList = ['runName', 'runMode']; // Params given by scipions json that we dont wanna show
+            var formattedStr = '<table><th>Param name</th><th>Param value</th>';
+            $.each(dict, function(key, value){
+                if (blackList.indexOf(key)===-1){
+                formattedStr += '<tr><td><b>'+key+':</b></td><td title="'+value+'">'+value+'</td></tr>'
+                }
+            });
+            formattedStr += '</table>';
+            return formattedStr
+        }
+
+        function paintGraph(workflowDiv, nodes, edges){
+            // Paints the graph inside a given container (workflowDiv).
+            // Needs nodes and edges as returned by getGraphNodes function
+            var cy = cytoscape({
+              container: workflowDiv,
+              autounselectify: true,
+              maxZoom: 1.75,
+              minZoom: 0.25,
+
+              layout: {
+                name: 'dagre',
+                padding: 10,
+                nodeSep: 10
+              },
+
+              style: cytoscape.stylesheet()
+                .selector('node')
+                  .style({
+                    'shape': 'rectangle',
+                    'width': 'label',
+                    'padding':5,
+                    'content': 'data(name)',
+                    'text-valign': 'center',
+                    'text-outline-width': 2,
+                    'text-outline-color': '#ACD8FC',
+                    'background-color': '#ACD8FC',
+                    'color': '#393939'
+                  })
+                .selector(':selected')
+                  .style({
+                    'border-width': 2,
+                    'border-color': '#333'
+                  })
+                .selector('edge')
+                  .style({
+                    'opacity': 1,
+                    'width': .5,
+                    'line-color': 'grey',
+                  })
+                .selector('edge:selected')
+                  .style({
+                    'width': 1,
+                    'border-color': '#333',
+                    'line-color': 'grey'
+                  })
+                .selector('.faded')
+                  .style({
+                    'opacity': 0.25,
+                    'text-opacity': 0
+                  }),
+
+              elements: {
+                nodes: nodes,
+                edges: edges
+              }
+            });
+
+            // just use the regular qtip api but on cy elements
+            cy.nodes().qtip({
+                content: {
+                    text: function(){ return this.data().content},
+                    title: function(){return this.data().name}
+                },
+                position: {
+                    my: 'bottom center',
+                    at: 'top center'
+                },
+                style: {
+                    classes: 'qtip-bootstrap maxwidth'
+                }
+            });
+
+        }
+
+        function getWorkflow(jsonSrc, workflowDiv){
+            // Parses json from jsonSrc and paints workflow in workflowDiv
+            // (workflowDiv must be an html element)
+
+            if (jsonSrc.startsWith("[")){
+                getGraphNodes(JSON.parse(jsonSrc), workflowDiv);
+
+            }else{
+                $.getJSON(jsonSrc, function (data , status){
+                    getGraphNodes(data, workflowDiv);
+                });
+            }
+        }
+
+        function getGraphNodes(data, workflowDiv){
+                // Parses json data as given by getWorkflow function
+                var nodeList = [{ data: {
+                                            id: 'root',
+                                            name: 'Project'
+                                        }
+                                }
+                    ];
+                var edgeList = [];
+                var regex = /^(\d+)\.\S+$/;
+
+                $.each(data, function(index, protocol){
+                    nodeList.push({ data: {
+                                            id: protocol['object.id'],
+                                            name: protocol['object.label'],
+                                            content: getFormattedProtocolStr(protocol)
+                    }
+                    });
+                    var hasInputs = false;
+                    $.each(protocol, function(key, value){
+                        var protID = protocol['object.id'];
+                        if (Array.isArray(value)){
+                            $.each(value, function(index, arrayValue){
+                                if (typeof(arrayValue) === 'string' && regex.test(arrayValue)){
+                                    edgeList.push({ data: {
+                                                        source: arrayValue.split('.')[0],
+                                                        target: protID
+                                                        }
+                                                  });
+                                    hasInputs = true
+                                }
+
+                            })
+                        }else if (typeof(value) === 'string' && regex.test(value)){
+                            edgeList.push({ data: {
+                                                source: value.split('.')[0],
+                                                target: protID
+                                                }
+                                          });
+                            hasInputs = true
+                        }
+                    });
+                    if (!hasInputs){
+                            edgeList.push({ data: {
+                                                source: 'root',
+                                                target: protocol['object.id']
+                                                }
+                                          });
+                    }
+
+                });
+                paintGraph(workflowDiv, nodeList, edgeList)
+        };
+
+        class ScipionWorkflow extends HTMLElement {
+            static get is() { return "scipion-workflow"; }
+
+            // Define attributes to observe
+            static get observedAttributes() {return ['src']; }
+
+            // React to attributes changes
+            attributeChangedCallback(attr, oldValue, newValue) {
+                if (attr == 'src') {
+                    this.refresh();
+                }
+            }
+
+            constructor() {
+                super();
+                // Create a shadow root
+                var shadow = this.attachShadow({mode: 'open'});
+                // Create a div that will contain the workflow graph
+                var workflowDiv = document.createElement('div');
+                workflowDiv.style.position = "relative";
+                workflowDiv.id = 'workflowDiv';
+                this.workflowDiv = workflowDiv;
+                shadow.appendChild(workflowDiv);
+                // Paint the graph
+                this.refresh()
+            }
+
+            refresh() {
+                var height, width;
+                // Performs all the steps to paint the graph
+
+                // 1. Get attrs from the html tag
+                var jsonSrc = this.getAttribute('src');
+                if (jsonSrc == undefined) {
+                    return;
+                }
+                var fullWindow = this.getAttribute('fullWindow');
+                // 2. Apply attrs to worfklow div
+                if (fullWindow == undefined) {
+                    height = this.getAttribute('height');
+                    width = this.getAttribute('width');
+                } else {
+                    height = $(window).height()+'px';
+                    width = $(window).width()+'px';
+                }
+                this.workflowDiv.style.width = width;
+                this.workflowDiv.style.height = height;
+                //3. Parse json data and paint graph
+                getWorkflow(jsonSrc, this.workflowDiv);
+            }
+        }
+        customElements.define(ScipionWorkflow.is, ScipionWorkflow);
+
+        // Prevent styles from being applied via html import, add them explicitly to head
+        // as specified in https://github.com/TakayoshiKochi/deprecate-style-in-html-imports
+        var importDoc = document.currentScript.ownerDocument;
+        var styleLink = importDoc.querySelector('link[rel=stylesheet]');
+        document.head.appendChild(styleLink);
+        var style = importDoc.querySelector('style');
+        document.head.appendChild(style);
+
+    </script>
+</dom-module>
+
+</html>

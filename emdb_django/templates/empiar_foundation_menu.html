@@ -1,0 +1,28 @@
+<div class="sidebarDiv">
+        <div>
+            <h4 class="menu-title">Quick links</h4>
+            <ul class="menu vertical padding-bottom-xlarge">
+                <li><a href="{{emdb_global.project_root}}"><i
+                        class="icon padding-right-small icon-generic" data-icon="L"></i>EMDB</a></li>
+                <li><a href="{{ emdb_global.pdbe_short }}"><i
+                        class="icon padding-right-small icon-generic" data-icon="L"></i>PDBe</a></li>
+                <li><a target="_blank" href="https://www.ebi.ac.uk/training/online/course/empiar-quick-tour"><i
+                        class="icon padding-right-small icon-generic" data-icon="t"></i>EMPIAR Quick tour</a></li>
+            </ul>
+
+            {% if entryName %}
+                <ul class="menu vertical padding-bottom-xlarge">
+                    <li>
+                        <a target="_blank" href="ftp://ftp.ebi.ac.uk/pub/databases/empiar/archive/{{entryName}}/{{entryName}}.xml"><i
+                        class="icon icon-functional" data-icon="="></i>Download experimental metadata (xml)</a>
+                    </li>
+                </ul>
+            {% endif %}
+        </div>
+
+        <empiar-citations
+            empiar-citations-url="{{emdb_global.empiar_citations_url}}"
+        ></empiar-citations>
+</div>
+
+

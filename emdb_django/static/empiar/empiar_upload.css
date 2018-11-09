@@ -1,0 +1,132 @@
+h5.upload_menu {
+	height: auto;
+	line-height: 40px;
+	font-size: 2em;
+	color: white;
+    padding: 0 9px;
+}
+
+.upload_menu.icon-functional::before {
+	content: "";
+}
+
+#aspera_console, #aspera_web{
+	background-color: #242526;
+}
+
+.upload_menu#aspera_console::before {
+    content: "";
+    display: block;
+    background: url('img/aspera_logo.png') no-repeat;
+    background-size: 34px;
+    width: 34px;
+    height: 34px;
+    float: left;
+    margin: 0 0.3em 0 0;
+    position: relative;
+    right: 2px;
+    top: 2px;
+}
+
+.upload_menu#aspera_web::before {
+    content: "";
+    display: block;
+    background: url('img/web_interface.svg') no-repeat;
+    background-size: 26px;
+    width: 26px;
+    height: 26px;
+    float: left;
+    margin: 0 0.6em 0 0;
+    position: relative;
+    right: -1px;
+    top: 6px;
+}
+
+#globus {
+	background-color: #2c5b9a;
+	font-color: white;
+}
+
+.upload_menu#globus::before {
+    content: "";
+    display: block;
+    background: url('img/globus_logo.png') no-repeat;
+    background-size: 26px;
+    width: 26px;
+    height: 19px;
+    float: left;
+    margin: 0 0.55em 0 0;
+    position: relative;
+    right: -2px;
+    top: 8px;
+}
+
+.upload_menu h5 {
+  position: relative;
+  top: 18px;
+  left: 10px;
+}
+
+li.filled_circle {
+	list-style-type: disc;
+	margin-left: 2em;
+}
+
+div ol ol, ol ol ol {
+	margin-bottom: 27px;
+}
+
+.system_info {
+	content: "";
+    display: block;
+	font-size: 1.5em;
+	margin: 0;
+	padding: 12px 0 12px 9px;
+}
+
+.linux_info::before {
+    background: url('img/linux-logo.png') no-repeat;
+    background-size: 22px;
+    width: 26px;
+    height: 25px;
+    width: 26px;
+    float: left;
+    margin: 0 0.55em 0 0;
+    position: relative;
+    right: -2px;
+    top: -5px;
+}
+
+.mac_info::before {
+    background: url('img/apple-logo.png') no-repeat;
+    background-size: 22px;
+    width: 26px;
+    height: 25px;
+    width: 26px;
+    float: left;
+    margin: 0 0.55em 0 0;
+    position: relative;
+    right: -2px;
+    top: -5px;
+}
+
+.windows_info::before {
+    background: url('img/windows-logo.png') no-repeat;
+    background-size: 22px;
+    width: 26px;
+    height: 25px;
+    width: 26px;
+    float: left;
+    margin: 0 0.55em 0 0;
+    position: relative;
+    right: -2px;
+    top: -5px;
+}
+
+.upload_sub {
+	border: thin solid black;
+}
+
+.padding_left {
+	padding-left: 1em;
+}

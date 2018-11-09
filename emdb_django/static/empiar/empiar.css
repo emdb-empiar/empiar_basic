@@ -4,7 +4,7 @@
 		Ardan Patwardhan
 
  Description:
- 		css file that goes with empiar.js
+ 		css file that goes with empiar-jquery.js
 
  Date:
 		20130724
@@ -29,26 +29,16 @@
  */
 
 .noAspera {
-	//font-weight: bold;
-	//color: red;
 	margin-top: 10px;
 }
 
 .transferDiv {
+	display: none;
 	position: relative;
-	//top: 100px;
-	width: 300px;
+	width: 400px;
 	overflow: auto;
 	border: 2px solid #7F7F7F;
 	padding: 10px;
-}
-
-.transferDiv .yui-pb {
-	z-index: 0;
-}
-
-.transferDiv .yui-button {
-	width: 100px;
 }
 
 .transferDiv button {
@@ -56,7 +46,6 @@
 	background-color: #668680;
     background-image: none;
     border: 2px solid white;
-    border-radius: 5px;
     color: white;
     font-family: verdana;
     font-weight: bold;
@@ -66,6 +55,10 @@
     position: relative;
     text-align: center;
     width: auto;
+}
+
+.empiar-code {
+	white-space: nowrap
 }
 
 .empiarTable {
@@ -88,15 +81,6 @@
 	vertical-align:middle;
 }
 
-.empiarTable td {
-	padding: 4px 5px 4px 5px;
-	border: #a0a0a0 1px solid;
-	text-align: left;
-	vertical-align: top;
-	position: relative;
-	//height: 100px;
-}
-
 .empiarTable tbody tr:nth-child(odd) {
 	background: #d0d0d0;
 }
@@ -112,8 +96,8 @@
 .empiarTable .downloadDiv {
 	float: right;
 	position: relative;
-    top: -4px;
-    right: 0px;
+    top: 4px;
+    right: 4px;
     width: 16px;
     padding:2px 2px 2px 2px;
 }
@@ -222,7 +206,6 @@ empiarDataLabel {
     background-color: #668680;
     background-image: none;
     border: 2px solid #ffffff;
-    border-radius: 5px;
     color: #ffffff;
     font-family: verdana;
     font-weight: bold;
@@ -238,42 +221,6 @@ empiarBanner {
     top: 0;
     width: 120px;
     z-index: 1;
-}
-
-@media only screen and (max-width: 640px) {
-	body.section-pdbe div#local-title #empiarBanner img {
-		width: 400%;
-		max-width: 400%;
-	}
-	
-	#global-masthead {
-		display: none;
-	}
-	
-    #intro h3 {
-        padding: 0;
-        font-size: 90%;
-    }
-    body.section-pdbe div#local-title a {
-        width: 40%;
-        margin: 0;
-        display: block;
-    }
-    body.section-pdbe div#local-title img {
-		margin: 5% 0 5% 2%;
-		width: 60%;
-		height: 100%;
-	}
-	
-	body.section-pdbe div#local-title.logo-title-strapline h1 {
-		font-size: 143.3%;
-		width: 59%;
-		display: block;
-		margin: 3% 0 0 1%;
-		padding: 0 0 0 1%;
-		white-space: nowrap;
-		line-height: 1;
-	}
 }
 
 div.ui-tooltip-content {
@@ -504,10 +451,6 @@ div#empiarChooseDlInner {
 	white-space: nowrap
 }
 
-.empiarAuthorList {
-	white-space: nowrap
-}
-
 .empiarInlineFormField {
 	display: inline-block;
 	width: 100%;
@@ -532,6 +475,21 @@ table tbody tr th {
     color: black;
 }
 
+.annotation_warning>a {
+	display: contents;
+}
+
+@media screen and (min-width: 40em) and (max-width: 63em) {
+	.menu .vertical .deposition_warning {
+		overflow-x: scroll;
+	}
+}
+
+.deposition_warning a {
+	display: inline;
+	padding: 0;
+}
+
 h2>span>div.browser_warning {
     border: 2px solid #f00;
     padding: 5px;
@@ -553,8 +511,6 @@ table.empiarTable.no-footer {
     border-left: 1px solid #ddd;
     border-top: 1px solid #ddd;
     border-right: 1px solid #ddd;
-    border-radius: 10px;
-    overflow: hidden;
 }
 
 table.empiarTable thead tr th, table.empiarTable thead tr td {
@@ -594,20 +550,15 @@ div.ui-progressbar-value.ui-widget-header.ui-corner-left {
 	border: 1px solid black;
 }
 
-.asperaControlElement {
+/* .asperaControlElement {
 	display: none;
-}
+} */
 
 .noAsperaControlElement {
 	display: inline;
 }
 
-iframe.aspera-iframe-container {
-	position: relative;
-	float: left;
-}
-
-.ui-state-default a, .ui-state-default a:link, .ui-state-default a:visited {
+.empiar-tabs .ui-state-default a, .empiar-tabs .ui-state-default a:link, .empiar-tabs .ui-state-default a:visited {
 	color: black;
 	border-bottom-width: 0px;
 	outline: none;
@@ -635,10 +586,6 @@ iframe.aspera-iframe-container {
 
 .ui-state-default.ui-corner-top.ui-tabs-active.ui-state-active {
 	border-color: black;
-}
-
-.all_citations>a {
-	padding-left:10px;
 }
 
 .shortcuts.clearfix> .pdbe_quick_related_reviews.pane-content {
@@ -673,4 +620,112 @@ iframe.aspera-iframe-container {
 
 div#omeroviewport {
  	display: none;
+}
+
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation div.heading h3 span.http_method a {
+	font-weight: bold;
+}
+
+.micro_icon {
+	margin-top: 8px;
+	margin-bottom: 8px;
+}
+
+.data-label {
+	font-weight: bold;
+}
+
+body h2, body h3 {
+	font-weight: 500;
+}
+
+div h4 {
+	color: #222;
+}
+
+div.dataTables_wrapper div.dataTables_length label {
+    float: left;
+    text-align: left;
+    margin-bottom: 5px;
+}
+
+div.dataTables_wrapper div.dataTables_length select {
+    width: 75px;
+    margin-bottom: 5px;
+}
+
+div.dataTables_wrapper div.dataTables_filter label {
+    float: right;
+    margin-bottom: 5px;
+}
+
+div.dataTables_wrapper div.dataTables_filter input {
+    display: inline-block !important;
+    width: auto !important;
+    margin-bottom: 5px;
+    margin-left: 0.5em;
+}
+
+.columns>.swagger-section .swagger-ui-wrap {
+	min-width: auto;
+}
+
+@media screen and (min-width: 10em) and (max-width: 70em) {
+    table.empiarTable.no-footer {
+		overflow-x: scroll;
+	}
+}
+
+@media screen and (min-width: 10em) and (max-width: 64em) {
+    table.empiarTable.no-footer {
+		display: grid;
+	}
+}
+
+.genericBtnEmpiar {
+	display: inline-block;
+	color: #444;
+	width: 130px;
+	box-shadow: 1px 1px 1px grey;
+	white-space: nowrap;
+	height: 32px;
+    margin: 10px 0 10px;
+    border: thin solid ;
+}
+
+
+.genericBtnEmpiar:hover {
+	cursor: pointer;
+}
+
+button, input[type=button], input[type=submit], label.specificBtnEmpiar {
+	background-color: #668680;
+	background-image: none;
+	border: 0px;
+    color: white;
+    font-family: verdana;
+    font-weight: 500;
+    line-height: 1.538em;
+    margin: 0.15em;
+    padding: 0 9px;
+    position: relative;
+    text-align: center;
+    letter-spacing: .21px;
+    font-size: 1.1em;
+	left: -2px;
+}
+
+label.specificBtnEmpiar {
+	padding: 0;
+	height: 1.55em;
+	box-shadow: none;
+}
+
+#at-expanded-menu-host button.at-expanded-menu-close {
+	padding-bottom: 4px;
+	left: auto;
+}
+
+.menu-title {
+	color: #cf2626;
 }

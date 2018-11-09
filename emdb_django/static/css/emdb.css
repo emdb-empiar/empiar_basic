@@ -1,0 +1,53 @@
+a, a:link, a:visited {
+   border: 0px;
+}
+.yui-skin-sam .yui-button .first-child {
+    border: none;
+}
+.yui-skin-sam .yui-link-button button,
+.yui-skin-sam .yui-link-button a,
+.yui-skin-sam .yui-link-button a:link,
+.yui-skin-sam .yui-link-button a:visited {
+    color: #f7f7f7;
+    font-size: 93%;
+    padding: 0;
+    text-decoration: none;
+    font-style: normal;
+    vertical-align: middle;
+}
+.yui-skin-sam .yui-link-button {
+    position: relative;
+    margin: 0.15em;
+    padding: 0px 9px;
+    line-height: 1.538;
+
+    -moz-border-radius: 5px;
+    -khtml-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    border: 2px solid white;
+    width: auto;
+
+    background-color: #668680;
+    background-image: none;
+    font-family: verdana;
+    font-weight: bold;
+    color: white;
+    /*min-width: 13em;*/
+    text-align: center;
+    /* IE7 */
+    *padding-top: 0px;
+    *padding-bottom: 0px;
+}
+.yui-skin-sam .yui-link-button-hover,
+.yui-skin-sam .yui-link-button:hover {
+    background: #374845;		/* colour C1 */
+}
+.yui-skin-sam .yui-link-button-hover a,
+.yui-skin-sam .yui-link-button:hover a,
+.yui-skin-sam .yui-link-button a,
+.yui-skin-sam .yui-link-button a {
+    text-decoration: none;
+    font-style: normal;
+}
+

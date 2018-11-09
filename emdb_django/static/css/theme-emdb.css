@@ -1,0 +1,88 @@
+/*
+  Colour palette: EMDB
+*/
+
+a {
+  color: #222;
+}
+
+dl dt a,
+a.label,
+.label,
+a:hover,
+a:focus,
+a:active {
+  color: rgb(0,124,130);
+}
+
+h1 { color: #f7f7f7; }
+h2 { color: rgb(0,124,130); }
+h3 { color: #444444; }
+
+a.special { background-color: #7cd17c; }
+
+.tabs-title > a:hover,
+.button.primary:hover,
+.button.primary:focus,
+.button:hover,
+.button:focus,
+.button:active {
+	background: rgba(99,118,118,0.8); 
+}
+
+.tabs-title > a:focus,
+.tabs-title > a[aria-selected='true'] {
+  color: #fff;
+  background: #666; }
+
+div#local-masthead { background-color: rgb(99,118,118); }
+
+/* Right sidebar css */
+.sidebarDiv {
+	margin-bottom: 50px;
+}
+
+#local-masthead nav ul li.active a, 
+#local-masthead nav ul li a:active, 
+#local-masthead ul li.active-trail a, 
+#local-masthead ul li.active a:visited, 
+#local-masthead ul li.active-trail a:visited {
+	border-radius:0px;
+}
+
+/* end */
+
+
+.dataTables_length>label, .dataTables_filter>label {
+	display: ruby;
+}
+
+.dataTables_filter {
+	margin-right: 54px;
+}
+
+.menu .active > a {
+	color: #333;
+	font-weight: 600;
+}
+
+.sidebarDiv>h4 {
+	margin-top: 10px;
+}
+
+button, input[type="button"], input[type="reset"], input[type="submit"] {
+    cursor: pointer;
+    -webkit-appearance: button;
+}
+
+.slideToggle, .field_expansion_toggle {
+    cursor: pointer;
+    cursor: hand;
+    line-height: 16px;
+}
+
+@media only print {
+    .hide_in_print {
+        display: none !important;
+    }
+}

@@ -2,6 +2,7 @@
 //
 // Authors:
 //		Ardan Patwardhan
+//		Andrii Iudin
 //
 // Description:
 // 		File controls for downloading empiar files
@@ -23,6 +24,7 @@
 // under the License.
 //
 // Version history
+// 1.0, 2017/01/08: Re-factored Aspera handling
 // 0.2, 2014/05/24: Added support for upload button. 
 //                  General code clean-up and added documentation.
 
@@ -34,26 +36,22 @@ var UploadStarted = false;
 // Regex for the check of the filename that the user can assign to the zipped file. Only ascii characters are supported
 var ascii = /^[ -~]+$/;
 
-var conf = EMPIAR.ConfigFileControl;
+var CONNECT_MIN_VERSION = "3.6.0";
+var CONNECT_AUTOINSTALL_LOCATION = "//d3gcli72yxqn2z.cloudfront.net/connect/v4";
+
+
+function isNullOrUndefinedOrEmpty(x) {
+	return x === "" || x === null || typeof x === "undefined";
+};
 
 
 //Make the tooltip copy-able by the user
 setupCopyableTooltip = function(){
-	$( '.tooltip' ).tooltip({
+	$( '.copyable_tooltip' ).tooltip({
         open: function(){
             // Make sure all other tooltips are closed when opening a new one
-        $('.tooltip').not(this).tooltip('close');
+        $('.copyable_tooltip').not(this).tooltip('close');
         }
-    }).on('mouseleave', function(e){
-        var that = this;
-
-        // Close the tooltip later
-        mouseLeaveTimer = setTimeout(function(){
-        	$(that).tooltip('close');
-        }, 300);
-
-        // Prevent tooltip widget to close the tooltip now
-        e.stopImmediatePropagation(); 
     });
 
     $(document).on('mouseenter', '.ui-tooltip', function(e){
@@ -63,7 +61,7 @@ setupCopyableTooltip = function(){
 
     $(document).on('mouseleave', '.ui-tooltip', function(){
         // Make sure tooltip is closed when the mouse is gone
-        $('.tooltip').tooltip('close');
+        $('.copyable_tooltip').tooltip('close');
     });
 }
 
@@ -71,6 +69,13 @@ setupCopyableTooltip = function(){
 $(document).ready(function () {
 	setupCopyableTooltip();
 });
+
+
+// Check if the variable is a function
+// @param functionToCheck: the variable that will be checked
+function isFunction(functionToCheck) {
+	return functionToCheck && {}.toString.call(functionToCheck) === '[object Function]';
+}
 
 
 //A function literal that is executed immediately. It is used for postponing the execution of the function until the specified element is inserted into the DOM 
@@ -97,12 +102,6 @@ $(document).ready(function () {
 	    return $this;
 	}
 }(jQuery));
-
-
-function moveAsperaIframe() {
-	var asperaIframe = document.getElementById('aspera-iframe-container');
-	document.getElementsByTagName('body')[0].insertBefore(asperaIframe, document.getElementById('wrapper'));
-}
 
 
 var controls = {
@@ -141,48 +140,12 @@ EMPIAR.FileControl.prototype.init = function (params) {
 	self.requestId = null;
 	self.transferId = null;
 	self.transferStatus = null;
+	self.transferContainer = params.transferContainer;
+	self.id = params.id;
+	self.paramSessionId = params.sessionId;
+	self.entryName = params.entryName;
 	
-	var CONNECT_MIN_VERSION = "3.6.0";
-	var CONNECT_AUTOINSTALL_LOCATION = "//d3gcli72yxqn2z.cloudfront.net/connect/v4";
-	self.asperaWeb = new AW4.Connect({
-		containerId: 'pluginContainer' + params.id,
-		id: "aspera_connect_object_container" + params.id,
-		minVersion: CONNECT_MIN_VERSION,
-		sdkLocation: CONNECT_AUTOINSTALL_LOCATION
-	});
-	self.connectInstaller = new AW4.ConnectInstaller({sdkLocation : CONNECT_AUTOINSTALL_LOCATION});
-	var statusEventListener = function (eventType, data) {
-		if (eventType === AW4.Connect.EVENT.STATUS && data == AW4.Connect.STATUS.RUNNING) {
-			self.connectInstaller.connected();
-		    // Enable controls that require Connect.
-			$('.asperaControlElement').waitUntilExists(controls.show);
-			if ($('.jstree').length > 0 && $('.jstree-checked').length < 1) {
-				$(".jstree").on("ready.jstree", function(e, data) {
-					$('.jstree').jstree("check_all");
-				});
-				$('.jstree').jstree("check_all");
-			}
-	    } else {
-	    	if (eventType === AW4.Connect.EVENT.STATUS && data == AW4.Connect.STATUS.INITIALIZING) {
-				self.connectInstaller.showLaunching();
-			} else if (eventType === AW4.Connect.EVENT.STATUS && data == AW4.Connect.STATUS.FAILED) {
-				self.connectInstaller.showDownload();
-			} else if (eventType === AW4.Connect.EVENT.STATUS && data == AW4.Connect.STATUS.OUTDATED) {
-				self.connectInstaller.showUpdate();
-			} else if (eventType === AW4.Connect.EVENT.STATUS && data == AW4.Connect.STATUS.RUNNING) {
-				self.connectInstaller.connected();
-	      }
-	    	
-	    	$('#aspera-iframe-container').waitUntilExists(moveAsperaIframe);
-	    }
-	};
-	self.asperaWeb.addEventListener(AW4.Connect.EVENT.STATUS, statusEventListener);
-	
-	self.sessionId = self.asperaWeb.initSession(params.sessionId);
-	$(params.transferContainer).show();
-	self.asperaWeb.addEventListener('transfer', function(event, obj) { self.handleTransferEvents(event, obj, params.transferContainer, params.entryName); });
-	
-	$(params.transferContainer).css('display', 'none');
+	$('#' + params.transferContainer).css('display', 'none');
 };
 
 
@@ -256,28 +219,30 @@ EMPIAR.FileControl.prototype.handleTransferEvents = function (event, allTransfer
 		transferResumeId,
 		progressPercent,
 		infoText = '';
-	var obj = allTransfers.transfers[0];
+	// Get the latest initiated transfer
+	var obj = allTransfers.transfers[allTransfers.transfers.length - 1];
+
 	if (obj) {
 		if (obj.error_code === -1) {
 			// Handle case when unable to contact Connect
 			alert(obj.error_desc);
 		}
-		
+
 		self.transferId = obj.uuid;
 		//self.requestId = obj.aspera_connect_settings.request_id;
 		self.transferStatus = obj.status;
 
 		// Get transfer div if null
 		if(!this.transferDiv) {
-			this.transferDiv = $(divId);
+			this.transferDiv = $('#'+divId);
 		}
-		
+
 		// Create transfer info div if it does not exist
 		if(!this.transferInfoDiv) {
 			this.transferInfoDiv = document.createElement('div');	
 			$(this.transferDiv).append(this.transferInfoDiv);	
 		}
-		
+
 		// If filename exists and/or status - add to info text
 		if(obj.current_file) {
 			infoText += obj.current_file + ', ';
@@ -286,7 +251,7 @@ EMPIAR.FileControl.prototype.handleTransferEvents = function (event, allTransfer
 			infoText += obj.status;
 		}
 		$(this.transferInfoDiv).html(infoText);
-		
+
 		// Create progress bar if it does not exist
 		if(!this.progressBar) {
 			this.progressBar = document.createElement('div');
@@ -299,19 +264,19 @@ EMPIAR.FileControl.prototype.handleTransferEvents = function (event, allTransfer
 			
 			$(this.transferDiv).append(this.progressBar);	
 		}
-		
+
 		// Create progress bar text div if it does not exist
 		if(!this.progressBarTextDiv) {
 			this.progressBarTextDiv = document.createElement('div');
 			$(this.transferDiv).append(this.progressBarTextDiv);
 		}
-		
+
 		if (obj.percentage) {
 			progressPercent = obj.percentage * 100;
 			$(this.progressBar).progressbar('value', progressPercent);
 			$(this.progressBarTextDiv).html(progressPercent.toFixed(1));
 		}
-		
+
 		// Create pause button if it does not exist
 		transferPauseId = divId + '_pause'
 		if(!this.transferPauseButton) {
@@ -323,19 +288,19 @@ EMPIAR.FileControl.prototype.handleTransferEvents = function (event, allTransfer
 				        type: 'Button',
 				    });
 		    $(this.transferDiv).append(this.transferPauseButton);
-			
+
 			var transferPauseButtonClick = function (e, fcObj) {
 				if (fcObj.transferId !== null && (fcObj.transferStatus === "initiating" || fcObj.transferStatus === "running")) {
 					fcObj.requestId = fcObj.asperaWeb.stopTransfer(fcObj.transferId);
 				}
 			};
-			
+
 			this.transferPauseButton.on("click", function(e) { transferPauseButtonClick(e, self); });
 		}
-		
+
 		// Create resume button if it does not exist
 		transferResumeId = divId + '_resume'
-		
+
 		if(! this.transferResumeButton ) {
 			this.transferResumeButton = $('<button/>',
 				    {
@@ -345,16 +310,16 @@ EMPIAR.FileControl.prototype.handleTransferEvents = function (event, allTransfer
 				        type: 'Button',
 				    });
 		    $(this.transferDiv).append(this.transferResumeButton);
-		
+
 			var transferResumeButtonClick = function (e, fcObj) {
 				if (fcObj.transferId !== null && (fcObj.transferStatus !== "initiating" && fcObj.transferStatus !== "running")) {
 					fcObj.requestId = fcObj.asperaWeb.resumeTransfer(fcObj.transferId);
 				}
 			};
-			
+
 			this.transferResumeButton.on("click", function(e) { transferResumeButtonClick(e, self); });
 		}
-		
+
 		// Create abort button if it does not exist
 		transferAbortId = divId + '_abort'
 		if(!this.transferAbortButton) {
@@ -366,44 +331,47 @@ EMPIAR.FileControl.prototype.handleTransferEvents = function (event, allTransfer
 				        type: 'Button',
 				    });
 		    $(this.transferDiv).append(this.transferAbortButton);
-			
+
 			var transferAbortButtonClick = function (e, fcObj) {
 				if (fcObj.transferId !== null) {
 					fcObj.requestId = fcObj.asperaWeb.removeTransfer(fcObj.transferId);
 					fcObj.transferId = null;
+					
+					fcObj.asperaWeb.stop();
+					fcObj.showHideTransferComponents({ transferInfoDiv: 0, progressBar: 0, progressBarTextDiv: 0, transferPauseButton: 0, transferResumeButton: 0, transferAbortButton: 0});
 				}
 			};
-			
 			this.transferAbortButton.on("click", function(e) { transferAbortButtonClick(e, self); });
 		}
-		
+
 		// Hide and show components depending on current status
 		if (['running', 'queued', 'willretry'].indexOf(self.transferStatus) >= 0) {
 			this.showHideTransferComponents({ transferInfoDiv: 1, progressBar: 1, progressBarTextDiv: 1, transferPauseButton: 1, transferResumeButton: 0, transferAbortButton: 1});
 		}
 		else if (self.transferStatus === "initiating") {
 			this.showHideTransferComponents({ transferInfoDiv: 1, progressBar: 0, progressBarTextDiv: 0, transferPauseButton: 1, transferResumeButton: 0, transferAbortButton: 1});
-		}
-		else if (self.transferStatus === "cancelled") {
-			this.showHideTransferComponents({ transferInfoDiv: 1, progressBar: 1, progressBarTextDiv: 1, transferPauseButton: 0, transferResumeButton: 1, transferAbortButton: 1});	
-		}
-		else if (['completed', 'removed'].indexOf(self.transferStatus) >= 0) {
-			this.showHideTransferComponents({ transferInfoDiv: 1, progressBar: 1, progressBarTextDiv: 1, transferPauseButton: 0, transferResumeButton: 0, transferAbortButton: 0});		
-			setTimeout(function () {
-				$(self.transferDiv).css( 'display', 'none');
-				if (UploadStarted) {
-					UploadStarted = false;
-					if (entryName !== undefined)
-	//					window.open(entryName+"/edit_imagesets/", "_self");
-						window.open("edit_imagesets/", "_self");
+		} else {
+			if (self.transferStatus === "cancelled") {
+				this.showHideTransferComponents({ transferInfoDiv: 1, progressBar: 1, progressBarTextDiv: 1, transferPauseButton: 0, transferResumeButton: 1, transferAbortButton: 1});	
+			} else {
+				if (['completed', 'removed'].indexOf(self.transferStatus) >= 0) {
+                    this.showHideTransferComponents({ transferInfoDiv: 1, progressBar: 1, progressBarTextDiv: 1, transferPauseButton: 0, transferResumeButton: 0, transferAbortButton: 0});
+                } else if (['failed'].indexOf(self.transferStatus) >= 0) {
+                    this.showHideTransferComponents({ transferInfoDiv: 1, progressBar: 1, progressBarTextDiv: 1, transferPauseButton: 0, transferResumeButton: 0, transferAbortButton: 0});
+                } else {
+                    this.showHideTransferComponents({ transferInfoDiv: 0, progressBar: 0, progressBarTextDiv: 0, transferPauseButton: 0, transferResumeButton: 0, transferAbortButton: 0});
+                }
+
+                this.asperaWeb.removeEventListener(AW4.Connect.EVENT.STATUS);
+
+				if (this.transferId !== null) {
+					this.requestId = this.asperaWeb.removeTransfer(this.transferId);
+					this.transferId = null;
+
+					this.asperaWeb.stop();
 				}
-			}, 12000);
-		}
-		else if (['failed'].indexOf(self.transferStatus) >= 0) {
-			this.showHideTransferComponents({ transferInfoDiv: 1, progressBar: 1, progressBarTextDiv: 1, transferPauseButton: 0, transferResumeButton: 0, transferAbortButton: 0});	
-		}
-		else {
-			this.showHideTransferComponents({ transferInfoDiv: 0, progressBar: 0, progressBarTextDiv: 0, transferPauseButton: 0, transferResumeButton: 0, transferAbortButton: 0});
+				this.asperaWeb.removeEventListener('transfer');
+            }
 		}
 	}
 };
@@ -429,38 +397,114 @@ EMPIAR.FileControl.prototype.download = function (source, path, asperaTokenUrl, 
 			pathsArray[0] = {"source" : source};
 		}
 
-	    $.post( asperaTokenUrl, { "paths": JSON.stringify(pathsArray), "csrfmiddlewaretoken": csrfToken })
-			.done(function( token ) {
-				var transferSpecs = [];
-				transferSpecs.push({
-				      "aspera_connect_settings": {
-				          // allow_dialogs is true by default.
-				          // Added for clarity.
-				          "allow_dialogs": false,
-				          "back_link": location.href,
-				          "use_absolute_destination_path" : true
-				      },
-			          "transfer_spec": {
-						  "authentication": conf.download_authentication,
-						  "create_dir": true,
-						  "token": token,
-						  "destination_root": path,
-				    	  "direction": "receive",
-				    	  "http_fallback": true,
-				    	  "paths": pathsArray,
-				    	  "rate_policy": conf.rate_policy,
-				    	  "remote_host": conf.remote_download_host,
-				    	  "remote_user": conf.remote_download_user,
-				    	  "resume": 'sparse_checksum', // "none","attributes","sparse_checksum","full_checksum"
-				    	  "ssh_port": 33001,
-				    	  "target_rate_kbps": conf.target_rate_kbps,
-				      }
-			    });
+		if ( null !== asperaTokenUrl && 'undefined' !== typeof asperaTokenUrl ) {
+            $.post(asperaTokenUrl, {"paths": JSON.stringify(pathsArray), "csrfmiddlewaretoken": csrfToken})
+                .done(function (token) {
+                    var transferSpecs = [];
+                    transferSpecs.push({
+                        "aspera_connect_settings": {
+                            // allow_dialogs is true by default.
+                            // Added for clarity.
+                            "allow_dialogs": false,
+                            "back_link": location.href,
+                            "use_absolute_destination_path": true
+                        },
+                        "transfer_spec": {
+                            "authentication": conf.download_authentication,
+                            "create_dir": true,
+                            "token": token,
+                            "destination_root": path,
+                            "direction": "receive",
+                            "http_fallback": true,
+                            "paths": pathsArray,
+                            "rate_policy": conf.rate_policy,
+                            "remote_host": conf.remote_download_host,
+                            "remote_user": conf.remote_download_user,
+                            "resume": 'sparse_checksum', // "none","attributes","sparse_checksum","full_checksum"
+                            "ssh_port": 33001,
+                            "target_rate_kbps": conf.target_rate_kbps,
+                        }
+                    });
 
-				requestId = self.asperaWeb.startTransfers({'transfer_specs': transferSpecs}, {"error": self.handleStartResponse});
+                    requestId = self.asperaWeb.startTransfers({'transfer_specs': transferSpecs}, {"error": self.handleStartResponse});
+                });
+        } else {
+			var transferSpecs = [];
+			transferSpecs.push({
+				  "aspera_connect_settings": {
+					  // allow_dialogs is true by default.
+					  // Added for clarity.
+					  "allow_dialogs": false,
+					  "back_link": location.href,
+					  "use_absolute_destination_path" : true
+				  },
+				  "transfer_spec": {
+					  // "authentication": conf.download_authentication,
+					  "cipher": conf.cipher,
+					  "create_dir": true,
+					  "destination_root": path,
+					  "direction": "receive",
+					  "http_fallback": true,
+					  "paths": pathsArray,
+					  "rate_policy": conf.rate_policy,
+					  "remote_host": conf.remote_upload_host,
+					  "remote_user": conf.remote_upload_user,
+					  "resume": 'sparse_checksum', // "none","attributes","sparse_checksum","full_checksum"
+					  "ssh_port": 33001,
+					  "target_rate_kbps": conf.target_rate_kbps,
+					  "remote_password": conf.remote_upload_password
+				  }
 			});
+
+			requestId = self.asperaWeb.startTransfers({'transfer_specs': transferSpecs}, {"error": self.handleStartResponse});
+		}
 	}
 };
+
+
+// Set up listeners for Aspera for showing top screen bar with the status of Aspera installation and 
+// for handling the transfer visual elements (progress bar, pause/resume/abort buttons)
+EMPIAR.FileControl.prototype.setupAsperaListeners = function () {
+	var self = this;
+
+	self.asperaWeb = new AW4.Connect({
+		containerId: 'pluginContainer' + self.id,
+		id: "aspera_connect_object_container" + self.id,
+		minVersion: CONNECT_MIN_VERSION,
+		sdkLocation: CONNECT_AUTOINSTALL_LOCATION
+	});
+	self.connectInstaller = new AW4.ConnectInstaller({sdkLocation : CONNECT_AUTOINSTALL_LOCATION});
+	var statusEventListener = function (eventType, data) {
+		if (eventType === AW4.Connect.EVENT.STATUS && data == AW4.Connect.STATUS.RUNNING) {
+			self.connectInstaller.connected();
+		    // Enable controls that require Connect.
+			if ($('.jstree').length > 0 && $('.jstree-checked').length < 1) {
+				$(".jstree").on("ready.jstree", function(e, data) {
+					$('.jstree').jstree("check_all");
+				});
+				$('.jstree').jstree("check_all");
+			}
+	    } else {
+	    	if (eventType === AW4.Connect.EVENT.STATUS && data == AW4.Connect.STATUS.INITIALIZING) {
+				self.connectInstaller.showLaunching();
+			} else if (eventType === AW4.Connect.EVENT.STATUS && data == AW4.Connect.STATUS.FAILED) {
+				self.connectInstaller.showDownload();
+				window.scrollTo(0, 0);
+			} else if (eventType === AW4.Connect.EVENT.STATUS && data == AW4.Connect.STATUS.OUTDATED) {
+				self.connectInstaller.showUpdate();
+				window.scrollTo(0, 0);
+			} else if (eventType === AW4.Connect.EVENT.STATUS && data == AW4.Connect.STATUS.RUNNING) {
+				self.connectInstaller.connected();
+	      }
+	    	
+	    }
+	};
+	self.asperaWeb.addEventListener(AW4.Connect.EVENT.STATUS, statusEventListener);
+
+	self.sessionId = self.asperaWeb.initSession(self.paramSessionId);
+	$(self.transferContainer).show();
+	self.asperaWeb.addEventListener('transfer', function(event, obj) { self.handleTransferEvents(event, obj, self.transferContainer, self.entryName); });
+}
 
 
 // Add upload button to page and setup event handlers
@@ -472,81 +516,48 @@ EMPIAR.FileControl.prototype.download = function (source, path, asperaTokenUrl, 
 // @param params.uploadContainer: DIV or HTML element in which to put the upload button
 EMPIAR.FileControl.prototype.addUploadButton = function (params) {
 	var self = this;
-	
+
 	$('#'+params.uploadContainer).append('<div id="' + params.buttonId + "Aspera" + 'Div"></div>');
-	
-	var uploadButton = $('<button/>',
-		    {
-				id: params.buttonId + "Aspera",
-		        label: params.buttonLabel + "Aspera",
-		        text: params.buttonText + ' files',
-		    });
+
+	var uploadButton = $('<button/>', {
+			id: params.buttonId + "Aspera",
+	        label: params.buttonLabel + "Aspera",
+	        text: params.buttonText + ' files',
+	});
 	uploadButton.addClass("empiarDownloadButton asperaControlElement icon icon-functional");
 	uploadButton.attr("data-icon", "_");
     $('#'+params.buttonId+"Aspera"+'Div').append(uploadButton);
 	var uploadButtonClick = function (e) {
-	    self.asperaWeb.showSelectFileDialog({
-	    	success: function(dataTransferObj) {
-	    		if (dataTransferObj.dataTransfer.files[0]) {
-	    			self.upload(dataTransferObj.dataTransfer.files, params.destination, self);
-	    		}
-	    	}
-	    });
+		self.setupAsperaListeners();
+		self.asperaWeb.showSelectFileDialog({
+			success: function(dataTransferObj) {
+				if (dataTransferObj.dataTransfer.files[0]) {
+					self.upload(dataTransferObj.dataTransfer.files, params.destination, self);
+				}
+			}
+		});
 	};
 	uploadButton.on("click", uploadButtonClick);
-	
-	var uploadButtonDir = $('<button/>',
-		    {
-				id: params.buttonId + "DirAspera",
-		        label: params.buttonLabel + "DirAspera",
-		        text: params.buttonText + ' directories',
-		    });
+
+	var uploadButtonDir = $('<button/>', {
+			id: params.buttonId + "DirAspera",
+	        label: params.buttonLabel + "DirAspera",
+	        text: params.buttonText + ' directories',
+	});
 	uploadButtonDir.addClass("empiarDownloadButton asperaControlElement icon icon-functional");
 	uploadButtonDir.attr("data-icon", "_");
 	$('#'+params.buttonId+"Aspera"+'Div').append(uploadButtonDir);
 	var uploadButtonDirClick = function (e) {
+		self.setupAsperaListeners();
 		self.asperaWeb.showSelectFolderDialog({
-	    	success: function(dataTransferObj) {
-	    		if (dataTransferObj.dataTransfer.files[0]) {
-	    			self.upload(dataTransferObj.dataTransfer.files, params.destination, self);
-	    		}
-	    	}
-	    });
+			success: function(dataTransferObj) {
+				if (dataTransferObj.dataTransfer.files[0]) {
+					self.upload(dataTransferObj.dataTransfer.files, params.destination, self);
+				}
+			}
+		});
 	};
 	uploadButtonDir.on("click", uploadButtonDirClick);
-	
-	
-	var uploadButtonNoAspera = $('<button/>',
-		    {
-				id: params.buttonId + "NoAspera",
-		        label: params.buttonLabel + "NoAspera",
-		        text: params.buttonText + ' files',
-		    });
-	uploadButtonNoAspera.addClass("empiarDownloadButton noAsperaControlElement icon icon-functional");
-	uploadButtonNoAspera.attr("data-icon", "_");
-    $('#'+params.buttonId+"Aspera"+'Div').append(uploadButtonNoAspera);
-    
-    // If Aspera plugin is not installed, then show a message that prompts users to install it
-	var uploadButtonNoAsperaClick = function (e) {
-	    alert("In order to upload files please install Aspera Connect.");
-	};
-	uploadButtonNoAspera.unbind('click').bind('click', uploadButtonNoAsperaClick);
-
-	var uploadButtonDirNoAspera = $('<button/>',
-		    {
-				id: params.buttonId + "DirNoAspera",
-		        label: params.buttonLabel + "DirNoAspera",
-		        text: params.buttonText + ' directories',
-		    });
-	uploadButtonDirNoAspera.addClass("empiarDownloadButton noAsperaControlElement icon icon-functional");
-	uploadButtonDirNoAspera.attr("data-icon", "_");
-    $('#'+params.buttonId+"Aspera"+'Div').append(uploadButtonDirNoAspera);
-    
-    // If Aspera plugin is not installed, then show a message that prompts users to install it
-	var uploadButtonDirNoAsperaClick = function (e) {
-	    alert("In order to upload directories please install Aspera Connect.");
-	};
-	uploadButtonDirNoAspera.unbind('click').bind('click', uploadButtonDirNoAsperaClick);
 };
 
 
@@ -562,13 +573,13 @@ EMPIAR.FileControl.prototype.upload = function (paths, destination, fcObj) {
 		pathsArray = [],
 		nPaths,
 		i;
-	
+
 	if (paths != null && paths.length > 0) {
 		nPaths = paths.length;
 		for(i=0; i<nPaths; i++) {
 			pathsArray.push({source:paths[i].name, destination:""});
 		}
-		
+
 		var transferSpecs = [];
 		transferSpecs.push({
 		      "aspera_connect_settings": {
@@ -582,19 +593,19 @@ EMPIAR.FileControl.prototype.upload = function (paths, destination, fcObj) {
 				  "cipher": conf.cipher,
 				  "create_dir": false,
 				  "destination_root": destination,
-		    	  "direction": "send",
-		    	  "http_fallback": true,
-		    	  "paths": pathsArray,
-		    	  "rate_policy": conf.rate_policy,
-		    	  "remote_host": conf.remote_upload_host,
-		    	  "remote_user": conf.remote_upload_user,
-		    	  "remote_password": conf.remote_upload_password,
-		    	  "resume": 'sparse_checksum', // "none","attributes","sparse_checksum","full_checksum"
-		    	  "ssh_port": 22,
-		    	  "target_rate_kbps": conf.target_rate_kbps
+			    	  "direction": "send",
+			    	  "http_fallback": true,
+			    	  "paths": pathsArray,
+			    	  "rate_policy": conf.rate_policy,
+			    	  "remote_host": conf.remote_upload_host,
+			    	  "remote_user": conf.remote_upload_user,
+			    	  "remote_password": conf.remote_upload_password,
+			    	  "resume": 'sparse_checksum', // "none","attributes","sparse_checksum","full_checksum"
+			    	  "ssh_port": 33001,
+			    	  "target_rate_kbps": conf.target_rate_kbps
 		      }
 	    });
-		
+
 	    requestId = fcObj.asperaWeb.startTransfers({'transfer_specs': transferSpecs}, {"error": fcObj.handleStartResponse});
 	}
 };
@@ -607,7 +618,7 @@ EMPIAR.FileControl.prototype.upload = function (paths, destination, fcObj) {
 EMPIAR.FileControl.prototype.handleStartResponse = function(responseData) {
 	var code,
 		userMessage;
-	
+
 	code = responseData.error.code;
 	userMessage = responseData.error.user_message;
 	switch(code) {
@@ -622,8 +633,8 @@ EMPIAR.FileControl.prototype.handleStartResponse = function(responseData) {
 
 
 // Make jsTree that represents a directory on a local machine with checkboxes and a Download button.
-// @param ftpServer: FTP server, where JSON files that represent the directory structures are stored
-// @param dirStruct: location on the FTP server, where JSON files that represent the directory structures are stored
+// @param dirStruct: display file contents ('full') or only directories ('dirs')
+// @param asperaOnly: display only Aspera download button and not the HTTP stream. Default - true
 // @param entryName: name of the EMPIAR entry that will be processed
 // @param treeDiv: DIV element of the page that will represent jstree
 // @param buttonId: ID of the download button for this particular tree
@@ -631,29 +642,42 @@ EMPIAR.FileControl.prototype.handleStartResponse = function(responseData) {
 // @param treeFileController: FileControl element that connects with a Download button. Submit -1 to make a jsTree for image set association, without a download button
 // @param entryUrl: the address to the EMPIAR entry that determines whether the jsTree json should be obtained for the deposition, for the release process or for the EMPIAR entry page
 // @param imageSetId: ID of the Image set to be processed. Defaults to -1 for the main directory tree
-// @example: browserTree ('ftp.ebi.ac.uk', '/pub/databases/emtest/empiar/directoryStructures', 10014, '#jstree_json10014', mybuttonid10014, 'archive/', trfc, entryUrl);
-browserTree = function (ftpServer, dirStruct, entryName, treeDiv, buttonId, sourcePath, treeFileController, entryUrl, imageSetId, noCheckbox, csrfToken, asperaTokenUrl) {
+// @param noCheckbox: do not display the checkbox
+// @param csrfToken: CSRF token as provided by Django
+// @param asperaTokenUrl: URL for obtaining the Aspera token - necessary for Aspera authentication for transfers
+// @param jsTreeLoadCb: The callback function that will be run after jsTree has finished loading and all the nodes are ready
+// @param jsTreeCbArgs: Arguments for the callback
+// @example: browserTree ('ftp.ebi.ac.uk', '/pub/databases/emtest/empiar/directoryStructures', 10014, '#jstree_json10014', btnid10014, 'archive/', trfc, entryUrl);
+browserTree = function (params) {
+	if (isNullOrUndefinedOrEmpty(params.dirStruct))
+		params.dirStruct = 'full';
+
+	if (isNullOrUndefinedOrEmpty(params.asperaOnly))
+		params.asperaOnly = true;
+
+
 	$(function () {
 		var jsTreeCore = {
 				'data' : {
 			        "url" : function (node) {
-								if (typeof imageSetId == 'undefined' || imageSetId === null)
-									imageSetId = '-1';
-								return node.id === '#' ? entryUrl + '/ftpServer=' + ftpServer + '&dirStruct=' + dirStruct + '&list=' + 1 + '/' + imageSetId : entryUrl + '/ftpServer=' + ftpServer + '&dirStruct=' + dirStruct + '&list=' + (parseInt(node.id) + parseInt(1)).toString() + '/' + imageSetId ;
+								if (isNullOrUndefinedOrEmpty(params.imageSetId))
+									params.imageSetId = '-1';
+								return node.id === '#' ? params.entryUrl + '/dirStruct=' + params.dirStruct + '&list=' + 1 + '/' + params.imageSetId : params.entryUrl + '/dirStruct=' + params.dirStruct + '&list=' + (parseInt(node.id) + parseInt(1)).toString() + '/' + params.imageSetId ;
 			         		},
 			        "data" : function (node) {
 			         			return { "id" : node.id };
 			         		},
-	         		"error": function (jqXHR, textStatus, errorThrown) { $(treeDiv).html("There was an error while loading data for this tree") }
+	         		"error": function (jqXHR, textStatus, errorThrown) { $(params.treeDiv).html("There was an error " +
+						"while loading data for this tree") }
 				},
 		}
 		var jsTreePlugins = ["json_data", "types"];
 		var jsTreeCheckbox = false;
 		var conditionalSelect = false;
-		
-		if (typeof noCheckbox == 'undefined' || noCheckbox === null) {
+
+		if (typeof params.noCheckbox == 'undefined' || params.noCheckbox === null) {
 			jsTreePlugins.push("checkbox")
-			if (treeFileController == -1) {
+			if (params.treeFileController == -1) {
 				jsTreeCore['multiple'] = false;
 				jsTreeCheckbox = {
 					"three_state" : false
@@ -669,8 +693,13 @@ browserTree = function (ftpServer, dirStruct, entryName, treeDiv, buttonId, sour
 					"tie_selection" : false,
 				};
 		}
-		
-		$(treeDiv).jstree({
+
+		$(params.treeDiv).on('loaded.jstree', function (e, data) {
+                    if (isFunction(params.jsTreeLoadCb)) {
+                        params.jsTreeLoadCb(params.jsTreeCbArgs);
+                    }
+			})
+			.jstree({
 			'core': jsTreeCore,
 			"checkbox" : jsTreeCheckbox,
 			"conditionalselect" : conditionalSelect,
@@ -685,67 +714,66 @@ browserTree = function (ftpServer, dirStruct, entryName, treeDiv, buttonId, sour
 			},
 			"plugins" : jsTreePlugins,
 		});
-		
+
 	});
-	
-	if (treeFileController != -1) {
+
+	if (params.treeFileController != -1) {
 		// A general download button that shows Aspera and HTTP stream buttons in a shadowbox
-	    $('#'+buttonId).append('<div id="' + buttonId + 'AspHttpDiv"></div>');
-		
+	    $('#'+params.buttonId).append('<div id="' + params.buttonId + 'AspHttpDiv"></div>');
+
 		// If the listing is of a full directory, then the displayed page is the one in the deposition system and only Aspera download should be available
-		if (dirStruct == 'full') {
-			if (treeFileController)
-				treeFileController.addDownloadButtonTree( { buttonId: buttonId,
-					buttonLabel: 'Download',
-					downloadContainer: buttonId+'AspHttpDiv',
-					source: sourcePath,
-					text: "Aspera download",
-					treeId: treeDiv } );
+		if (params.asperaOnly === true) {
+			params.treeFileController.addDownloadButtonTree( { buttonId: params.buttonId,
+				buttonLabel: 'Download',
+				downloadContainer: params.buttonId+'AspHttpDiv',
+				source: params.sourcePath,
+				text: "Aspera download",
+				treeId: params.treeDiv } );
 		} else {
-			if (null !== asperaTokenUrl && "undefined" !== typeof asperaTokenUrl && "" !== asperaTokenUrl) {
-				var downloadButtonAspHttp = $('<button/>',
-					    {
-							type: "button",
-							id: buttonId + 'AspHttp',
-					        label: 'Download',
-					        text: 'Download',
-					    });
-				downloadButtonAspHttp.addClass("empiarDownloadButton icon icon-functional");
-				downloadButtonAspHttp.attr("data-icon", "=");
-				downloadButtonAspHttp.attr("type", "button");
-			    $('#'+buttonId+'AspHttpDiv').append(downloadButtonAspHttp);
-			    downloadButtonAspHttp.on("click",  function(){
-					var arr = new Array();
-					arr = $(treeDiv).jstree('get_top_checked');
-					if (arr.length < 1) {
-						alert("Please select files and/or folders which you would like to download.");
-						return;
-					}
-	
-					treeFileController.addDownloadButtonTree( { buttonId: buttonId,
-						buttonLabel: 'Download',
-						downloadContainer: 'empiarChooseDlInner',
-						source: sourcePath,
-						text: "Aspera (recommended)",
-						treeId: treeDiv,
-						asperaTokenUrl: asperaTokenUrl,
-						csrfToken: csrfToken} );
-	
-			    	treeFileController.addHttpStreamButtonTree( { buttonId: buttonId,
-			    		buttonLabel: 'Download',
-			    		downloadContainer: 'empiarChooseDlInner',
-			    		source: sourcePath,
-			    		treeId: treeDiv,
-			    		csrfToken: csrfToken} );
-			    	$('#empiarChooseDl').show();
-			    });
-			} else {
-				treeFileController.addHttpStreamButtonTree( { buttonId: buttonId,
+			if (null !== params.asperaTokenUrl && "undefined" !== typeof params.asperaTokenUrl && "" !== params.asperaTokenUrl) {
+                var downloadButtonAspHttp = $('<button/>',
+                        {
+                            type: "button",
+                            id: params.buttonId + 'AspHttp',
+                            label: 'Download',
+                            text: 'Download',
+                        });
+                downloadButtonAspHttp.addClass("empiarDownloadButton icon icon-functional");
+                downloadButtonAspHttp.attr("data-icon", "=");
+                downloadButtonAspHttp.attr("type", "button");
+                $('#'+params.buttonId+'AspHttpDiv').append(downloadButtonAspHttp);
+                downloadButtonAspHttp.on("click",  function(){
+                    var arr = new Array();
+                    arr = $(params.treeDiv).jstree('get_top_checked');
+                    if (arr.length < 1) {
+                        alert("Please select files and/or folders which you would like to download.");
+                        return;
+                    }
+
+                    params.treeFileController.addDownloadButtonTree( { buttonId: params.buttonId,
+                        buttonLabel: 'Download',
+                        downloadContainer: 'empiarChooseDlInner',
+                        source: params.sourcePath,
+                        text: "Aspera (recommended)",
+                        treeId: params.treeDiv,
+                        asperaTokenUrl: params.asperaTokenUrl,
+                        csrfToken: params.csrfToken} );
+
+                    params.treeFileController.addHttpStreamButtonTree( { buttonId: params.buttonId,
+                        buttonLabel: 'Download',
+                        downloadContainer: 'empiarChooseDlInner',
+                        source: params.sourcePath,
+                        treeId: params.treeDiv,
+                        csrfToken: params.csrfToken} );
+                    $('#empiarChooseDl').show();
+                });
+            } else {
+				params.treeFileController.addHttpStreamButtonTree( { buttonId: params.buttonId,
 		    		buttonLabel: 'Download',
-		    		downloadContainer: buttonId+'AspHttpDiv',
-		    		source: sourcePath,
-		    		treeId: treeDiv,
-		    		csrfToken: csrfToken} );
+		    		downloadContainer: params.buttonId+'AspHttpDiv',
+		    		source: params.sourcePath,
+		    		treeId: params.treeDiv,
+		    		csrfToken: params.csrfToken} );
 			}
 		}
 	}
@@ -775,7 +803,7 @@ EMPIAR.FileControl.prototype.addDownloadButtonTree = function (params) {
 	downloadButton.attr("type", "button");
 	$('#'+params.downloadContainer).append('<div id="' + params.buttonId + "Aspera" + 'Div"></div>');
     $('#'+params.buttonId+"Aspera"+'Div').append(downloadButton);
-    
+
     // If Aspera plugin is installed, then get an array of checked tree nodes and provide it to Aspera
 	var downloadButtonClick = function (e) {
 		// Get the checked jsTree nodes
@@ -783,40 +811,26 @@ EMPIAR.FileControl.prototype.addDownloadButtonTree = function (params) {
 		arr = $(params.treeId).jstree('get_top_checked');
 		if (arr.length > 0) {
 			var arrayLength = arr.length;
-			
+
 			// Make an array of system paths to the checked jsTree nodes
 			var parents = new Array();
 			for (var i = 0; i < arrayLength; ++i) {
 				parents.push(params.source + $(params.treeId).jstree("get_path", arr[i], "/"));
 			};
-			
-			// Feed the array of paths to Aspera plugin for download initiation
-			self.asperaWeb.showSelectFolderDialog( { success: function(dataTransferObj) { if (dataTransferObj.dataTransfer.files[0]) self.download(parents, dataTransferObj.dataTransfer.files[0].name, params.asperaTokenUrl, params.csrfToken); } });
+
+			self.setupAsperaListeners();
+			self.asperaWeb.showSelectFolderDialog( { 
+				success: function(obj) {
+					if (obj.dataTransfer.files[0]) {
+						self.download(parents, obj.dataTransfer.files[0].name, params.asperaTokenUrl, params.csrfToken);
+					}
+				} 
+			});
 		}
 		else
 			alert("Please select files and/or folders which you would like to download.");
 	};
 	downloadButton.unbind('click').bind('click', downloadButtonClick);
-	
-	
-	var downloadButtonNoAspera = $('<button/>',
-		    {
-				type: "button",
-				id: params.buttonId + "NoAspera",
-		        label: params.buttonLabel + "NoAspera",
-		        text: params.text,
-		    });
-	downloadButtonNoAspera.addClass("empiarDownloadButton noAsperaControlElement icon icon-functional");
-	downloadButtonNoAspera.attr("data-icon", "=");
-	downloadButtonNoAspera.attr("type", "button");
-    $('#'+params.buttonId+"Aspera"+'Div').append(downloadButtonNoAspera);
-    
-    // If Aspera plugin is not installed, then show a message that prompts users to install it
-	var downloadButtonNoAsperaClick = function (e) {
-	    alert("In order to download files please install Aspera Connect.");
-	};
-	
-	downloadButtonNoAspera.unbind('click').bind('click', downloadButtonNoAsperaClick);
 };
 
 
@@ -825,7 +839,7 @@ showLoader = function(){
 	var divBrowserVersion = document.createElement("div");
 	divBrowserVersion.innerHTML = "<!--[if lt IE 10]><i></i><![endif]-->";
 	var isIeLessThan10 = (divBrowserVersion.getElementsByTagName("i").length == 1);
-	
+
 	// If the browser is IE<10, then show the GIF loading wheel
 	if (isIeLessThan10) {
 		$('#empiarLoaderGif').show();
@@ -842,7 +856,7 @@ hideLoader = function(){
 	var divBrowserVersion = document.createElement("div");
 	divBrowserVersion.innerHTML = "<!--[if lt IE 10]><i></i><![endif]-->";
 	var isIeLessThan10 = (divBrowserVersion.getElementsByTagName("i").length == 1);
-	
+
 	// If the browser is IE<10, then hide the GIF loading wheel
 	if (isIeLessThan10) {
 		$('#empiarLoaderGif').hide();
@@ -882,7 +896,7 @@ getZipFile = function(params) {
 // @param params.treeId: ID of the jsTree that is being associated with the downlaod button
 EMPIAR.FileControl.prototype.addHttpStreamButtonTree = function (params) {
 	var self = this;
-	
+
 	var HttpStreamButton = $('<button/>',
 		    {
 				type: "button",
@@ -895,24 +909,23 @@ EMPIAR.FileControl.prototype.addHttpStreamButtonTree = function (params) {
 	HttpStreamButton.attr("type", "button");
 	$('#'+params.downloadContainer).append('<div id="' + params.buttonId + "Http" + 'Div"></div>');
     $('#'+params.buttonId+"Http"+'Div').append(HttpStreamButton);
-    
+
     // Get an array of checked tree nodes and stream them via Http
 	var HttpStreamButtonClick = function (e) {
-		
+
 		// Get the checked jsTree nodes
 		var arr = new Array();
 		arr = $(params.treeId).jstree('get_top_checked');
 		if (arr.length > 0) {
 			var arrayLength = arr.length;
-			
+
 			// Make an array of system paths to the checked jsTree nodes
 			var parents = new Array();
 			for (var i = 0; i < arrayLength; ++i) {
-				
 				// Calculate the size of the checked nodes
 				parents.push("/archive/" + $(params.treeId).jstree("get_path", arr[i], '/'));
 			};
-			
+
 			if ( parents.join("|").indexOf('The file with the list of directories does not exist') >= 0 )
 				alert('Please select a valid file.');
 			else {
@@ -925,8 +938,8 @@ EMPIAR.FileControl.prototype.addHttpStreamButtonTree = function (params) {
 			    		parents: parents,
 			    		csrfToken: params.csrfToken
 			    	});
-			    } else {
-				alert("Please enter a valid name. Name should contain only ASCII characters");
+			    } else if (name!=null) {
+			    	alert("Please enter a valid name. Name should contain only ASCII characters");
 			    }
 			}
 		}
