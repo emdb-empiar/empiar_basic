@@ -1,0 +1,382 @@
+/* empiar_shadowbox.css
+
+ Authors:
+		Andrii Iudin
+
+ Description:
+ 		css file that goes with open-lightbox.js based on
+ 		PhotoSwipe
+
+ Date:
+		20191111
+
+ Copyright [2013-20] EMBL - European Bioinformatics Institute
+ Licensed under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in
+ compliance with the License. You may obtain a copy of
+ the License at
+ http://www.apache.org/licenses/LICENSE-2.0
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on
+ an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied. See the License for the
+ specific language governing permissions and limitations
+ under the License.
+
+ Version history:
+0.1, 2019/11/11: First version.
+
+ */
+
+.empthumb {
+    display: none;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    overflow: hidden;
+    -ms-touch-action: none;
+    touch-action: none;
+    z-index: 1500;
+    -webkit-text-size-adjust: 100%;
+    /* create separate layer, to avoid paint on window.onscroll in webkit/blink */
+    -webkit-backface-visibility: hidden;
+    outline: none;
+}
+
+.empthumb * {
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.empthumb img {
+    max-width: none;
+}
+
+img.empthumb__img {
+    position: absolute;
+    width: 384px;
+    height: 384px;
+    left: 50%;
+    top: 50%;
+    margin-left: -192px;
+    margin-top: -192px;
+}
+
+button.empthumb__button--arrow--right, button.empthumb__button--arrow--left {
+    opacity: 1;
+}
+
+.empthumb__bg {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    opacity: 0;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    will-change: opacity;
+}
+
+.empthumb__caption {
+    opacity: 0.9;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    min-height: 44px;
+}
+
+.empthumb__caption small {
+    font-size: 11px;
+    color: #BBB;
+}
+
+.empthumb__caption__center {
+    text-align: left;
+    max-width: 420px;
+    margin: 0 auto;
+    font-size: 13px;
+    padding: 10px;
+    line-height: 20px;
+    color: #CCC;
+}
+
+.empthumb__button {
+    width: 44px;
+    height: 44px;
+    position: relative;
+    background: none;
+    cursor: pointer;
+    overflow: visible;
+    -webkit-appearance: none;
+    display: block;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    float: right;
+    opacity: 0.75;
+    -webkit-transition: opacity 0.2s;
+    transition: opacity 0.2s;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+.empthumb__button:focus, .empthumb__button:hover {
+    opacity: 1;
+}
+
+.empthumb__button:active {
+    outline: none;
+    opacity: 0.9;
+}
+
+.empthumb__button::-moz-focus-inner {
+    padding: 0;
+    border: 0;
+}
+
+.empthumb__button,
+.empthumb__button--arrow--left:before,
+.empthumb__button--arrow--right:before {
+    background: url(img/thumbnail-skin.png) 0 0 no-repeat;
+    background-size: 264px 88px;
+    width: 44px;
+    height: 44px;
+}
+
+@media (-webkit-min-device-pixel-ratio: 1.1), (-webkit-min-device-pixel-ratio: 1.09375), (min-resolution: 105dpi), (min-resolution: 1.1dppx) {
+    /* Serve SVG sprite if browser supports SVG and resolution is more than 105dpi */
+    .empthumb--svg .empthumb__button,
+    .empthumb--svg .empthumb__button--arrow--left:before,
+    .empthumb--svg .empthumb__button--arrow--right:before {
+        background-image: url(img/thumbnail-skin.svg);
+    }
+
+    .empthumb--svg .empthumb__button--arrow--left,
+    .empthumb--svg .empthumb__button--arrow--right {
+        background: none;
+    }
+}
+
+.empthumb__button--close {
+    background-position: 0 -44px;
+}
+
+.empthumb__button--share {
+    background-position: -44px -44px;
+}
+
+/*
+	Arrow buttons hit area
+	(icon is added to :before pseudo-element)
+*/
+.empthumb__button--arrow--left,
+.empthumb__button--arrow--right {
+    background: none;
+    top: 50%;
+    margin-top: -50px;
+    width: 44px;
+    height: 100px;
+    position: absolute;
+}
+
+.empthumb__button--arrow--left {
+    left: 0;
+}
+
+.empthumb__button--arrow--right {
+    right: 0;
+    left: 50px;
+}
+
+.empthumb__button--arrow--left:before,
+.empthumb__button--arrow--right:before {
+    content: '';
+    top: 35px;
+    background-color: rgba(0, 0, 0, 0.3);
+    height: 30px;
+    width: 32px;
+    position: absolute;
+}
+
+.empthumb__button--arrow--left:before {
+    left: 6px;
+    background-position: -138px -44px;
+}
+
+.empthumb__button--arrow--right:before {
+    right: 6px;
+    background-position: -94px -44px;
+}
+
+/*
+
+	2. Share modal/popup and links
+
+ */
+.empthumb__share-modal {
+    display: block;
+    background: rgba(0, 0, 0, 0.5);
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    padding: 10px;
+    position: absolute;
+    z-index: 1600;
+    opacity: 0;
+    -webkit-transition: opacity 0.25s ease-out;
+    transition: opacity 0.25s ease-out;
+    -webkit-backface-visibility: hidden;
+    will-change: opacity;
+}
+
+.empthumb__share-modal--hidden {
+    display: none;
+}
+
+.empthumb__share-tooltip {
+    z-index: 1620;
+    position: absolute;
+    background: #FFF;
+    top: 56px;
+    border-radius: 2px;
+    display: block;
+    width: auto;
+    right: 44px;
+    -webkit-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+    -webkit-transform: translateY(6px);
+    -ms-transform: translateY(6px);
+    transform: translateY(6px);
+    -webkit-transition: -webkit-transform 0.25s;
+    transition: transform 0.25s;
+    -webkit-backface-visibility: hidden;
+    will-change: transform;
+}
+
+.empthumb__share-tooltip a {
+    display: block;
+    padding: 8px 12px;
+    color: #000;
+    text-decoration: none;
+    font-size: 14px;
+    line-height: 18px;
+}
+
+.empthumb__share-tooltip a:hover {
+    text-decoration: none;
+    color: #000;
+}
+
+.empthumb__share-tooltip a:first-child {
+    /* round corners on the first/last list item */
+    border-radius: 2px 2px 0 0;
+}
+
+.empthumb__share-tooltip a:last-child {
+    border-radius: 0 0 2px 2px;
+}
+
+/* increase size of share links on touch devices */
+.empthumb--touch .empthumb__share-tooltip a {
+    padding: 16px 12px;
+}
+
+a.empthumb__share--facebook:before {
+    content: '';
+    display: block;
+    width: 0;
+    height: 0;
+    position: absolute;
+    top: -12px;
+    right: 15px;
+    border: 6px solid transparent;
+    border-bottom-color: #FFF;
+    -webkit-pointer-events: none;
+    -moz-pointer-events: none;
+    pointer-events: none;
+}
+
+a.empthumb__share--facebook:hover {
+    background: #3E5C9A;
+    color: #FFF;
+}
+
+a.empthumb__share--facebook:hover:before {
+    border-bottom-color: #3E5C9A;
+}
+
+a.empthumb__share--twitter:hover {
+    background: #55ACEE;
+    color: #FFF;
+}
+
+a.empthumb__share--pinterest:hover {
+    background: #CCC;
+    color: #CE272D;
+}
+
+a.empthumb__share--download:hover {
+    background: #DDD;
+}
+
+/*
+
+	4. Caption
+
+ */
+.empthumb__caption {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    min-height: 44px;
+}
+
+.empthumb__caption small {
+    font-size: 11px;
+    color: #BBB;
+}
+
+.empthumb__caption__center {
+    text-align: center;
+    max-width: 420px;
+    margin: 0 auto;
+    font-size: 13px;
+    padding: 10px;
+    line-height: 20px;
+    color: #CCC;
+}
+
+/*
+
+	6. Additional styles
+
+ */
+/* root element of UI */
+.empthumb__ui {
+    -webkit-font-smoothing: auto;
+    visibility: visible;
+    opacity: 1;
+    z-index: 1550;
+}
+
+/* top black bar with buttons */
+.empthumb__top-bar {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 44px;
+    width: 100%;
+}
+
+.empthumb__top-bar,
+.empthumb__caption {
+    background-color: rgba(0, 0, 0, 0.5);
+}

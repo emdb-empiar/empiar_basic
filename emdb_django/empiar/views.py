@@ -17,6 +17,8 @@ specific language governing permissions and limitations
 under the License.
 
 Version history
+0.2, 2020/08/06: Andrii Iudin
+                Quick update to Python 3
 0.1, 2014/07/24: Andrii Iudin
                 initial version
 """
@@ -28,7 +30,10 @@ __date__ = '2014-07-24'
 import json
 import logging
 import os
-import urllib
+try:
+    from urllib.parse import quote
+except ImportError:
+    from urllib import quote
 from operator import itemgetter
 
 import requests
@@ -37,11 +42,10 @@ from django.http import Http404, StreamingHttpResponse
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.decorators.cache import never_cache
-from past.builtins import cmp
 from ratelimit.decorators import ratelimit
 from settings import RATE_LIMIT, BURST_RATE_LIMIT, EMDBGlobal, LOCAL_HOSTS
-from zipstreamE import ZipStream
 
+from .zipstreamE import ZipStream
 from .util import entry_dir_listing, android_safe_names, reverse_sizeof_fmt, get_resolution
 
 logging.basicConfig()
@@ -114,6 +118,7 @@ def main_table(request):
     start = int(request.GET.get('start'))
     length = int(request.GET.get('length'))
     search = {'value': request.GET.get('search[value]'), 'regex': request.GET.get('search[regex]')}
+    search_value = str(search["value"]).lower()
 
     response_dict = {"draw": draw}
     if any(s in EMDBGlobal.project_root for s in LOCAL_HOSTS):
@@ -138,17 +143,30 @@ def main_table(request):
         empiar_json_obj = json.loads(empiar_json_txt)
         empiar_entries = empiar_json_obj["data"]
 
-        filtered_entries = [entryInfo for entryInfo in empiar_entries if
-                            b_any(search["value"].lower() in cell.lower() for cell in entryInfo)]
+        if search_value:
+            filtered_entries = [entryInfo for entryInfo in empiar_entries if
+                                b_any(search_value in str(cell).lower()
+                                      for cell in entryInfo)]
+        else:
+            filtered_entries = empiar_entries
 
-        if order[0]["column"] == 4:
-            sorted_filtered_entries = sorted(filtered_entries, key=itemgetter(4),
-                                             cmp=lambda x, y: cmp(reverse_sizeof_fmt(x, 'B'),
-                                                                  reverse_sizeof_fmt(y, 'B')),
+        if order[0]["column"] == 0:
+            sorted_filtered_entries = sorted(filtered_entries, key=itemgetter(9),
+                                             reverse=reverse_sort_order)
+        elif order[0]["column"] == 1:
+            sorted_filtered_entries = sorted(filtered_entries, key=itemgetter(0),
+                                             reverse=reverse_sort_order)
+        elif order[0]["column"] == 2:
+            sorted_filtered_entries = sorted(filtered_entries, key=itemgetter(1),
+                                             reverse=reverse_sort_order)
+        elif order[0]["column"] == 3:
+            sorted_filtered_entries = sorted(filtered_entries, key=itemgetter(2),
+                                             reverse=reverse_sort_order)
+        elif order[0]["column"] == 4:
+            sorted_filtered_entries = sorted(filtered_entries, key=lambda x: reverse_sizeof_fmt(x[4], 'B'),
                                              reverse=reverse_sort_order)
         elif order[0]["column"] == 5:
-            sorted_filtered_entries = sorted(filtered_entries, key=itemgetter(8),
-                                             cmp=lambda x, y: cmp(get_resolution(x), get_resolution(y)),
+            sorted_filtered_entries = sorted(filtered_entries, key=lambda x: get_resolution(x[8]),
                                              reverse=reverse_sort_order)
         else:
             sorted_filtered_entries = sorted(filtered_entries, key=itemgetter(order[0]["column"]),
@@ -235,14 +253,14 @@ def get_zip_file(request):
             user_agent = request.META['HTTP_USER_AGENT'].lower()
             if "msie 7.0" in user_agent or "msie 8.0" in user_agent or "mspie 7.0" in user_agent or \
                     "mspie 8.0" in user_agent:
-                response['Content-Disposition'] = "attachment; filename=" + urllib.quote(store_as)
+                response['Content-Disposition'] = "attachment; filename=" + quote(store_as)
             # Android built-in download manager (all browsers on android):
             elif "android" in user_agent:
                 response['Content-Disposition'] = "attachment; filename=\"" + android_safe_names(store_as) + "\""
             else:
                 response[
                     'Content-Disposition'] = "attachment; filename=\"" + store_as + "\"; filename*=UTF-8''" + \
-                                             urllib.quote(store_as)
+                                             quote(store_as)
 
             # Return the response object. Streaming process will be performed by Django, not by this view.
             # We only pass the generator to Django.
@@ -334,29 +352,6 @@ def empiar_entry_thumbnail(request, entry_id):
                                         next_node_id = cur_nodes[tmp_next_node_id]['id']
                                     tmp_next_node_id += 1
 
-                            # Get OMERO id
-                            try:
-                                conn = psycopg2.connect(EMDBGlobal.omero_database_string)
-                                cur = conn.cursor()
-                                try:
-                                    cur.execute("SELECT id from image WHERE image.name = '" + entry_path + "'")
-                                    try:
-                                        rows = cur.fetchall()
-                                        omero_id = rows[0][0]
-                                    except Exception as e:
-                                        logger.error('Unable to fetch SQL query results')
-                                        logger.error(e)
-                                except Exception as e:
-                                    logger.error('Unable to select id for an image name = ' + entry_path)
-                                    logger.error(e)
-                                try:
-                                    conn.close()
-                                except Exception as e:
-                                    logger.error('Unable to close Postgres connection for image ' + entry_path)
-                                    logger.error(e)
-                            except Exception as e:
-                                logger.error('Unable to connect to the OMERO database:')
-                                logger.error(e)
     except Exception as e:
         logger.error(e)
     result = {'cur_node': cur_node_is_readable, 'prev_node_id': prev_node_id, 'next_node_id': next_node_id,
@@ -439,10 +434,11 @@ def empiar_get_aspera_token(request):
 
 def empiar_scipion_workflow(request, entry_name, filepath):
     """
-    Display the SCIPION workflow file
+    Display the Scipion workflow file in workflow viewer
 
     @param request: request object
-    @param entry_name: name of the entry in archive
+    @param entry_name: numeric part of the entry accession code
+    @param filepath: relative path to the Scipion workflow file
     @return return entry information for templates to handle
     """
     entry_dict = {
@@ -459,6 +455,8 @@ def scipion_workflow_json(request, entry_name, filepath):
     Return JSON with Scipion workflow
 
     @param request: request object
+    @param entry_name: numeric part of the entry accession code
+    @param filepath: relative path to the Scipion workflow file
     @return if a callback function was specified then return JSONP otherwise return JSON
     """
     try:

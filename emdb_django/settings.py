@@ -5,7 +5,6 @@ from datetime import datetime, date, timedelta
 from pytz import timezone, utc
 
 DEBUG = True
-TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
     ('Andrii Iudin', ''),
@@ -91,24 +90,6 @@ STATICFILES_FINDERS = (
 SECRET_KEY = 'ii-5a0r=u1q@219@$g+tcqil(!w-54wj)x=_$krsd1ua@!8skk'
 
 ROOT_URLCONF = 'urls'
-
-TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
-    os.path.join(os.path.dirname(__file__), 'templates').replace('\\', '/'),
-    os.path.join(os.path.dirname(__file__), 'empiar', 'templates').replace('\\', '/'),
-)
-
-TEMPLATE_CONTEXT_PROCESSORS = (
-    'django.core.context_processors.debug',
-    'django.core.context_processors.i18n',
-    'django.core.context_processors.media',
-    'django.core.context_processors.static',
-    'django.core.context_processors.request',
-    'django.contrib.auth.context_processors.auth',
-    'django.contrib.messages.context_processors.messages',
-)
 
 TEMPLATES = [
     {

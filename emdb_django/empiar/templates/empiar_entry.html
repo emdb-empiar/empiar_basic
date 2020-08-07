@@ -9,13 +9,6 @@ EMPIAR is an archive for 2D image data related to EMDB. It includes micrographs,
 {% endblock %}
 
 {% block codeHeader %}
-    <!-- Core JS file -->
-    <script src="{{emdb_global.static_empiar_path}}/photoswipe/photoswipe.min.js"></script>
-
-    <!-- UI JS file -->
-    <script src="{{emdb_global.static_empiar_path}}/photoswipe/photoswipe-ui-default.min.js"></script>
-
-
     <script type="text/javascript" src="{{emdb_global.static_empiar_path}}/asperaweb-4.js"></script>
     <script>document.write('<script src="{{emdb_global.static_empiar_path}}/connectversions.js?'+ new Date().getTime() + '"><\/script>')</script>
     <script type="text/javascript" src="{{emdb_global.static_empiar_path}}/connectinstaller-4.js"></script>
@@ -58,15 +51,7 @@ EMPIAR is an archive for 2D image data related to EMDB. It includes micrographs,
     <script type="text/javascript" src="{{emdb_global.static_empiar_path}}/wait_for_element.js"></script>
 
 
-    <!-- PhotoSwipe -->
-    <!-- Core CSS file -->
-    <link rel="stylesheet" href="{{emdb_global.static_empiar_path}}/photoswipe/photoswipe.css">
-
-    <!-- Skin CSS file (styling of UI - buttons, caption, etc.)
-         In the folder of skin CSS file there are also:
-         - .png and .svg icons sprite,
-         - preloader.gif (for browsers that do not support CSS animations) -->
-    <link rel="stylesheet" href="{{emdb_global.static_empiar_path}}/photoswipe/default-skin/default-skin.css">
+    <link rel="stylesheet" href="{{emdb_global.static_empiar_path}}/empiar_shadowbox.css">
 
     <!-- for OMERO viewer -->
     <link type="text/css" rel="stylesheet" href="{{emdb_global.static_empiar_path}}/appmedia/webgateway/css/ome.gs_slider.css">

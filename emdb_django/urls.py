@@ -25,7 +25,7 @@ __date__ = '2012-10-30'
 try:
     from django.conf.urls import include, url
 except ImportError:
-    print "Can not import django.conf items patterns include and url "    
+    print("Can not import django.conf items patterns include and url ")
 from settings import EMDBGlobal
 from core.views.views import show_page
 

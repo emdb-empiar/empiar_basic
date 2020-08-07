@@ -29,7 +29,7 @@ import logging
 import os
 import socket
 
-import empiar
+from . import empiar
 from builtins import range
 from django.http import HttpResponse
 from settings import EMDBGlobal

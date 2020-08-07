@@ -16,25 +16,25 @@ UTF8_FLAG = 0x800  # utf-8 filename encoding flag
 
 # File descriptor
 LF_STRUCT = "<4s2B4HL2L2H"
-LF_MAGIC = "PK\003\004"
+LF_MAGIC = b"PK\003\004"
 
 # File header
 DD_STRUCT = "<4sLLL"
 DD_STRUCT64 = "<4sLQQ"
-DD_MAGIC = "PK\x07\x08"
+DD_MAGIC = b"PK\x07\x08"
 
 # Central directory file header
 CDLF_STRUCT = "<4s4B4HL2L5H2L"
-CDFH_MAGIC = "PK\001\002"
+CDFH_MAGIC = b"PK\001\002"
 
 # End of central directory record
 CD_END_STRUCT64 = "<4sQ2H2L4Q"
-CD_END_MAGIC64 = "PK\x06\x06"
+CD_END_MAGIC64 = b"PK\x06\x06"
 CDL_END_STRUCT64 = "<4sLQL"
-CDL_END_MAGIC64 = "PK\x06\x07"
+CDL_END_MAGIC64 = b"PK\x06\x07"
 
-CD_END_FINAL_STRUCT = "<4s4H2LH"
-CD_END_FINAL_MAGIC = "PK\005\006"
+CD_END_FINAL_STRUCT = b"<4s4H2LH"
+CD_END_FINAL_MAGIC = b"PK\005\006"
 
 
 class ZipStream(object):
@@ -57,8 +57,8 @@ class ZipStream(object):
                'file_size': file_stats.st_size,
                'date_time': date_time,
                'compress_type': zipfile.ZIP_STORED,  # Pack without compression
-               'comment': "",
-               'extra': "",
+               'comment': b"",
+               'extra': b"",
                'create_system': 3,  # Unix
                'create_version': ZIP32_VERSION,
                'version_needed': ZIP32_VERSION,
@@ -97,7 +97,7 @@ class ZipStream(object):
         dosdate = (date_time[0] - 1980) << 9 | date_time[1] << 5 | date_time[2]
         dostime = date_time[3] << 11 | date_time[4] << 5 | (date_time[5] // 2)
 
-        extra = ""
+        extra = b""
 
         # If the file does not fit into 4 byte int, then use ZIP64
         if file_size > ZIP32_LIMIT:
@@ -216,7 +216,7 @@ class ZipStream(object):
             # Size of ZIP64 EOCD   : 44 (0x2c) (Zip64 End Central Directory Record size)
             # Version Made by      : 45 (0x2d)
             #        (HI) Platform : 0 (External Attribute Compatibility)
-            #        (LO) Version  : 45 
+            #        (LO) Version  : 45
             # Version needed       : 45 (0x2d)
             # NumDisk              : 0 (0x0)
             # NumDiskWithThisCD    : 0 (0x0)
@@ -245,8 +245,8 @@ class ZipStream(object):
                                  cd_head_offset, 0)
         self.__offset += len(cd_end_rec)
         central_directory.append(cd_end_rec)
-
-        return ''.join(central_directory)
+        data_bytes = b"".join(central_directory)
+        return data_bytes
 
     # Stream single zip file with header and descriptor
     def stream_single_file(self, idx):
@@ -281,4 +281,4 @@ class ZipStream(object):
                 yield data
 
         for data in self.make_cd():
-            yield data
+            yield bytes([data])

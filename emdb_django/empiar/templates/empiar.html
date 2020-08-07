@@ -43,10 +43,10 @@ EMPIAR, the Electron Microscopy Public Image Archive, is a public resource for r
     <table id="empiarTable1" class="empiarTable stack">
         <thead>
             <tr>
+                <th>Release date</th>
                 <th>Dataset</th>
                 <th>Title</th>
-                <th>Authors</th>
-                <th>Related EMDB/PDB entries</th>
+                <th>Authors and references</th>
                 <th>Size</th>
                 <th>Resolution</th>
             </tr>
@@ -90,28 +90,29 @@ var conf = {
 };
 
 
-/* Render ID code 
+/* Render ID code
 @param data: data in table cell
 @param type: data type
 @param row: array of table elements on row
  */
-function renderIDCode( data, type, row) {
-	var dataOut,
+const renderIDCode = ( data, type, row) => {
+	let dataOut,
 		tag1 = '',
 		tag2 = '',
 		tag3 = '',
 		imagePath;
+	data = row[0];
 	if(data === '-') {
 		tag1 = '-';
 		tag2 = 'EMPIAR-test';
-	} 
+	}
 	else {
-		tag1 = '<a class="empiar-code" href="' + '{{emdb_global.project_root}}/empiar/entry/' + data.replace("EMPIAR-","") + '" target="_blank">' + data + '</a>'
+		tag1 = `<a class="empiar-code" href="{{emdb_global.project_root}}/empiar/entry/${data.replace("EMPIAR-","")}" target="_blank">${data}</a>`;
 		tag2 = data;
 		imagePath = row[5];
-		tag3 = '<img class="entryIcon" src="{{emdb_global.empiar_icon_url}}/' + imagePath + '" ' + 'onerror="this.src=\'{{emdb_global.static_rel_path}}/images/noimage.png\'" alt="Image not available"' + ' />';
+		tag3 = `<img class="entryIcon" src="{{emdb_global.empiar_icon_url}}/${imagePath}" onerror="this.src='{{emdb_global.static_rel_path}}/images/noimage.png'" alt="Image not available" />`;
 	}
-	dataOut =  tag1  + '<div id="dlc' + tag2 + '"' + ' class="downloadDiv asperaControlElement hide-for-print"></div>' + tag3;
+	dataOut =  `${tag1} <div id="dlc${tag2}" class="downloadDiv asperaControlElement hide-for-print"></div>${tag3}`;
 	return dataOut;
 }
 
@@ -120,20 +121,23 @@ function renderIDCode( data, type, row) {
 @param type: data type
 @param row: array of table elements on row
  */
-function renderAuthors( data, type, row ) {
-	var id,
-		dataOut = '',
+const renderAuthors = ( data, type, row ) => {
+	let dataOut = '',
 		pubmed,
 		doi;
-	
-	dataOut = data;
+
+	dataOut = row[2];
 	if (row[6] !== undefined && row[6] !== "") {
-		pubmed = '{{ emdb_global.pubmed_prefix}}' + row[6];
-		dataOut += '<br/>' + '[Pubmed: <a target="_blank" href="' + pubmed + '">' + row[6] + '</a>]';
+		pubmed = `{{ emdb_global.pubmed_prefix}}${row[6]}`;
+		dataOut += `<br/> [Pubmed: <a target="_blank" rel="noopener" href="${pubmed}">${row[6]}</a>]`;
 	}
 	if (row[7] !== undefined && row[7] !== "") {
-		doi = '{{ emdb_global.doi_prefix}}' + row[7];
-		dataOut += '<br/>' + '[DOI: <a target="_blank" href="' + doi + '">' + row[7] + '</a>]';
+		doi = `{{ emdb_global.doi_prefix}}${row[7]}`;
+		dataOut += `<br/> [DOI: <a target="_blank" rel="noopener" href="${doi}">${row[7]}</a>]`;
+	}
+
+	if (row[3] !== undefined && row[3] !== "") {
+	    dataOut += `<br/>${renderAccessionCodes(row[3])}`;
 	}
 	return dataOut;
 }
@@ -143,11 +147,11 @@ function renderAuthors( data, type, row ) {
 @param type: data type
 @param row: array of table elements on row
  */
-function renderAccessionCodes( data, type, row ) {
+const renderAccessionCodes = ( data, type, row ) => {
 	var id,
 		ids,
 		idsOut,
-		dataOut, 
+		dataOut,
 		max,
 		i;
 
@@ -163,6 +167,16 @@ function renderAccessionCodes( data, type, row ) {
 	return dataOut;
 }
 
+/* Render entry title in table
+@param data: data in table cell
+@param type: data type
+@param row: array of table elements on row
+ */
+function renderTitle( data, type, row ) {
+	/* Assume entry title */
+	return row[1];
+}
+
 /* Render EMDB resolution in table
 @param data: data in table cell
 @param type: data type
@@ -171,6 +185,24 @@ function renderAccessionCodes( data, type, row ) {
 function emdbResolution( data, type, row ) {
 	/* Assume EMDB resolution (min-max range, if available) */
 	return row[8];
+}
+
+/* Render file size in table
+@param data: data in table cell
+@param type: data type
+@param row: array of table elements on row
+ */
+function fileSize( data, type, row ) {
+	return row[4];
+}
+
+/* Render release date in table
+@param data: data in table cell
+@param type: data type
+@param row: array of table elements on row
+ */
+function releaseDate( data, type, row ) {
+	return row[9];
 }
 
 $(document).ready(function () {
@@ -193,11 +225,11 @@ $(document).ready(function () {
 	        // Callback function executed after rendition of each row.
 			// Adds a download button to the first column
 			"fnCreatedRow": function( nRow, aData, iDataIndex ) {
-		      	var dlcDiv = $($(nRow).children()[0]).children()[1];
+		      	var dlcDiv = $($(nRow).children()[1]).children()[1];
 		      	
 		      	var dlcDivId = $(dlcDiv).attr('id');
 				if (dlcDivId === undefined) {
-					dlcDiv = $($(nRow).children()[0]).children()[0];
+					dlcDiv = $($(nRow).children()[1]).children()[0];
 					dlcDivId = $(dlcDiv).attr('id');
 				}
 				
@@ -217,35 +249,43 @@ $(document).ready(function () {
 				downloadButton.on("click", downloadButtonClick);
 		    },
 			columnDefs: [
-				{	type: 'empiar-id', 
-					width: '140px',
-					targets: 0, 
+                {
+		            type: 'release-date',
+                    targets: 0,
+                    render: releaseDate,
+                    width: '90px',
+                    class: "show-for-large"
+                },
+			    {	type: 'empiarid',
+					width: '90px',
+					targets: 1,
 					render: renderIDCode
 				},
 				{
-					targets: 1,
-					width: '300px',
+					targets: 2,
+					width: '380px',
+                    render: renderTitle,
 				},
 				{
-					targets: 2,
-					width: '300px',
+					targets: 3,
+					width: '220px',
 					render: renderAuthors,
 				},
 				{
-				    targets: 3,
-                    render: renderAccessionCodes,
+				    type: 'file-size',
+				    targets: 4,
+                    render: fileSize,
                 },
 		        {
-		            type: 'file-size',
-                    targets: 4,
-                },
-		        {
-		        		type: 'resolution',
-		        		targets: 5,
-		        		render: emdbResolution,
-                    class: "show-for-large"
-		        }
-		    ]
+		            type: 'resolution',
+                    targets: 5,
+                    width: '100px',
+                    render: emdbResolution,
+                }
+		    ],
+            "language": {
+                "info": "Showing _START_ to _END_ of _TOTAL_ entries (including 1 test dataset)"
+            }
 		});
 	}, waitTime);
 });
